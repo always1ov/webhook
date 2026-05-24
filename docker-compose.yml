@@ -18,9 +18,10 @@
 
 services:
   webhook:
-    # extend 镜像包含 bash、curl、jq 等工具，通知脚本依赖这些工具
-    # 如需更新版本，修改 image 标签，保持 extend- 前缀
-    image: soulteary/webhook:extend-5.0.0
+    # 从项目源码构建镜像，包含 bash、curl、jq 等通知脚本所需工具
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - "9000:9000"
