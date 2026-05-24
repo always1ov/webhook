@@ -18,10 +18,8 @@
 
 services:
   webhook:
-    # 从项目源码构建镜像，包含 bash、curl、jq 等通知脚本所需工具
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # 直接从 GitHub 拉取已构建的镜像
+    image: ghcr.io/always1ov/webhook:latest
     restart: unless-stopped
     ports:
       - "9000:9000"
