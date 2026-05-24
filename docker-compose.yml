@@ -1,0 +1,45 @@
+# Webhook 通知推送服务
+#
+# 快速启动:
+#   1. cp .env.example .env        # 复制配置模板
+#   2. 编辑 .env，填入通知平台的 Webhook 地址 / Token
+#   3. docker compose up -d        # 启动服务
+#
+# 服务启动后，各平台通知地址:
+#   飞书:     http://localhost:9000/hooks/feishu?msg=Hello
+#   钉钉:     http://localhost:9000/hooks/dingtalk?msg=Hello
+#   企业微信:  http://localhost:9000/hooks/wecom?msg=Hello
+#   Telegram: http://localhost:9000/hooks/telegram?msg=Hello
+#   Slack:    http://localhost:9000/hooks/slack?msg=Hello
+#   Discord:  http://localhost:9000/hooks/discord?msg=Hello
+#   Server酱: http://localhost:9000/hooks/serverchan?msg=Hello&title=标题
+#
+# 更多用法见 hooks/ 目录下各 YAML 文件的注释
+
+services:
+  webhook:
+    # extend 镜像包含 bash、curl、jq 等工具，通知脚本依赖这些工具
+    # 如需更新版本，修改 image 标签，保持 extend- 前缀
+    image: soulteary/webhook:extend-5.0.0
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    env_file:
+      - .env
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "9000"
+      # 热重载：修改 hooks/ 下的配置文件后自动生效，无需重启
+      HOT_RELOAD: "true"
+      VERBOSE: "true"
+      # hooks 目录：自动扫描目录下所有 .yaml/.json 文件
+      HOOKS_DIR: "/hooks"
+      # 语言设置：zh-CN 或 en-US
+      LANGUAGE: "zh-CN"
+    volumes:
+      # hooks 目录：存放各平台的 hook 配置 YAML
+      - ./hooks:/hooks:ro
+      # notify 目录：存放各平台的通知脚本
+      - ./notify:/notify
+    # 确保通知脚本有执行权限
+    entrypoint: ["/bin/sh", "-c", "chmod +x /notify/*.sh && /usr/bin/webhook"]

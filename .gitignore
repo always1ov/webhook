@@ -15,4 +15,6 @@ redeploy.sh
 
 OPTIMIZATION_REPORT.md
 test.log
-hooks/*
+# 本地临时 hooks 目录中的非 yaml 文件
+hooks/*.json.local
+hooks/*.yaml.local

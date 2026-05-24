@@ -1,0 +1,33 @@
+# 飞书机器人通知 Hook
+#
+# 调用方式一（GET，适合简单场景）:
+#   curl "http://localhost:9000/hooks/feishu?msg=Hello+World"
+#   curl "http://localhost:9000/hooks/feishu?msg=告警消息&title=系统告警"
+#
+# 调用方式二（POST JSON，适合复杂场景）:
+#   curl -X POST http://localhost:9000/hooks/feishu \
+#     -H "Content-Type: application/json" \
+#     -d '{"msg": "部署完成！", "title": "CI/CD 通知"}'
+
+- id: feishu
+  execute-command: /notify/feishu.sh
+  command-working-directory: /notify
+  include-command-output-in-response: true
+  include-command-out-in-response-on-error: true
+  pass-environment-to-command:
+    # 从 POST JSON body 获取消息内容（优先）
+    - source: payload
+      name: msg
+      envname: MSG
+    # 从 POST JSON body 获取标题
+    - source: payload
+      name: title
+      envname: TITLE
+    # 从 URL 参数 ?msg=... 获取消息内容（备用）
+    - source: url
+      name: msg
+      envname: MSG_QUERY
+    # 从 URL 参数 ?title=... 获取标题（备用）
+    - source: url
+      name: title
+      envname: TITLE_QUERY
