@@ -245,3 +245,14 @@ func LockHooksFiles() {
 func UnlockHooksFiles() {
 	hooksMutex.Unlock()
 }
+
+// GetAllHooks 返回当前已加载的所有 hook 的浅拷贝列表（只读，线程安全）
+func GetAllHooks() []hook.Hook {
+	hooksMutex.RLock()
+	defer hooksMutex.RUnlock()
+	var result []hook.Hook
+	for _, hooks := range LoadedHooksFromFiles {
+		result = append(result, hooks...)
+	}
+	return result
+}

@@ -101,6 +101,11 @@ func ParseConfig() AppFlags {
 	// Hooks directory: scan for *.json, *.yaml; when empty, watch for new files (use with or without -hotreload)
 	fs.String("hooks-dir", DEFAULT_HOOKS_DIR, "directory to scan for hook config files (*.json, *.yaml); if empty, watch for new files")
 
+	// WebUI flags
+	fs.Bool("webui", DEFAULT_WEBUI_ENABLED, "enable web UI dashboard at webui-path (default true)")
+	fs.String("webui-path", DEFAULT_WEBUI_PATH, "HTTP path for web UI dashboard (default /ui)")
+	fs.String("notify-config-file", DEFAULT_NOTIFY_CONFIG_FILE, "path to JSON file for storing notification platform credentials (default ./notify.config.json)")
+
 	showVersion := fs.Bool("version", false, "display webhook version and quit")
 	validateConfig := fs.Bool("validate-config", false, "validate configuration and exit")
 
@@ -209,6 +214,11 @@ func ParseConfig() AppFlags {
 	// Config UI settings
 	flags.ConfigUIEnabled = configutil.ResolveBool(fs, "config-ui", ENV_KEY_CONFIG_UI_ENABLED, DEFAULT_CONFIG_UI_ENABLED)
 	flags.ConfigUIPath = configutil.ResolveString(fs, "config-ui-path", ENV_KEY_CONFIG_UI_PATH, DEFAULT_CONFIG_UI_PATH, true)
+
+	// WebUI settings
+	flags.WebUIEnabled = configutil.ResolveBool(fs, "webui", ENV_KEY_WEBUI_ENABLED, DEFAULT_WEBUI_ENABLED)
+	flags.WebUIPath = configutil.ResolveString(fs, "webui-path", ENV_KEY_WEBUI_PATH, DEFAULT_WEBUI_PATH, true)
+	flags.NotifyConfigFile = configutil.ResolveString(fs, "notify-config-file", ENV_KEY_NOTIFY_CONFIG_FILE, DEFAULT_NOTIFY_CONFIG_FILE, true)
 
 	// Hooks directory: when set, scan for hook files and optionally watch when empty
 	flags.HooksDir = configutil.ResolveString(fs, "hooks-dir", ENV_KEY_HOOKS_DIR, DEFAULT_HOOKS_DIR, true)

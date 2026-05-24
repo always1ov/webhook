@@ -87,6 +87,11 @@ const (
 
 	// Hooks directory: default scan dir for hook configs
 	DEFAULT_HOOKS_DIR = "./hooks"
+
+	// WebUI defaults
+	DEFAULT_WEBUI_ENABLED      = true
+	DEFAULT_WEBUI_PATH         = "/ui"
+	DEFAULT_NOTIFY_CONFIG_FILE = "./notify.config.json"
 )
 
 const (
@@ -173,6 +178,11 @@ const (
 
 	// Hooks directory
 	ENV_KEY_HOOKS_DIR = "HOOKS_DIR"
+
+	// WebUI environment keys
+	ENV_KEY_WEBUI_ENABLED      = "WEBUI_ENABLED"
+	ENV_KEY_WEBUI_PATH         = "WEBUI_PATH"
+	ENV_KEY_NOTIFY_CONFIG_FILE = "NOTIFY_CONFIG_FILE"
 )
 
 type AppFlags struct {
@@ -261,4 +271,9 @@ type AppFlags struct {
 
 	// Hooks directory: when set, scan for hook config files (*.json, *.yaml); if empty, watch for new files
 	HooksDir string
+
+	// WebUI settings
+	WebUIEnabled      bool   // 是否启用可视化后台（默认 true）
+	WebUIPath         string // WebUI 路径前缀（默认 /ui）
+	NotifyConfigFile  string // 通知配置 JSON 文件路径（默认 ./notify.config.json）
 }
