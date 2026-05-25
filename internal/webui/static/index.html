@@ -164,9 +164,7 @@
                 </td>
                 <td style="text-align:right;">
                   <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;">
-                    <template x-if="h.isCustom">
-                      <button class="btn btn-ghost btn-sm" @click="editHookFromOverview(h.id)">编辑</button>
-                    </template>
+                    <button class="btn btn-ghost btn-sm" @click="editHookFromOverview(h)">编辑</button>
                     <button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id"><span x-text="testing===h.id?'发送中…':'测试'"></span></button>
                     <button class="btn btn-danger btn-sm" @click="deleteHook(h.id)">删除</button>
                   </div>
@@ -340,6 +338,33 @@
     </div>
   </div>
 
+  <!-- 内置 Hook 编辑弹窗 -->
+  <div x-show="builtinEditOpen" x-cloak class="modal-backdrop" @click.self="builtinEditOpen=false">
+    <div class="modal">
+      <div class="modal-header">
+        <span style="font-size:15px;font-weight:700;color:var(--ink);" x-text="(builtinEditPlatform?.name||'')+' 配置'"></span>
+        <button class="btn btn-ghost btn-sm" @click="builtinEditOpen=false" style="font-size:16px;padding:0 8px;">✕</button>
+      </div>
+      <div class="modal-body">
+        <template x-if="builtinEditPlatform">
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <template x-for="f in builtinEditPlatform.fields" :key="f.key">
+              <div>
+                <label style="font-size:12px;font-weight:500;color:var(--muted);display:block;margin-bottom:5px;" x-text="f.label"></label>
+                <input :type="f.secret?'password':'text'" class="inp" x-model="cfg[f.key]" :placeholder="f.placeholder">
+              </div>
+            </template>
+          </div>
+        </template>
+        <div x-show="builtinEditMsg" x-transition style="margin-top:12px;" :class="builtinEditOk?'alert alert-ok':'alert alert-err'" x-text="builtinEditMsg"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" @click="builtinEditOpen=false">取消</button>
+        <button class="btn btn-primary" @click="saveBuiltinEdit()" :disabled="builtinEditSaving"><span x-text="builtinEditSaving?'保存中…':'保存配置'"></span></button>
+      </div>
+    </div>
+  </div>
+
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script>
   function app() {
@@ -351,6 +376,7 @@
       modalOpen:false,editingHook:null,modalSaving:false,modalErr:'',
       form:{id:'',name:'',targetURL:'',method:'POST',bodyTemplate:'',headers:''},
       cfg:{},saveMsg:'',saveOk:false,saving:false,
+      builtinEditOpen:false,builtinEditPlatform:null,builtinEditSaving:false,builtinEditMsg:'',builtinEditOk:false,
       logs:[],logFilter:'',logStatus:'',
       platforms:[
         {key:'feishu',name:'飞书',fields:[{key:'feishu_webhook_url',label:'Webhook URL',placeholder:'https://open.feishu.cn/open-apis/bot/v2/hook/...',secret:false}]},
@@ -408,9 +434,24 @@
           setTimeout(()=>this.testMsg='',3000);
         }catch(e){this.testOk=false;this.testMsg='网络错误：'+e.message;}
       },
-      editHookFromOverview(id){
-        const h=this.customHooks.find(c=>c.id===id);
-        if(h){this.openEditModal(h);}
+      editHookFromOverview(h){
+        if(h.isCustom){
+          const ch=this.customHooks.find(c=>c.id===h.id);
+          if(ch)this.openEditModal(ch);
+        }else{
+          const platformKey=h.id;
+          const p=this.platforms.find(p=>p.key===platformKey);
+          if(p){this.builtinEditPlatform=p;this.builtinEditMsg='';this.builtinEditOpen=true;}
+        }
+      },
+      async saveBuiltinEdit(){
+        this.builtinEditSaving=true;this.builtinEditMsg='';
+        try{
+          const r=await fetch('api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.cfg)});
+          const j=await r.json();this.builtinEditOk=j.ok;this.builtinEditMsg=j.ok?'配置已保存':(j.msg||'保存失败');
+          if(j.ok)setTimeout(()=>{this.builtinEditOpen=false;this.builtinEditMsg='';},1000);
+        }catch(e){this.builtinEditOk=false;this.builtinEditMsg='网络错误：'+e.message;}
+        this.builtinEditSaving=false;
       },
       hasPlatformValue(p){return p.fields.some(f=>this.cfg[f.key]);},
       get filteredLogs(){return this.logs.filter(l=>{const okId=!this.logFilter||l.hookID.includes(this.logFilter);const okSt=!this.logStatus||(this.logStatus==='success'?l.success:!l.success);return okId&&okSt;});},
