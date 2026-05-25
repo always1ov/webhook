@@ -1,19 +1,9 @@
-# Webhook 通知推送服务
-#
-# 快速启动:
-#   1. mkdir -p hooks data && touch data/custom-hooks.json
-#   2. docker compose up -d
-#   3. 访问 http://localhost:9000/ui 配置推送
-
 services:
   webhook:
     image: ghcr.io/always1ov/webhook:latest
     restart: unless-stopped
     ports:
       - "9000:9000"
-    env_file:
-      - path: .env
-        required: false
     environment:
       HOST: "0.0.0.0"
       PORT: "9000"
@@ -22,11 +12,31 @@ services:
       HOOKS_DIR: "/hooks"
       LANGUAGE: "zh-CN"
       WEBUI: "true"
-      # 自定义推送配置文件路径（UI 新建的 Hook 会持久化到此文件）
       CUSTOM_HOOKS_FILE: "/data/custom-hooks.json"
       NOTIFY_CONFIG_FILE: "/data/notify.config.json"
+
+      # 飞书
+      FEISHU_WEBHOOK_URL: ""
+
+      # 钉钉
+      DINGTALK_WEBHOOK_URL: ""
+      DINGTALK_SECRET: ""
+
+      # 企业微信
+      WECOM_WEBHOOK_URL: ""
+
+      # Telegram
+      TELEGRAM_BOT_TOKEN: ""
+      TELEGRAM_CHAT_ID: ""
+
+      # Slack
+      SLACK_WEBHOOK_URL: ""
+
+      # Discord
+      DISCORD_WEBHOOK_URL: ""
+
+      # Server酱
+      SERVERCHAN_SENDKEY: ""
     volumes:
-      # hooks 目录：可写，UI 新建的 Hook 会在此生成 YAML 文件，热重载自动生效
       - ./hooks:/hooks
-      # data 目录：持久化自定义 Hook 配置和脚本
       - ./data:/data
