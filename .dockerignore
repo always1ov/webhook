@@ -1,3 +1,13 @@
 Dockerfile
 Dockerfile.*
+.git
+.github
+docs
+example
+cmd
+scripts
+test
 coverage.out
+*.md
+.env
+.env.*

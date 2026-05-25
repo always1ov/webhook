@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 )
 
-// NotifyConfig 各通知平台的凭证配置
 type NotifyConfig struct {
 	FeishuWebhookURL   string `json:"feishu_webhook_url"`
 	DingtalkWebhookURL string `json:"dingtalk_webhook_url"`
@@ -19,7 +18,6 @@ type NotifyConfig struct {
 	ServerChanSendKey  string `json:"serverchan_sendkey"`
 }
 
-// LoadNotifyConfig 从 JSON 文件读取通知配置，文件不存在时返回空配置
 func LoadNotifyConfig(filePath string) (*NotifyConfig, error) {
 	data, err := os.ReadFile(filePath)
 	if err != nil {
@@ -35,26 +33,29 @@ func LoadNotifyConfig(filePath string) (*NotifyConfig, error) {
 	return &cfg, nil
 }
 
-// SaveNotifyConfig 原子写入通知配置到 JSON 文件
 func SaveNotifyConfig(filePath string, cfg *NotifyConfig) error {
 	data, err := json.MarshalIndent(cfg, "", "  ")
 	if err != nil {
 		return err
 	}
-	// 写临时文件再 rename，保证原子性（必须与目标同设备，否则跨设备 rename 失败）
-	tmp, err := os.CreateTemp(filepath.Dir(filePath), ".notify-config-*.tmp")
+	dir := filepath.Dir(filePath)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return err
+	}
+	// temp file must be on the same device as target to avoid cross-device rename
+	tmp, err := os.CreateTemp(dir, ".notify-config-*.tmp")
 	if err != nil {
 		return err
 	}
-	tmpName := tmp.Name()
+	name := tmp.Name()
 	if _, err := tmp.Write(data); err != nil {
 		_ = tmp.Close()
-		_ = os.Remove(tmpName)
+		_ = os.Remove(name)
 		return err
 	}
 	if err := tmp.Close(); err != nil {
-		_ = os.Remove(tmpName)
+		_ = os.Remove(name)
 		return err
 	}
-	return os.Rename(tmpName, filePath)
+	return os.Rename(name, filePath)
 }

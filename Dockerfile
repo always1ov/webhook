@@ -1,20 +1,18 @@
-# 第一阶段：编译 webhook 二进制
 FROM golang:1.26-alpine3.23 AS builder
-RUN apk --update add ca-certificates
-ENV GOPROXY=https://goproxy.cn
+RUN apk add --no-cache ca-certificates upx
+ENV GOPROXY=https://goproxy.cn,direct
 ENV CGO_ENABLED=0
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -ldflags "-w -s" -o webhook .
+RUN go build -ldflags "-w -s" -trimpath -o webhook . \
+    && upx --best --lzma webhook
 
-# 第二阶段：运行时镜像
-FROM alpine:3.21
-RUN apk --no-cache add bash curl jq ca-certificates
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+FROM alpine:3.23
+RUN apk add --no-cache bash curl jq ca-certificates
 COPY --from=builder /app/webhook /usr/bin/webhook
 COPY notify/ /notify/
 RUN chmod +x /notify/*.sh
 EXPOSE 9000/tcp
-CMD ["/usr/bin/webhook"]
+ENTRYPOINT ["/usr/bin/webhook"]
