@@ -9,12 +9,11 @@ RUN go mod download
 COPY . .
 RUN go build -ldflags "-w -s" -o webhook .
 
-# 第二阶段：运行镜像（含通知脚本所需工具）
+# 第二阶段：运行镜像
 FROM alpine:3.21
 RUN apk --no-cache add bash curl jq ca-certificates
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /app/webhook /usr/bin/webhook
-# 将通知脚本打入镜像，用户也可通过 volume 覆盖
 COPY notify/ /notify/
 RUN chmod +x /notify/*.sh
 EXPOSE 9000/tcp
