@@ -1,11 +1,11 @@
 # Webhook 通知推送服务
 #
 # 快速启动:
-#   1. mkdir -p hooks notify && touch .env
-#   2. 编辑 .env，填入通知平台的 Webhook 地址 / Token（不需要的平台留空）
+#   1. mkdir -p hooks && touch .env
+#   2. 编辑 .env，填入通知平台的 Webhook 地址 / Token
 #   3. docker compose up -d
 #
-# 服务启动后访问控制台: http://localhost:9000/ui
+# 控制台: http://localhost:9000/ui
 # 各平台通知地址:
 #   飞书:     http://localhost:9000/hooks/feishu?msg=Hello
 #   钉钉:     http://localhost:9000/hooks/dingtalk?msg=Hello
@@ -34,5 +34,5 @@ services:
       WEBUI: "true"
     volumes:
       - ./hooks:/hooks:ro
-      - ./notify:/notify
-    entrypoint: ["/bin/sh", "-c", "find /notify -name '*.sh' -exec chmod +x {} \\; 2>/dev/null; exec /usr/bin/webhook"]
+      # 如需自定义通知脚本，取消下行注释并在本地创建 notify 目录
+      # - ./notify:/notify
