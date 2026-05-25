@@ -89,9 +89,10 @@ const (
 	DEFAULT_HOOKS_DIR = "./hooks"
 
 	// WebUI defaults
-	DEFAULT_WEBUI_ENABLED      = true
-	DEFAULT_WEBUI_PATH         = "/ui"
+	DEFAULT_WEBUI_ENABLED     = true
+	DEFAULT_WEBUI_PATH        = "/ui"
 	DEFAULT_NOTIFY_CONFIG_FILE = "./notify.config.json"
+	DEFAULT_CUSTOM_HOOKS_FILE  = "./data/custom-hooks.json"
 )
 
 const (
@@ -183,6 +184,7 @@ const (
 	ENV_KEY_WEBUI_ENABLED      = "WEBUI_ENABLED"
 	ENV_KEY_WEBUI_PATH         = "WEBUI_PATH"
 	ENV_KEY_NOTIFY_CONFIG_FILE = "NOTIFY_CONFIG_FILE"
+	ENV_KEY_CUSTOM_HOOKS_FILE  = "CUSTOM_HOOKS_FILE"
 )
 
 type AppFlags struct {
@@ -218,62 +220,63 @@ type AppFlags struct {
 	AllowAutoChmod       bool
 
 	// Security settings
-	AllowedCommandPaths string // 逗号分隔的允许的命令路径列表
-	MaxArgLength        int    // 单个参数最大长度
-	MaxTotalArgsLength  int    // 所有参数总长度限制
-	MaxArgsCount        int    // 最大参数数量
-	StrictMode          bool   // 严格模式：禁止危险字符
+	AllowedCommandPaths string
+	MaxArgLength        int
+	MaxTotalArgsLength  int
+	MaxArgsCount        int
+	StrictMode          bool
 
 	// Rate limiting settings
-	RateLimitEnabled bool // 是否启用限流
-	RateLimitRPS     int  // 每秒请求数限制
-	RateLimitBurst   int  // 突发请求数限制
+	RateLimitEnabled bool
+	RateLimitRPS     int
+	RateLimitBurst   int
 
-	// Redis rate limiting settings (分布式限流)
-	RedisEnabled       bool   // 是否启用 Redis 分布式限流
-	RedisAddr          string // Redis 服务器地址
-	RedisPassword      string // Redis 密码
-	RedisDB            int    // Redis 数据库索引
-	RedisKeyPrefix     string // Redis 限流键前缀
-	RateLimitWindowSec int    // 限流时间窗口（秒）
+	// Redis rate limiting settings
+	RedisEnabled       bool
+	RedisAddr          string
+	RedisPassword      string
+	RedisDB            int
+	RedisKeyPrefix     string
+	RateLimitWindowSec int
 
 	// Logging settings
-	LogRequestBody bool // 是否在调试模式下记录请求体（默认false，避免敏感信息泄露）
+	LogRequestBody bool
 
 	// HTTP server timeout settings
-	ReadHeaderTimeoutSeconds int // 读取请求头超时时间（秒）
-	ReadTimeoutSeconds       int // 读取请求体超时时间（秒）
-	WriteTimeoutSeconds      int // 写入响应超时时间（秒）
-	IdleTimeoutSeconds       int // 空闲连接超时时间（秒）
-	MaxHeaderBytes           int // 最大请求头大小（字节）
+	ReadHeaderTimeoutSeconds int
+	ReadTimeoutSeconds       int
+	WriteTimeoutSeconds      int
+	IdleTimeoutSeconds       int
+	MaxHeaderBytes           int
 
 	// Tracing settings
-	TracingEnabled     bool   // 是否启用分布式追踪
-	OTLPEndpoint       string // OTLP 导出端点（如 localhost:4318）
-	TracingServiceName string // 追踪服务名称
+	TracingEnabled     bool
+	OTLPEndpoint       string
+	TracingServiceName string
 
 	// Audit settings
-	AuditEnabled     bool   // 是否启用审计日志
-	AuditStorageType string // 审计存储类型：file, redis, database
-	AuditFilePath    string // 审计日志文件路径（当存储类型为 file 时）
-	AuditQueueSize   int    // 异步写入队列大小
-	AuditWorkers     int    // 异步写入工作协程数
-	AuditMaskIP      bool   // 是否对 IP 地址进行脱敏
+	AuditEnabled     bool
+	AuditStorageType string
+	AuditFilePath    string
+	AuditQueueSize   int
+	AuditWorkers     int
+	AuditMaskIP      bool
 
 	// OpenAPI settings
-	OpenAPIEnabled bool   // 是否启用 OpenAPI 规范（GET 路径或打印）
-	OpenAPIPath    string // OpenAPI 规范 HTTP 路径（默认 /openapi）
-	OpenAPIPrint   bool   // 是否在启动时将规范打印到 stdout
+	OpenAPIEnabled bool
+	OpenAPIPath    string
+	OpenAPIPrint   bool
 
-	// Config UI settings (config generator Web UI)
-	ConfigUIEnabled bool   // 是否启用配置生成 Web UI
-	ConfigUIPath    string // Config UI 的 HTTP 路径（默认 /config-ui）
+	// Config UI settings
+	ConfigUIEnabled bool
+	ConfigUIPath    string
 
-	// Hooks directory: when set, scan for hook config files (*.json, *.yaml); if empty, watch for new files
+	// Hooks directory
 	HooksDir string
 
 	// WebUI settings
-	WebUIEnabled      bool   // 是否启用可视化后台（默认 true）
-	WebUIPath         string // WebUI 路径前缀（默认 /ui）
-	NotifyConfigFile  string // 通知配置 JSON 文件路径（默认 ./notify.config.json）
+	WebUIEnabled      bool
+	WebUIPath         string
+	NotifyConfigFile  string
+	CustomHooksFile   string
 }
