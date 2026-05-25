@@ -22,7 +22,6 @@
       --accent-h:  #0077ed;
       --ok:        #30d158;
       --err:       #ff453a;
-      --warn:      #ffd60a;
       --radius-sm: 8px;
       --radius:    12px;
       --radius-lg: 18px;
@@ -32,218 +31,114 @@
     }
 
     html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--font);
-      font-size: 15px;
-      line-height: 1.55;
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-    }
+    body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; min-height: 100vh; }
 
-    /* ── Nav ── */
-    .nav {
-      position: sticky; top: 0; z-index: 50;
-      height: 52px;
-      background: rgba(0,0,0,.72);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-      border-bottom: 1px solid var(--border2);
-      display: flex; align-items: center;
-      padding: 0 28px;
-      gap: 0;
-    }
-    .nav-brand {
-      display: flex; align-items: center; gap: 8px;
-      font-family: var(--font-display);
-      font-size: 17px; font-weight: 600;
-      color: var(--ink); letter-spacing: -.2px;
-      flex-shrink: 0;
-      margin-right: 32px;
-    }
-    .nav-tabs {
-      display: flex; align-items: center; gap: 2px;
-      flex: 1;
-    }
-    .nav-tab {
-      height: 32px; padding: 0 14px;
-      background: none; border: none;
-      font-family: var(--font); font-size: 13px; font-weight: 500;
-      color: var(--muted);
-      border-radius: var(--radius-sm);
-      cursor: pointer; white-space: nowrap;
-      transition: color .15s, background .15s;
-    }
+    /* Nav */
+    .nav { position: sticky; top: 0; z-index: 50; height: 52px; background: rgba(0,0,0,.72); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid var(--border2); display: flex; align-items: center; padding: 0 28px; }
+    .nav-brand { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--ink); letter-spacing: -.2px; flex-shrink: 0; margin-right: 32px; }
+    .nav-tabs { display: flex; align-items: center; gap: 2px; flex: 1; }
+    .nav-tab { height: 32px; padding: 0 14px; background: none; border: none; font-family: var(--font); font-size: 13px; font-weight: 500; color: var(--muted); border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; transition: color .15s, background .15s; }
     .nav-tab:hover { color: var(--ink2); background: var(--faint); }
     .nav-tab.active { color: var(--ink); background: rgba(255,255,255,.08); }
-    .nav-status {
-      display: flex; align-items: center; gap: 7px;
-      font-size: 12px; color: var(--muted);
-      margin-left: auto; flex-shrink: 0;
-    }
-    .status-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--ok);
-      box-shadow: 0 0 6px var(--ok);
-    }
+    .nav-status { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); margin-left: auto; flex-shrink: 0; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 6px var(--ok); }
 
-    /* ── Layout ── */
+    /* Layout */
     .main { max-width: 1040px; margin: 0 auto; padding: 40px 28px 80px; }
-    .section-title {
-      font-family: var(--font-display);
-      font-size: 22px; font-weight: 600;
-      letter-spacing: -.3px; color: var(--ink);
-      margin-bottom: 4px;
-    }
+    .section-title { font-family: var(--font-display); font-size: 22px; font-weight: 600; letter-spacing: -.3px; color: var(--ink); margin-bottom: 4px; }
     .section-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
 
-    /* ── Stats ── */
+    /* Stats */
     .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px; }
-    .stat-card {
-      background: var(--surface); border: 1px solid var(--border2);
-      border-radius: var(--radius); padding: 20px 22px;
-    }
+    .stat-card { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 20px 22px; }
     .stat-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
     .stat-value { font-family: var(--font-display); font-size: 34px; font-weight: 700; line-height: 1; letter-spacing: -.5px; }
 
-    /* ── Card ── */
-    .card {
-      background: var(--surface); border: 1px solid var(--border2);
-      border-radius: var(--radius); overflow: hidden;
-    }
-    .card-head {
-      padding: 16px 22px; border-bottom: 1px solid var(--border2);
-      display: flex; align-items: center; justify-content: space-between;
-    }
+    /* Card */
+    .card { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; }
+    .card-head { padding: 16px 22px; border-bottom: 1px solid var(--border2); display: flex; align-items: center; justify-content: space-between; }
     .card-head-title { font-size: 14px; font-weight: 600; color: var(--ink); }
 
-    /* ── Table ── */
+    /* Platform card (no accordion) */
+    .platform-card { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; }
+    .platform-card-head { padding: 14px 20px; border-bottom: 1px solid var(--border2); display: flex; align-items: center; gap: 10px; }
+    .platform-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+    .platform-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+
+    /* Table */
     table { width: 100%; border-collapse: collapse; }
-    th {
-      padding: 9px 22px; text-align: left;
-      font-size: 11px; font-weight: 600; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .07em;
-      border-bottom: 1px solid var(--border2);
-    }
+    th { padding: 9px 22px; text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; border-bottom: 1px solid var(--border2); }
     td { padding: 13px 22px; border-bottom: 1px solid var(--border2); color: var(--ink2); font-size: 14px; }
     tr:last-child td { border-bottom: none; }
     tbody tr { transition: background .1s; }
     tbody tr:hover td { background: rgba(255,255,255,.03); }
 
-    /* ── Empty ── */
+    /* Empty */
     .empty { padding: 60px 22px; text-align: center; color: var(--muted); font-size: 14px; }
     .empty-title { font-size: 15px; font-weight: 500; color: var(--ink2); margin-bottom: 6px; }
 
-    /* ── Buttons ── */
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      height: 34px; padding: 0 15px;
-      font-family: var(--font); font-size: 13px; font-weight: 500;
-      border-radius: var(--radius-sm); border: none; cursor: pointer;
-      white-space: nowrap; transition: opacity .15s, background .15s;
-    }
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 15px; font-family: var(--font); font-size: 13px; font-weight: 500; border-radius: var(--radius-sm); border: none; cursor: pointer; white-space: nowrap; transition: opacity .15s, background .15s; }
     .btn:disabled { opacity: .35; cursor: not-allowed; }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:not(:disabled):hover { background: var(--accent-h); }
-    .btn-secondary {
-      background: rgba(255,255,255,.09); color: var(--ink);
-      border: 1px solid var(--border);
-    }
+    .btn-secondary { background: rgba(255,255,255,.09); color: var(--ink); border: 1px solid var(--border); }
     .btn-secondary:not(:disabled):hover { background: rgba(255,255,255,.13); }
     .btn-danger { background: rgba(255,69,58,.12); color: var(--err); border: 1px solid rgba(255,69,58,.2); }
     .btn-danger:not(:disabled):hover { background: rgba(255,69,58,.2); }
     .btn-sm { height: 28px; padding: 0 11px; font-size: 12px; }
 
-    /* ── Badge ── */
-    .badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
-    }
+    /* Badge */
+    .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
     .bdot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
     .badge-ok { color: var(--ok); background: rgba(48,209,88,.12); }
     .badge-ok .bdot { background: var(--ok); }
     .badge-err { color: var(--err); background: rgba(255,69,58,.12); }
     .badge-err .bdot { background: var(--err); }
 
-    /* ── Tag ── */
-    .tag {
-      display: inline-block; padding: 1px 7px; border-radius: 5px;
-      font-size: 11px; font-weight: 600; font-family: var(--font-mono);
-      background: var(--elevated); border: 1px solid var(--border2); color: var(--muted);
-    }
-
-    /* ── Mono ── */
+    /* Tag */
+    .tag { display: inline-block; padding: 1px 7px; border-radius: 5px; font-size: 11px; font-weight: 600; font-family: var(--font-mono); background: var(--elevated); border: 1px solid var(--border2); color: var(--muted); }
     .mono { font-family: var(--font-mono); }
 
-    /* ── Inputs ── */
-    .inp {
-      display: block; width: 100%;
-      height: 36px; padding: 0 12px;
-      background: var(--elevated); border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--ink); font-family: var(--font); font-size: 14px;
-      outline: none; transition: border-color .15s, box-shadow .15s;
-    }
+    /* Inputs */
+    .inp { display: block; width: 100%; height: 36px; padding: 0 12px; background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--ink); font-family: var(--font); font-size: 14px; outline: none; transition: border-color .15s, box-shadow .15s; }
     .inp:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,.22); }
     .inp::placeholder { color: var(--faint); }
     textarea.inp { height: auto; padding: 10px 12px; font-family: var(--font-mono); font-size: 12.5px; resize: vertical; }
     select.inp { cursor: pointer; }
 
-    /* ── Alert ── */
+    /* Alert */
     .alert { padding: 11px 15px; border-radius: var(--radius-sm); font-size: 13px; border: 1px solid; margin-bottom: 16px; }
     .alert-ok { color: var(--ok); background: rgba(48,209,88,.08); border-color: rgba(48,209,88,.2); }
     .alert-err { color: var(--err); background: rgba(255,69,58,.08); border-color: rgba(255,69,58,.2); }
 
-    /* ── Modal ── */
-    .backdrop {
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,.6); backdrop-filter: blur(8px);
-      display: flex; align-items: center; justify-content: center; padding: 24px;
-    }
-    .modal {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      width: 100%; max-width: 510px; max-height: 90vh; overflow-y: auto;
-    }
+    /* Modal */
+    .backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 100%; max-width: 510px; max-height: 90vh; overflow-y: auto; }
     .modal-head { padding: 22px 24px 0; display: flex; align-items: center; justify-content: space-between; }
     .modal-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; letter-spacing: -.2px; }
-    .modal-close {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--elevated); border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted); font-size: 16px; transition: background .15s;
-    }
+    .modal-close { width: 28px; height: 28px; border-radius: 50%; background: var(--elevated); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 16px; transition: background .15s; }
     .modal-close:hover { background: rgba(255,255,255,.12); }
     .modal-body { padding: 20px 24px; }
     .modal-foot { padding: 0 24px 22px; display: flex; gap: 10px; justify-content: flex-end; }
 
-    /* ── Field ── */
+    /* Field */
     .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
     .field:last-child { margin-bottom: 0; }
     .field-label { font-size: 13px; font-weight: 500; color: var(--ink2); }
     .field-req { color: var(--err); margin-left: 2px; }
     .field-hint { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-    /* ── Custom hook card ── */
-    .hook-card {
-      background: var(--surface); border: 1px solid var(--border2);
-      border-radius: var(--radius); padding: 18px 22px;
-      display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
-      transition: border-color .15s;
-    }
+    /* Custom hook card */
+    .hook-card { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 18px 22px; display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; transition: border-color .15s; }
     .hook-card:hover { border-color: var(--border); }
     .hook-card + .hook-card { margin-top: 10px; }
     .hook-actions { display: flex; gap: 7px; flex-shrink: 0; }
 
-    /* ── Code hint ── */
-    .code-hint {
-      margin-top: 20px; padding: 16px 20px;
-      background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius);
-      font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); line-height: 2;
-    }
+    /* Code hint */
+    .code-hint { margin-top: 20px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); line-height: 2; }
 
-    /* ── Scrollbar ── */
+    /* Scrollbar */
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 2px; }
@@ -252,12 +147,9 @@
 
 <body x-data="app()" x-init="init()">
 
-  <!-- Navigation -->
   <nav class="nav">
     <div class="nav-brand">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <path d="M8 1L15 13.5H1L8 1Z" fill="#0071e3"/>
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L15 13.5H1L8 1Z" fill="#0071e3"/></svg>
       Webhook
     </div>
     <div class="nav-tabs">
@@ -265,63 +157,37 @@
         <button class="nav-tab" :class="{active: tab===t.id}" @click="switchTab(t.id)" x-text="t.label"></button>
       </template>
     </div>
-    <div class="nav-status">
-      <span class="status-dot"></span>
-      运行中
-    </div>
+    <div class="nav-status"><span class="status-dot"></span>运行中</div>
   </nav>
 
   <main class="main">
 
-    <!-- ═══ Dashboard ═══ -->
+    <!-- Dashboard -->
     <div x-show="tab==='dashboard'">
       <div class="stats">
-        <div class="stat-card">
-          <div class="stat-label">已加载 Hook</div>
-          <div class="stat-value" style="color:var(--ink)" x-text="hooks.length">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">成功执行</div>
-          <div class="stat-value" style="color:var(--ok)" x-text="successCount">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">失败执行</div>
-          <div class="stat-value" style="color:var(--err)" x-text="errorCount">0</div>
-        </div>
+        <div class="stat-card"><div class="stat-label">已加载 Hook</div><div class="stat-value" style="color:var(--ink)" x-text="hooks.length">0</div></div>
+        <div class="stat-card"><div class="stat-label">成功执行</div><div class="stat-value" style="color:var(--ok)" x-text="successCount">0</div></div>
+        <div class="stat-card"><div class="stat-label">失败执行</div><div class="stat-value" style="color:var(--err)" x-text="errorCount">0</div></div>
       </div>
-
       <div class="card">
         <div class="card-head">
           <span class="card-head-title">已注册的 Hook</span>
           <button class="btn btn-secondary btn-sm" @click="loadHooks()">刷新</button>
         </div>
-        <div class="empty" x-show="hooks.length===0">
-          <div class="empty-title">暂无 Hook</div>
-          hooks/ 目录下还没有配置文件
-        </div>
+        <div class="empty" x-show="hooks.length===0"><div class="empty-title">暂无 Hook</div>hooks/ 目录下还没有配置文件</div>
         <table x-show="hooks.length>0">
-          <thead>
-            <tr><th>Hook ID</th><th>执行命令</th><th>HTTP 方法</th><th>触发规则</th><th style="width:80px"></th></tr>
-          </thead>
+          <thead><tr><th>Hook ID</th><th>执行命令</th><th>HTTP 方法</th><th>触发规则</th><th style="width:80px"></th></tr></thead>
           <tbody>
             <template x-for="h in hooks" :key="h.id">
               <tr>
                 <td><span class="mono" style="color:var(--accent);font-size:13px" x-text="h.id"></span></td>
                 <td><span class="mono" style="color:var(--muted);font-size:12px" x-text="h.executeCommand"></span></td>
-                <td>
-                  <template x-for="m in (h.httpMethods||[])" :key="m">
-                    <span class="tag" x-text="m" style="margin-right:4px"></span>
-                  </template>
-                </td>
+                <td><template x-for="m in (h.httpMethods||[])" :key="m"><span class="tag" x-text="m" style="margin-right:4px"></span></template></td>
                 <td>
                   <span x-show="h.hasTriggerRule" class="badge badge-ok"><span class="bdot"></span>有规则</span>
                   <span x-show="!h.hasTriggerRule" style="color:var(--faint)">—</span>
                 </td>
-                <td>
-                  <button class="btn btn-secondary btn-sm" @click="testHook(h.id)" :disabled="testing===h.id">
-                    <span x-text="testing===h.id?'发送中…':'测试'"></span>
-                  </button>
-                </td>
+                <td><button class="btn btn-secondary btn-sm" @click="testHook(h.id)" :disabled="testing===h.id"><span x-text="testing===h.id?'发送中…':'测试'"></span></button></td>
               </tr>
             </template>
           </tbody>
@@ -330,7 +196,7 @@
       <div x-show="testMsg" x-transition style="margin-top:12px" :class="testOk?'alert alert-ok':'alert alert-err'" x-text="testMsg"></div>
     </div>
 
-    <!-- ═══ 自定义推送 ═══ -->
+    <!-- 自定义推送 -->
     <div x-show="tab==='custom'" x-cloak>
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px">
         <div>
@@ -342,16 +208,10 @@
           新建推送
         </button>
       </div>
-
       <div x-show="customMsg" x-transition :class="customOk?'alert alert-ok':'alert alert-err'" x-text="customMsg"></div>
-
-      <div class="card" x-show="customHooks.length===0" style="border:none;background:var(--surface)">
-        <div class="empty">
-          <div class="empty-title">还没有自定义推送</div>
-          点击右上角「新建推送」添加第一个
-        </div>
+      <div class="card" x-show="customHooks.length===0" style="border:none">
+        <div class="empty"><div class="empty-title">还没有自定义推送</div>点击右上角「新建推送」添加第一个</div>
       </div>
-
       <div x-show="customHooks.length>0">
         <template x-for="h in customHooks" :key="h.id">
           <div class="hook-card">
@@ -367,15 +227,12 @@
               <div class="mono" style="font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" x-text="h.targetURL"></div>
             </div>
             <div class="hook-actions">
-              <button class="btn btn-secondary btn-sm" @click="testHook(h.id)" :disabled="testing===h.id">
-                <span x-text="testing===h.id?'发送中…':'测试'"></span>
-              </button>
+              <button class="btn btn-secondary btn-sm" @click="testHook(h.id)" :disabled="testing===h.id"><span x-text="testing===h.id?'发送中…':'测试'"></span></button>
               <button class="btn btn-secondary btn-sm" @click="openEditModal(h)">编辑</button>
               <button class="btn btn-danger btn-sm" @click="deleteCustomHook(h.id)">删除</button>
             </div>
           </div>
         </template>
-
         <div class="code-hint">
           <span style="color:var(--faint)">GET &nbsp;</span> http://192.168.0.168:9000/hooks/<span style="color:var(--accent)">{id}</span>?msg=消息&amp;title=标题<br>
           <span style="color:var(--faint)">POST</span> http://192.168.0.168:9000/hooks/<span style="color:var(--accent)">{id}</span>
@@ -383,50 +240,42 @@
       </div>
     </div>
 
-    <!-- ═══ 通知配置 ═══ -->
+    <!-- 通知配置 -->
     <div x-show="tab==='config'" x-cloak>
-      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap">
         <div>
           <div class="section-title">通知平台配置</div>
-          <div class="section-sub" style="margin-bottom:0">选择需要接入的平台展开填写，保存后立即生效。</div>
+          <div class="section-sub" style="margin-bottom:0">填写需要接入的平台，保存后立即生效。</div>
         </div>
-        <div style="display:flex;gap:10px;flex-shrink:0">
+        <div style="display:flex;gap:10px">
           <button class="btn btn-secondary" @click="loadConfig()">重置</button>
-          <button class="btn btn-primary" @click="saveConfig()" :disabled="saving">
-            <span x-text="saving?'保存中…':'保存配置'"></span>
-          </button>
+          <button class="btn btn-primary" @click="saveConfig()" :disabled="saving"><span x-text="saving?'保存中…':'保存配置'"></span></button>
         </div>
       </div>
-
       <div x-show="saveMsg" x-transition :class="saveOk?'alert alert-ok':'alert alert-err'" x-text="saveMsg"></div>
 
-      <!-- 2-column grid on wide screens -->
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;align-items:start">
+      <!-- 平铺显示，2列网格 -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
         <template x-for="p in platforms" :key="p.key">
-          <div>
-            <div class="card">
-              <div class="card-head" style="cursor:pointer" @click="p.open=!p.open">
-                <div style="display:flex;align-items:center;gap:10px">
-                  <span class="card-head-title" x-text="p.name"></span>
-                  <span x-show="hasPlatformValue(p)" class="badge badge-ok"><span class="bdot"></span>已配置</span>
+          <div class="platform-card">
+            <div class="platform-card-head">
+              <span class="platform-name" x-text="p.name"></span>
+              <span x-show="hasPlatformValue(p)" class="badge badge-ok"><span class="bdot"></span>已配置</span>
+            </div>
+            <div class="platform-body">
+              <template x-for="f in p.fields" :key="f.key">
+                <div>
+                  <div style="font-size:12px;color:var(--muted);font-weight:500;margin-bottom:6px" x-text="f.label"></div>
+                  <input class="inp" :type="f.secret?'password':'text'" x-model="cfg[f.key]" :placeholder="f.placeholder">
                 </div>
-                <svg :style="p.open?'transform:rotate(180deg)':''" style="transition:transform .2s;color:var(--muted);flex-shrink:0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-              </div>
-              <div x-show="p.open" style="padding:18px 22px;display:flex;flex-direction:column;gap:14px">
-                <template x-for="f in p.fields" :key="f.key">
-                  <div class="field" style="margin-bottom:0">
-                    <label class="field-label" x-text="f.label"></label>
-                    <input class="inp" :type="f.secret?'password':'text'" x-model="cfg[f.key]" :placeholder="f.placeholder">
-                  </div>
-                </template>
-              </div>
+              </template>
             </div>
           </div>
         </template>
       </div>
     </div>
 
-    <!-- ═══ 执行日志 ═══ -->
+    <!-- 执行日志 -->
     <div x-show="tab==='logs'" x-cloak>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap">
         <div style="display:flex;gap:8px">
@@ -440,21 +289,13 @@
         <button class="btn btn-secondary btn-sm" @click="loadLogs()">刷新</button>
       </div>
       <div class="card">
-        <div class="empty" x-show="filteredLogs.length===0">
-          <div class="empty-title">暂无日志</div>
-          触发 Hook 后日志会出现在这里
-        </div>
+        <div class="empty" x-show="filteredLogs.length===0"><div class="empty-title">暂无日志</div>触发 Hook 后日志会出现在这里</div>
         <table x-show="filteredLogs.length>0">
           <thead><tr><th>状态</th><th>Hook ID</th><th>时间</th><th>耗时</th><th>来源 IP</th><th>输出</th></tr></thead>
           <tbody>
             <template x-for="l in filteredLogs" :key="l.id">
               <tr>
-                <td>
-                  <span :class="l.success?'badge badge-ok':'badge badge-err'">
-                    <span class="bdot"></span>
-                    <span x-text="l.success?'成功':'失败'"></span>
-                  </span>
-                </td>
+                <td><span :class="l.success?'badge badge-ok':'badge badge-err'"><span class="bdot"></span><span x-text="l.success?'成功':'失败'"></span></span></td>
                 <td><span class="mono" style="color:var(--accent);font-size:13px" x-text="l.hookID"></span></td>
                 <td style="color:var(--muted);font-size:12px;white-space:nowrap" x-text="fmtTime(l.timestamp)"></td>
                 <td><span class="mono" style="color:var(--muted);font-size:12px" x-text="l.durationMS+'ms'"></span></td>
@@ -470,7 +311,7 @@
 
   </main>
 
-  <!-- ═══ Modal ═══ -->
+  <!-- Modal -->
   <div class="backdrop" x-show="modalOpen" x-cloak @click.self="modalOpen=false" x-transition>
     <div class="modal" @click.stop>
       <div class="modal-head">
@@ -479,26 +320,20 @@
       </div>
       <div class="modal-body">
         <div x-show="modalErr" class="alert alert-err" x-text="modalErr"></div>
-
         <div class="field">
           <label class="field-label">推送 ID <span class="field-req">*</span></label>
-          <input class="inp" placeholder="my-notify（小写字母、数字、连字符）"
-            x-model="form.id" :readonly="!!editingHook"
-            :style="editingHook?'opacity:.5;cursor:not-allowed':''">
+          <input class="inp" placeholder="my-notify（小写字母、数字、连字符）" x-model="form.id" :readonly="!!editingHook" :style="editingHook?'opacity:.5;cursor:not-allowed':''">
           <div class="field-hint">触发地址：/hooks/<span class="mono" x-text="form.id||'your-id'"></span></div>
         </div>
-
         <div class="field">
           <label class="field-label">显示名称 <span class="field-req">*</span></label>
           <input class="inp" placeholder="我的钉钉群" x-model="form.name">
         </div>
-
         <div class="field">
           <label class="field-label">目标 URL <span class="field-req">*</span></label>
           <input class="inp" placeholder="https://your-api.example.com/notify" x-model="form.targetURL">
           <div class="field-hint">消息会以 HTTP 请求发送到此地址</div>
         </div>
-
         <div class="field">
           <label class="field-label">HTTP 方法</label>
           <select class="inp" x-model="form.method">
@@ -507,13 +342,11 @@
             <option value="PUT">PUT</option>
           </select>
         </div>
-
         <div class="field">
           <label class="field-label">请求体模板（jq 表达式）</label>
           <textarea class="inp" rows="3" placeholder='{"msg":$msg,"title":$title}' x-model="form.bodyTemplate"></textarea>
           <div class="field-hint">可用变量：<span class="mono" style="color:var(--accent)">$msg</span>、<span class="mono" style="color:var(--accent)">$title</span>，留空使用默认格式。</div>
         </div>
-
         <div class="field">
           <label class="field-label">附加请求头（可选）</label>
           <textarea class="inp" rows="3" placeholder="Authorization: Bearer token123&#10;X-Custom-Header: value" x-model="form.headers"></textarea>
@@ -534,168 +367,64 @@
   function app() {
     return {
       tab: 'dashboard',
-      tabs: [
-        {id:'dashboard', label:'概览'},
-        {id:'custom',    label:'自定义推送'},
-        {id:'config',    label:'通知配置'},
-        {id:'logs',      label:'执行日志'},
+      tabs: [{id:'dashboard',label:'概览'},{id:'custom',label:'自定义推送'},{id:'config',label:'通知配置'},{id:'logs',label:'执行日志'}],
+      hooks:[], successCount:0, errorCount:0, testing:null, testMsg:'', testOk:false,
+      customHooks:[], customMsg:'', customOk:false,
+      modalOpen:false, editingHook:null, modalSaving:false, modalErr:'',
+      form:{id:'',name:'',targetURL:'',method:'POST',bodyTemplate:'',headers:''},
+      cfg:{}, saveMsg:'', saveOk:false, saving:false,
+      logs:[], logFilter:'', logStatus:'',
+      platforms:[
+        {key:'feishu',name:'飞书',fields:[{key:'feishuWebhookURL',label:'Webhook URL',placeholder:'https://open.feishu.cn/open-apis/bot/v2/hook/...',secret:false}]},
+        {key:'dingtalk',name:'钉钉',fields:[{key:'dingtalkWebhookURL',label:'Webhook URL',placeholder:'https://oapi.dingtalk.com/robot/send?access_token=...',secret:false},{key:'dingtalkSecret',label:'加签密钥（可选）',placeholder:'SEC...',secret:true}]},
+        {key:'wecom',name:'企业微信',fields:[{key:'wecomWebhookURL',label:'Webhook URL',placeholder:'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=...',secret:false}]},
+        {key:'telegram',name:'Telegram',fields:[{key:'telegramBotToken',label:'Bot Token',placeholder:'123456789:AAxxxxxx',secret:true},{key:'telegramChatID',label:'Chat ID',placeholder:'-100xxxxxxxxxx',secret:false}]},
+        {key:'slack',name:'Slack',fields:[{key:'slackWebhookURL',label:'Incoming Webhook URL',placeholder:'https://hooks.slack.com/services/...',secret:false}]},
+        {key:'discord',name:'Discord',fields:[{key:'discordWebhookURL',label:'Webhook URL',placeholder:'https://discord.com/api/webhooks/...',secret:false}]},
+        {key:'serverchan',name:'Server酱',fields:[{key:'serverChanSendKey',label:'SendKey',placeholder:'SCT...',secret:true}]},
       ],
-
-      hooks: [], successCount: 0, errorCount: 0,
-      testing: null, testMsg: '', testOk: false,
-
-      customHooks: [], customMsg: '', customOk: false,
-
-      modalOpen: false, editingHook: null, modalSaving: false, modalErr: '',
-      form: {id:'', name:'', targetURL:'', method:'POST', bodyTemplate:'', headers:''},
-
-      cfg: {}, saveMsg: '', saveOk: false, saving: false,
-
-      logs: [], logFilter: '', logStatus: '',
-
-      platforms: [
-        {key:'feishu', name:'飞书', open:false, fields:[
-          {key:'feishuWebhookURL', label:'Webhook URL', placeholder:'https://open.feishu.cn/open-apis/bot/v2/hook/...', secret:false}
-        ]},
-        {key:'dingtalk', name:'钉钉', open:false, fields:[
-          {key:'dingtalkWebhookURL', label:'Webhook URL', placeholder:'https://oapi.dingtalk.com/robot/send?access_token=...', secret:false},
-          {key:'dingtalkSecret', label:'加签密钥（可选）', placeholder:'SEC...', secret:true}
-        ]},
-        {key:'wecom', name:'企业微信', open:false, fields:[
-          {key:'wecomWebhookURL', label:'Webhook URL', placeholder:'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=...', secret:false}
-        ]},
-        {key:'telegram', name:'Telegram', open:false, fields:[
-          {key:'telegramBotToken', label:'Bot Token', placeholder:'123456789:AAxxxxxx', secret:true},
-          {key:'telegramChatID', label:'Chat ID', placeholder:'-100xxxxxxxxxx', secret:false}
-        ]},
-        {key:'slack', name:'Slack', open:false, fields:[
-          {key:'slackWebhookURL', label:'Incoming Webhook URL', placeholder:'https://hooks.slack.com/services/...', secret:false}
-        ]},
-        {key:'discord', name:'Discord', open:false, fields:[
-          {key:'discordWebhookURL', label:'Webhook URL', placeholder:'https://discord.com/api/webhooks/...', secret:false}
-        ]},
-        {key:'serverchan', name:'Server酱', open:false, fields:[
-          {key:'serverChanSendKey', label:'SendKey', placeholder:'SCT...', secret:true}
-        ]},
-      ],
-
-      init() {
-        this.loadHooks();
-        this.loadConfig();
-        this.loadLogs();
-        this.loadCustomHooks();
-        setInterval(() => { if (this.tab === 'logs') this.loadLogs(); }, 10000);
-      },
-
-      switchTab(t) {
-        this.tab = t;
-        if (t === 'logs') this.loadLogs();
-        if (t === 'custom') this.loadCustomHooks();
-      },
-
-      async loadHooks() {
-        try { const r = await fetch('api/hooks'); const j = await r.json(); if (j.ok) this.hooks = j.data || []; } catch {}
-      },
-      async loadLogs() {
-        try {
-          const r = await fetch('api/logs'); const j = await r.json();
-          if (j.ok) {
-            this.logs = j.data || [];
-            this.successCount = this.logs.filter(l => l.success).length;
-            this.errorCount   = this.logs.filter(l => !l.success).length;
-          }
-        } catch {}
-      },
-      async loadConfig() {
-        try { const r = await fetch('api/config'); const j = await r.json(); if (j.ok) this.cfg = j.data || {}; } catch {}
-      },
-      async loadCustomHooks() {
-        try { const r = await fetch('api/custom-hooks'); const j = await r.json(); if (j.ok) this.customHooks = j.data || []; } catch {}
-      },
-
+      init() { this.loadHooks(); this.loadConfig(); this.loadLogs(); this.loadCustomHooks(); setInterval(()=>{ if(this.tab==='logs') this.loadLogs(); },10000); },
+      switchTab(t) { this.tab=t; if(t==='logs') this.loadLogs(); if(t==='custom') this.loadCustomHooks(); },
+      async loadHooks() { try{const r=await fetch('api/hooks');const j=await r.json();if(j.ok)this.hooks=j.data||[];}catch{} },
+      async loadLogs() { try{const r=await fetch('api/logs');const j=await r.json();if(j.ok){this.logs=j.data||[];this.successCount=this.logs.filter(l=>l.success).length;this.errorCount=this.logs.filter(l=>!l.success).length;}}catch{} },
+      async loadConfig() { try{const r=await fetch('api/config');const j=await r.json();if(j.ok)this.cfg=j.data||{};}catch{} },
+      async loadCustomHooks() { try{const r=await fetch('api/custom-hooks');const j=await r.json();if(j.ok)this.customHooks=j.data||[];}catch{} },
       async saveConfig() {
-        this.saving = true; this.saveMsg = '';
-        try {
-          const r = await fetch('api/config', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(this.cfg)});
-          const j = await r.json();
-          this.saveOk = j.ok; this.saveMsg = j.ok ? '配置已保存' : (j.msg || '保存失败');
-        } catch(e) { this.saveOk = false; this.saveMsg = '网络错误：' + e.message; }
-        this.saving = false;
-        setTimeout(() => this.saveMsg = '', 3000);
+        this.saving=true; this.saveMsg='';
+        try{const r=await fetch('api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.cfg)});const j=await r.json();this.saveOk=j.ok;this.saveMsg=j.ok?'配置已保存':(j.msg||'保存失败');}catch(e){this.saveOk=false;this.saveMsg='网络错误：'+e.message;}
+        this.saving=false; setTimeout(()=>this.saveMsg='',3000);
       },
-
       async testHook(id) {
-        this.testing = id; this.testMsg = '';
-        try {
-          const r = await fetch(`api/hooks/${id}/test`, {method:'POST'});
-          const j = await r.json();
-          this.testOk = j.ok; this.testMsg = j.msg || (j.ok ? '测试请求已发送' : '发送失败');
-        } catch(e) { this.testOk = false; this.testMsg = '网络错误：' + e.message; }
-        this.testing = null;
-        setTimeout(() => this.testMsg = '', 4000);
+        this.testing=id; this.testMsg='';
+        try{const r=await fetch(`api/hooks/${id}/test`,{method:'POST'});const j=await r.json();this.testOk=j.ok;this.testMsg=j.msg||(j.ok?'测试请求已发送':'发送失败');}catch(e){this.testOk=false;this.testMsg='网络错误：'+e.message;}
+        this.testing=null; setTimeout(()=>this.testMsg='',4000);
       },
-
-      openCreateModal() {
-        this.editingHook = null;
-        this.form = {id:'', name:'', targetURL:'', method:'POST', bodyTemplate:'', headers:''};
-        this.modalErr = ''; this.modalOpen = true;
-      },
-
-      openEditModal(h) {
-        this.editingHook = h;
-        this.form = {id:h.id, name:h.name, targetURL:h.targetURL, method:h.method||'POST', bodyTemplate:h.bodyTemplate||'', headers:h.headers||''};
-        this.modalErr = ''; this.modalOpen = true;
-      },
-
+      openCreateModal() { this.editingHook=null; this.form={id:'',name:'',targetURL:'',method:'POST',bodyTemplate:'',headers:''}; this.modalErr=''; this.modalOpen=true; },
+      openEditModal(h) { this.editingHook=h; this.form={id:h.id,name:h.name,targetURL:h.targetURL,method:h.method||'POST',bodyTemplate:h.bodyTemplate||'',headers:h.headers||''}; this.modalErr=''; this.modalOpen=true; },
       async submitModal() {
-        this.modalErr = '';
-        if (!this.form.id)        { this.modalErr = '请填写推送 ID'; return; }
-        if (!this.form.name)      { this.modalErr = '请填写显示名称'; return; }
-        if (!this.form.targetURL) { this.modalErr = '请填写目标 URL'; return; }
-        this.modalSaving = true;
-        try {
-          const isEdit = !!this.editingHook;
-          const url    = isEdit ? `api/custom-hooks/${this.form.id}` : 'api/custom-hooks';
-          const method = isEdit ? 'PUT' : 'POST';
-          const r = await fetch(url, {method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(this.form)});
-          const j = await r.json();
-          if (j.ok) {
-            this.modalOpen = false;
-            this.customOk = true; this.customMsg = j.msg || '操作成功';
-            await this.loadCustomHooks(); await this.loadHooks();
-            setTimeout(() => this.customMsg = '', 3000);
-          } else {
-            this.modalErr = j.msg || '操作失败';
-          }
-        } catch(e) { this.modalErr = '网络错误：' + e.message; }
-        this.modalSaving = false;
+        this.modalErr='';
+        if(!this.form.id){this.modalErr='请填写推送 ID';return;}
+        if(!this.form.name){this.modalErr='请填写显示名称';return;}
+        if(!this.form.targetURL){this.modalErr='请填写目标 URL';return;}
+        this.modalSaving=true;
+        try{
+          const isEdit=!!this.editingHook;
+          const url=isEdit?`api/custom-hooks/${this.form.id}`:'api/custom-hooks';
+          const method=isEdit?'PUT':'POST';
+          const r=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(this.form)});
+          const j=await r.json();
+          if(j.ok){this.modalOpen=false;this.customOk=true;this.customMsg=j.msg||'操作成功';await this.loadCustomHooks();await this.loadHooks();setTimeout(()=>this.customMsg='',3000);}
+          else{this.modalErr=j.msg||'操作失败';}
+        }catch(e){this.modalErr='网络错误：'+e.message;}
+        this.modalSaving=false;
       },
-
       async deleteCustomHook(id) {
-        if (!confirm(`确认删除推送 "${id}"？此操作不可撤销。`)) return;
-        try {
-          const r = await fetch(`api/custom-hooks/${id}`, {method:'DELETE'});
-          const j = await r.json();
-          this.customOk = j.ok; this.customMsg = j.msg || (j.ok ? '已删除' : '删除失败');
-          if (j.ok) { await this.loadCustomHooks(); await this.loadHooks(); }
-          setTimeout(() => this.customMsg = '', 3000);
-        } catch(e) { this.customOk = false; this.customMsg = '网络错误：' + e.message; }
+        if(!confirm(`确认删除推送 "${id}"？此操作不可撤销。`))return;
+        try{const r=await fetch(`api/custom-hooks/${id}`,{method:'DELETE'});const j=await r.json();this.customOk=j.ok;this.customMsg=j.msg||(j.ok?'已删除':'删除失败');if(j.ok){await this.loadCustomHooks();await this.loadHooks();}setTimeout(()=>this.customMsg='',3000);}catch(e){this.customOk=false;this.customMsg='网络错误：'+e.message;}
       },
-
-      hasPlatformValue(p) { return p.fields.some(f => this.cfg[f.key]); },
-
-      get filteredLogs() {
-        return this.logs.filter(l => {
-          const okId = !this.logFilter || l.hookID.includes(this.logFilter);
-          const okSt = !this.logStatus || (this.logStatus === 'success' ? l.success : !l.success);
-          return okId && okSt;
-        });
-      },
-
-      fmtTime(ts) {
-        if (!ts) return '—';
-        return new Date(ts).toLocaleString('zh-CN', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit'});
-      }
+      hasPlatformValue(p){return p.fields.some(f=>this.cfg[f.key]);},
+      get filteredLogs(){return this.logs.filter(l=>{const okId=!this.logFilter||l.hookID.includes(this.logFilter);const okSt=!this.logStatus||(this.logStatus==='success'?l.success:!l.success);return okId&&okSt;});},
+      fmtTime(ts){if(!ts)return'—';return new Date(ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
     };
   }
   </script>
