@@ -13,6 +13,8 @@ FROM alpine:3.23
 RUN apk add --no-cache bash curl jq ca-certificates
 COPY --from=builder /app/webhook /usr/bin/webhook
 COPY notify/ /notify/
-RUN chmod +x /notify/*.sh
+COPY hooks/ /builtin-hooks/
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /notify/*.sh /entrypoint.sh
 EXPOSE 9000/tcp
-ENTRYPOINT ["/usr/bin/webhook"]
+ENTRYPOINT ["/entrypoint.sh"]
