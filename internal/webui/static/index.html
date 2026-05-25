@@ -9,60 +9,29 @@
     [x-cloak]{display:none!important;}
 
     :root{
-      --bg:#18181b;
-      --surface:#232326;
-      --elevated:#2a2a2e;
-      --border:#3a3a3e;
-      --border2:#2e2e32;
-      --ink:#f0f0f0;
-      --muted:#a0a0a8;
-      --faint:#55555c;
-      --accent:#3b82f6;
-      --accent-h:#2563eb;
-      --ok:#34d399;
-      --err:#f87171;
-      --warn:#fbbf24;
-      --radius:10px;
-      --radius-sm:6px;
+      --bg:#18181b;--surface:#232326;--elevated:#2a2a2e;
+      --border:#3a3a3e;--border2:#2e2e32;--ink:#f0f0f0;
+      --muted:#a0a0a8;--faint:#55555c;--accent:#3b82f6;--accent-h:#2563eb;
+      --ok:#34d399;--err:#f87171;--radius:10px;--radius-sm:6px;
     }
 
-    body{
-      background:var(--bg);color:var(--ink);
-      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
-      font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;
-    }
+    body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
 
-    .inp{
-      height:36px;background:var(--elevated);border:1px solid var(--border);
-      border-radius:var(--radius-sm);padding:0 12px;color:var(--ink);
-      font-size:13px;font-family:inherit;outline:none;width:100%;
-      transition:border-color .15s,box-shadow .15s;
-    }
+    .inp{height:36px;background:var(--elevated);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 12px;color:var(--ink);font-size:13px;font-family:inherit;outline:none;width:100%;transition:border-color .15s,box-shadow .15s;}
     .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.18);}
     .inp::placeholder{color:var(--faint);}
     textarea.inp{height:auto;padding:9px 12px;resize:vertical;font-family:ui-monospace,SFMono-Regular,'SF Mono',monospace;font-size:12px;}
     select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;}
 
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:6px;
-      height:34px;padding:0 16px;font-size:13px;font-weight:500;font-family:inherit;
-      border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;
-      transition:background .15s,opacity .15s;border:1px solid transparent;
-    }
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 16px;font-size:13px;font-weight:500;font-family:inherit;border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;transition:background .15s,opacity .15s;border:1px solid transparent;}
     .btn:disabled{opacity:.4;cursor:not-allowed;}
-    .btn-primary{background:var(--accent);color:#fff;}
-    .btn-primary:not(:disabled):hover{background:var(--accent-h);}
-    .btn-ghost{background:transparent;color:var(--ink);border-color:var(--border);}
-    .btn-ghost:not(:disabled):hover{background:var(--elevated);}
-    .btn-danger{background:transparent;color:var(--err);border-color:rgba(248,113,113,.3);}
-    .btn-danger:not(:disabled):hover{background:rgba(248,113,113,.08);}
+    .btn-primary{background:var(--accent);color:#fff;}.btn-primary:not(:disabled):hover{background:var(--accent-h);}
+    .btn-ghost{background:transparent;color:var(--ink);border-color:var(--border);}.btn-ghost:not(:disabled):hover{background:var(--elevated);}
+    .btn-danger{background:transparent;color:var(--err);border-color:rgba(248,113,113,.3);}.btn-danger:not(:disabled):hover{background:rgba(248,113,113,.08);}
     .btn-sm{height:28px;padding:0 12px;font-size:12px;}
 
     .card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;}
-    .card-header{
-      padding:14px 20px;border-bottom:1px solid var(--border2);
-      display:flex;align-items:center;justify-content:space-between;
-    }
+    .card-header{padding:14px 20px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;}
     .card-title{font-size:13px;font-weight:600;color:var(--ink);}
 
     .badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;}
@@ -76,9 +45,7 @@
     tr:last-child td{border-bottom:none;}
     tbody tr:hover td{background:rgba(255,255,255,.03);}
 
-    ::-webkit-scrollbar{width:4px;height:4px;}
-    ::-webkit-scrollbar-track{background:transparent;}
-    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+    ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
     .alert{padding:11px 16px;border-radius:var(--radius-sm);font-size:13px;border:1px solid;}
     .alert-ok{color:var(--ok);background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.25);}
@@ -86,22 +53,15 @@
 
     .mono{font-family:ui-monospace,SFMono-Regular,'SF Mono',monospace;}
     .tag{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:600;font-family:monospace;background:var(--elevated);border:1px solid var(--border);color:var(--muted);}
-    .stat{padding:22px 24px;}
-    .stat-label{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
-    .stat-value{font-size:32px;font-weight:700;line-height:1;}
+    .stat{padding:22px 24px;}.stat-label{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}.stat-value{font-size:32px;font-weight:700;line-height:1;}
 
-    .nav-tab{
-      height:54px;padding:0 16px;font-size:13px;font-weight:500;font-family:inherit;
-      background:transparent;border:none;border-bottom:2px solid transparent;
-      cursor:pointer;color:var(--faint);
-      transition:color .15s,border-color .15s;
-      white-space:nowrap;
-    }
+    .nav-tab{height:54px;padding:0 16px;font-size:13px;font-weight:500;font-family:inherit;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;color:var(--faint);transition:color .15s,border-color .15s;white-space:nowrap;}
     .nav-tab:hover{color:var(--muted);}
     .nav-tab.active{color:var(--ink);border-bottom-color:var(--ink);}
 
     .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;}
     .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+    .modal-wide{max-width:780px;}
     .modal-header{padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between;}
     .modal-body{padding:20px 24px;}
     .modal-footer{padding:0 24px 22px;display:flex;gap:10px;justify-content:flex-end;}
@@ -133,6 +93,7 @@
 
   <main style="max-width:1200px;margin:0 auto;padding:32px 28px 80px;">
 
+    <!-- 概览 -->
     <div x-show="tab==='dashboard'">
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;">
         <div class="card stat"><div class="stat-label">已加载 Hook</div><div class="stat-value" style="color:var(--ink);" x-text="hooks.length">0</div></div>
@@ -146,7 +107,7 @@
         </div>
         <div x-show="hooks.length===0" style="padding:60px;text-align:center;color:var(--faint);font-size:13px;">hooks/ 目录下暂无配置文件</div>
         <table x-show="hooks.length>0">
-          <thead><tr><th>Hook ID</th><th>执行命令</th><th>HTTP 方法</th><th>触发规则</th><th style="width:180px;text-align:right;padding-right:20px;"></th></tr></thead>
+          <thead><tr><th>Hook ID</th><th>脚本路径</th><th>HTTP 方法</th><th>触发规则</th><th style="width:200px;text-align:right;padding-right:20px;"></th></tr></thead>
           <tbody>
             <template x-for="h in hooks" :key="h.id">
               <tr>
@@ -164,7 +125,7 @@
                 </td>
                 <td style="text-align:right;">
                   <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;">
-                    <button class="btn btn-ghost btn-sm" @click="editHookFromOverview(h)">编辑</button>
+                    <button class="btn btn-ghost btn-sm" @click="openScriptEditor(h.id)">编辑脚本</button>
                     <button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id"><span x-text="testing===h.id?'发送中…':'测试'"></span></button>
                     <button class="btn btn-danger btn-sm" @click="deleteHook(h.id)">删除</button>
                   </div>
@@ -177,11 +138,12 @@
       <div x-show="testMsg" x-transition style="margin-top:14px;" :class="testOk?'alert alert-ok':'alert alert-err'" x-text="testMsg"></div>
     </div>
 
+    <!-- 自定义推送 -->
     <div x-show="tab==='custom'" x-cloak>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
         <div>
           <h2 style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px;">自定义推送</h2>
-          <p style="font-size:13px;color:var(--muted);">添加任意 HTTP Webhook 推送，保存后热重载立即生效。</p>
+          <p style="font-size:13px;color:var(--muted);">创建后可直接编辑生成的 .sh 脚本自定义逻辑。</p>
         </div>
         <button class="btn btn-primary" @click="openCreateModal()">+ 新建推送</button>
       </div>
@@ -193,21 +155,20 @@
       <div style="display:flex;flex-direction:column;gap:10px;">
         <template x-for="h in customHooks" :key="h.id">
           <div class="card">
-            <div style="padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+            <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
               <div style="min-width:0;flex:1;">
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-                  <span style="font-size:14px;font-weight:600;color:var(--ink);" x-text="h.name"></span>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+                  <span style="font-size:14px;font-weight:600;color:var(--ink);" x-text="h.name||h.id"></span>
                   <span class="tag" x-text="h.method||'POST'"></span>
                 </div>
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+                <div style="display:flex;align-items:center;gap:8px;">
                   <span style="font-size:11px;color:var(--faint);">触发地址:</span>
                   <span class="mono" style="font-size:12px;color:var(--accent);" x-text="'/hooks/'+h.id"></span>
                 </div>
-                <div style="font-size:12px;color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" x-text="h.targetURL"></div>
               </div>
               <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-sm" @click="openScriptEditor(h.id)" :disabled="testing===h.id">编辑脚本</button>
                 <button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id"><span x-text="testing===h.id?'发送中…':'测试'"></span></button>
-                <button class="btn btn-ghost btn-sm" @click="openEditModal(h)">编辑</button>
                 <button class="btn btn-danger btn-sm" @click="deleteCustomHook(h.id)">删除</button>
               </div>
             </div>
@@ -223,38 +184,7 @@
       </div>
     </div>
 
-    <div x-show="tab==='config'" x-cloak>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
-        <div>
-          <h2 style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px;">通知平台配置</h2>
-          <p style="font-size:13px;color:var(--muted);">填写需要的平台凭证，保存后立即生效。</p>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-ghost" @click="loadConfig()">重置</button>
-          <button class="btn btn-primary" @click="saveConfig()" :disabled="saving"><span x-text="saving?'保存中…':'保存配置'"></span></button>
-        </div>
-      </div>
-      <div x-show="saveMsg" x-transition :class="saveOk?'alert alert-ok':'alert alert-err'" x-text="saveMsg" style="margin-bottom:20px;"></div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;">
-        <template x-for="p in platforms" :key="p.key">
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title" x-text="p.name"></span>
-              <span x-show="hasPlatformValue(p)" class="badge badge-ok" style="font-size:10px;"><span class="dot"></span>已配置</span>
-            </div>
-            <div style="padding:16px 20px;display:flex;flex-direction:column;gap:14px;">
-              <template x-for="f in p.fields" :key="f.key">
-                <div class="field" style="margin-bottom:0;">
-                  <label class="field-label" x-text="f.label"></label>
-                  <input class="inp" :type="f.secret?'password':'text'" x-model="cfg[f.key]" :placeholder="f.placeholder">
-                </div>
-              </template>
-            </div>
-          </div>
-        </template>
-      </div>
-    </div>
-
+    <!-- 执行日志 -->
     <div x-show="tab==='logs'" x-cloak>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:10px;flex-wrap:wrap;">
         <div style="display:flex;gap:8px;">
@@ -290,29 +220,30 @@
 
   </main>
 
+  <!-- 新建自定义推送弹窗 -->
   <div class="modal-backdrop" x-show="modalOpen" x-cloak @click.self="modalOpen=false" x-transition>
     <div class="modal" @click.stop>
       <div class="modal-header">
-        <span style="font-size:16px;font-weight:700;color:var(--ink);" x-text="editingHook?'编辑推送':'新建推送'"></span>
+        <span style="font-size:16px;font-weight:700;color:var(--ink);">新建推送</span>
         <button class="btn btn-ghost btn-sm" @click="modalOpen=false" style="border:none;color:var(--faint);">✕</button>
       </div>
       <div class="modal-body">
         <div x-show="modalErr" class="alert alert-err" x-text="modalErr" style="margin-bottom:16px;"></div>
         <div class="field">
           <label class="field-label">推送 ID <span style="color:var(--err);">*</span></label>
-          <input class="inp" placeholder="my-notify（小写字母、数字、连字符）" x-model="form.id" :readonly="!!editingHook" :style="editingHook?'opacity:.5;cursor:not-allowed;':''">
+          <input class="inp" placeholder="my-notify（小写字母、数字、连字符）" x-model="form.id">
           <div class="field-hint">触发地址：/hooks/<span class="mono" x-text="form.id||'your-id'"></span></div>
         </div>
         <div class="field">
-          <label class="field-label">显示名称 <span style="color:var(--err);">*</span></label>
+          <label class="field-label">显示名称</label>
           <input class="inp" placeholder="我的钉钉群" x-model="form.name">
         </div>
         <div class="field">
           <label class="field-label">目标 URL <span style="color:var(--err);">*</span></label>
           <input class="inp" placeholder="https://your-api.example.com/notify" x-model="form.targetURL">
-          <div class="field-hint">消息会以 HTTP 请求发送到此地址</div>
+          <div class="field-hint">创建后可点「编辑脚本」进一步自定义发送逻辑</div>
         </div>
-        <div class="field">
+        <div class="field" style="margin-bottom:0;">
           <label class="field-label">HTTP 方法</label>
           <select class="inp" x-model="form.method">
             <option value="POST">POST（推荐）</option>
@@ -320,47 +251,39 @@
             <option value="PUT">PUT</option>
           </select>
         </div>
-        <div class="field">
-          <label class="field-label">请求体模板（jq 表达式）</label>
-          <textarea class="inp" rows="3" placeholder='{"msg":$msg,"title":$title}' x-model="form.bodyTemplate"></textarea>
-          <div class="field-hint">可用变量：<span class="mono" style="color:var(--accent);">$msg</span>、<span class="mono" style="color:var(--accent);">$title</span>。留空使用默认格式。</div>
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label class="field-label">附加请求头（可选）</label>
-          <textarea class="inp" rows="3" placeholder="Authorization: Bearer token123&#10;X-Custom-Header: value" x-model="form.headers"></textarea>
-          <div class="field-hint">每行一个，格式：Key: Value</div>
-        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" @click="modalOpen=false">取消</button>
-        <button class="btn btn-primary" @click="submitModal()" :disabled="modalSaving"><span x-text="modalSaving?'保存中…':(editingHook?'保存修改':'创建推送')"></span></button>
+        <button class="btn btn-primary" @click="submitModal()" :disabled="modalSaving"><span x-text="modalSaving?'创建中…':'创建推送'"></span></button>
       </div>
     </div>
   </div>
 
-  <!-- 内置 Hook 编辑弹窗 -->
-  <div x-show="builtinEditOpen" x-cloak class="modal-backdrop" @click.self="builtinEditOpen=false">
-    <div class="modal">
+  <!-- 脚本编辑器弹窗 -->
+  <div class="modal-backdrop" x-show="scriptOpen" x-cloak @click.self="scriptOpen=false" x-transition>
+    <div class="modal modal-wide" @click.stop>
       <div class="modal-header">
-        <span style="font-size:15px;font-weight:700;color:var(--ink);" x-text="(builtinEditPlatform?.name||'')+' 配置'"></span>
-        <button class="btn btn-ghost btn-sm" @click="builtinEditOpen=false" style="font-size:16px;padding:0 8px;">✕</button>
+        <div>
+          <span style="font-size:15px;font-weight:700;color:var(--ink);">编辑脚本</span>
+          <span class="mono" style="font-size:12px;color:var(--faint);margin-left:10px;" x-text="scriptHookID"></span>
+        </div>
+        <button class="btn btn-ghost btn-sm" @click="scriptOpen=false" style="border:none;color:var(--faint);">✕</button>
       </div>
       <div class="modal-body">
-        <template x-if="builtinEditPlatform">
-          <div style="display:flex;flex-direction:column;gap:14px;">
-            <template x-for="f in builtinEditPlatform.fields" :key="f.key">
-              <div>
-                <label style="font-size:12px;font-weight:500;color:var(--muted);display:block;margin-bottom:5px;" x-text="f.label"></label>
-                <input :type="f.secret?'password':'text'" class="inp" x-model="cfg[f.key]" :placeholder="f.placeholder">
-              </div>
-            </template>
+        <div x-show="scriptLoading" style="text-align:center;padding:40px;color:var(--faint);">加载中…</div>
+        <div x-show="!scriptLoading">
+          <textarea class="inp" x-model="scriptContent"
+            style="height:420px;resize:none;font-size:12px;line-height:1.6;tab-size:2;"
+            spellcheck="false" @keydown.tab.prevent="insertTab($event)"></textarea>
+          <div style="margin-top:8px;font-size:11px;color:var(--faint);">
+            MSG / MSG_QUERY = 消息正文 &nbsp;·&nbsp; TITLE / TITLE_QUERY = 标题 &nbsp;·&nbsp; Tab 键缩进
           </div>
-        </template>
-        <div x-show="builtinEditMsg" x-transition style="margin-top:12px;" :class="builtinEditOk?'alert alert-ok':'alert alert-err'" x-text="builtinEditMsg"></div>
+        </div>
+        <div x-show="scriptMsg" x-transition style="margin-top:10px;" :class="scriptOk?'alert alert-ok':'alert alert-err'" x-text="scriptMsg"></div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-ghost" @click="builtinEditOpen=false">取消</button>
-        <button class="btn btn-primary" @click="saveBuiltinEdit()" :disabled="builtinEditSaving"><span x-text="builtinEditSaving?'保存中…':'保存配置'"></span></button>
+        <button class="btn btn-ghost" @click="scriptOpen=false">取消</button>
+        <button class="btn btn-primary" @click="saveScript()" :disabled="scriptSaving||scriptLoading"><span x-text="scriptSaving?'保存中…':'保存脚本'"></span></button>
       </div>
     </div>
   </div>
@@ -370,54 +293,66 @@
   function app() {
     return {
       tab:'dashboard',
-      tabs:[{id:'dashboard',label:'概览'},{id:'custom',label:'自定义推送'},{id:'config',label:'通知配置'},{id:'logs',label:'执行日志'}],
+      tabs:[{id:'dashboard',label:'概览'},{id:'custom',label:'自定义推送'},{id:'logs',label:'执行日志'}],
       hooks:[],successCount:0,errorCount:0,testing:null,testMsg:'',testOk:false,
       customHooks:[],customMsg:'',customOk:false,
-      modalOpen:false,editingHook:null,modalSaving:false,modalErr:'',
-      form:{id:'',name:'',targetURL:'',method:'POST',bodyTemplate:'',headers:''},
-      cfg:{},saveMsg:'',saveOk:false,saving:false,
-      builtinEditOpen:false,builtinEditPlatform:null,builtinEditSaving:false,builtinEditMsg:'',builtinEditOk:false,
+      modalOpen:false,modalSaving:false,modalErr:'',
+      form:{id:'',name:'',targetURL:'',method:'POST'},
+      scriptOpen:false,scriptHookID:'',scriptContent:'',scriptLoading:false,scriptSaving:false,scriptMsg:'',scriptOk:false,
       logs:[],logFilter:'',logStatus:'',
-      platforms:[
-        {key:'feishu',name:'飞书',fields:[{key:'feishu_webhook_url',label:'Webhook URL',placeholder:'https://open.feishu.cn/open-apis/bot/v2/hook/...',secret:false}]},
-        {key:'dingtalk',name:'钉钉',fields:[{key:'dingtalk_webhook_url',label:'Webhook URL',placeholder:'https://oapi.dingtalk.com/robot/send?access_token=...',secret:false},{key:'dingtalk_secret',label:'加签密钥（可选）',placeholder:'SEC...',secret:true}]},
-        {key:'wecom',name:'企业微信',fields:[{key:'wecom_webhook_url',label:'Webhook URL',placeholder:'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=...',secret:false}]},
-      ],
-      init(){this.loadHooks();this.loadConfig();this.loadLogs();this.loadCustomHooks();setInterval(()=>{if(this.tab==='logs')this.loadLogs();},10000);},
+
+      init(){this.loadHooks();this.loadLogs();this.loadCustomHooks();setInterval(()=>{if(this.tab==='logs')this.loadLogs();},10000);},
       switchTab(t){this.tab=t;if(t==='logs')this.loadLogs();if(t==='custom')this.loadCustomHooks();},
       async loadHooks(){try{const r=await fetch('api/hooks');const j=await r.json();if(j.ok)this.hooks=j.data||[];}catch{}},
       async loadLogs(){try{const r=await fetch('api/logs');const j=await r.json();if(j.ok){this.logs=j.data||[];this.successCount=this.logs.filter(l=>l.success).length;this.errorCount=this.logs.filter(l=>!l.success).length;}}catch{}},
-      async loadConfig(){try{const r=await fetch('api/config');const j=await r.json();if(j.ok)this.cfg=j.data||{};}catch{}},
       async loadCustomHooks(){try{const r=await fetch('api/custom-hooks');const j=await r.json();if(j.ok)this.customHooks=j.data||[];}catch{}},
-      async saveConfig(){
-        this.saving=true;this.saveMsg='';
-        try{const r=await fetch('api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.cfg)});const j=await r.json();this.saveOk=j.ok;this.saveMsg=j.ok?'配置已保存':(j.msg||'保存失败');}catch(e){this.saveOk=false;this.saveMsg='网络错误：'+e.message;}
-        this.saving=false;setTimeout(()=>this.saveMsg='',3000);
-      },
+
       async testHook(id){
         this.testing=id;this.testMsg='';
-        try{const r=await fetch(`api/hooks/${id}/test`,{method:'POST'});const j=await r.json();this.testOk=j.ok;this.testMsg=j.msg||(j.ok?'测试请求已发送':'发送失败');}catch(e){this.testOk=false;this.testMsg='网络错误：'+e.message;}
+        try{const r=await fetch(`api/hooks/${id}/test`,{method:'POST'});const j=await r.json();this.testOk=j.ok;this.testMsg=j.msg||(j.ok?'测试成功':'发送失败');}catch(e){this.testOk=false;this.testMsg='网络错误：'+e.message;}
         this.testing=null;setTimeout(()=>this.testMsg='',4000);
       },
-      openCreateModal(){this.editingHook=null;this.form={id:'',name:'',targetURL:'',method:'POST',bodyTemplate:'',headers:''};this.modalErr='';this.modalOpen=true;},
-      openEditModal(h){this.editingHook=h;this.form={id:h.id,name:h.name,targetURL:h.targetURL,method:h.method||'POST',bodyTemplate:h.bodyTemplate||'',headers:h.headers||''};this.modalErr='';this.modalOpen=true;},
+
+      async openScriptEditor(hookId){
+        this.scriptHookID=hookId;this.scriptContent='';this.scriptMsg='';this.scriptLoading=true;this.scriptOpen=true;
+        try{
+          const r=await fetch(`api/hooks/${hookId}/script`);const j=await r.json();
+          if(j.ok)this.scriptContent=j.data.content;
+          else this.scriptMsg=j.msg||'加载失败';
+        }catch(e){this.scriptMsg='网络错误：'+e.message;}
+        this.scriptLoading=false;
+      },
+      async saveScript(){
+        this.scriptSaving=true;this.scriptMsg='';
+        try{
+          const r=await fetch(`api/hooks/${this.scriptHookID}/script`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:this.scriptContent})});
+          const j=await r.json();this.scriptOk=j.ok;this.scriptMsg=j.ok?'脚本已保存':(j.msg||'保存失败');
+          if(j.ok)setTimeout(()=>this.scriptMsg='',3000);
+        }catch(e){this.scriptOk=false;this.scriptMsg='网络错误：'+e.message;}
+        this.scriptSaving=false;
+      },
+      insertTab(e){
+        const el=e.target,s=el.selectionStart,end=el.selectionEnd;
+        this.scriptContent=this.scriptContent.substring(0,s)+'  '+this.scriptContent.substring(end);
+        this.$nextTick(()=>{el.selectionStart=el.selectionEnd=s+2;});
+      },
+
+      openCreateModal(){this.form={id:'',name:'',targetURL:'',method:'POST'};this.modalErr='';this.modalOpen=true;},
       async submitModal(){
         this.modalErr='';
         if(!this.form.id){this.modalErr='请填写推送 ID';return;}
-        if(!this.form.name){this.modalErr='请填写显示名称';return;}
         if(!this.form.targetURL){this.modalErr='请填写目标 URL';return;}
         this.modalSaving=true;
         try{
-          const isEdit=!!this.editingHook;
-          const r=await fetch(isEdit?`api/custom-hooks/${this.form.id}`:'api/custom-hooks',{method:isEdit?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.form)});
+          const r=await fetch('api/custom-hooks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.form)});
           const j=await r.json();
-          if(j.ok){this.modalOpen=false;const msg=j.msg||'操作成功';this.customOk=true;this.customMsg=msg;this.testOk=true;this.testMsg=msg;await this.loadCustomHooks();await this.loadHooks();setTimeout(()=>{this.customMsg='';this.testMsg='';},3000);}
-          else{this.modalErr=j.msg||'操作失败';}
+          if(j.ok){this.modalOpen=false;this.customOk=true;this.customMsg=j.msg||'创建成功';await this.loadCustomHooks();await this.loadHooks();setTimeout(()=>this.customMsg='',3000);}
+          else{this.modalErr=j.msg||'创建失败';}
         }catch(e){this.modalErr='网络错误：'+e.message;}
         this.modalSaving=false;
       },
       async deleteCustomHook(id){
-        if(!confirm(`确认删除推送 "${id}"？此操作不可撤销。`))return;
+        if(!confirm(`确认删除推送 "${id}"？`))return;
         try{
           const r=await fetch(`api/custom-hooks/${id}`,{method:'DELETE'});const j=await r.json();
           this.customOk=j.ok;this.customMsg=j.msg||(j.ok?'已删除':'删除失败');
@@ -426,7 +361,7 @@
         }catch(e){this.customOk=false;this.customMsg='网络错误：'+e.message;}
       },
       async deleteHook(id){
-        if(!confirm(`确认删除 Hook "${id}"？此操作不可撤销。`))return;
+        if(!confirm(`确认删除 Hook "${id}"？`))return;
         try{
           const r=await fetch(`api/hooks/${id}`,{method:'DELETE'});const j=await r.json();
           this.testOk=j.ok;this.testMsg=j.msg||(j.ok?'已删除':'删除失败');
@@ -434,26 +369,7 @@
           setTimeout(()=>this.testMsg='',3000);
         }catch(e){this.testOk=false;this.testMsg='网络错误：'+e.message;}
       },
-      editHookFromOverview(h){
-        if(h.isCustom){
-          const ch=this.customHooks.find(c=>c.id===h.id);
-          if(ch)this.openEditModal(ch);
-        }else{
-          const platformKey=h.id;
-          const p=this.platforms.find(p=>p.key===platformKey);
-          if(p){this.builtinEditPlatform=p;this.builtinEditMsg='';this.builtinEditOpen=true;}
-        }
-      },
-      async saveBuiltinEdit(){
-        this.builtinEditSaving=true;this.builtinEditMsg='';
-        try{
-          const r=await fetch('api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.cfg)});
-          const j=await r.json();this.builtinEditOk=j.ok;this.builtinEditMsg=j.ok?'配置已保存':(j.msg||'保存失败');
-          if(j.ok)setTimeout(()=>{this.builtinEditOpen=false;this.builtinEditMsg='';},1000);
-        }catch(e){this.builtinEditOk=false;this.builtinEditMsg='网络错误：'+e.message;}
-        this.builtinEditSaving=false;
-      },
-      hasPlatformValue(p){return p.fields.some(f=>this.cfg[f.key]);},
+
       get filteredLogs(){return this.logs.filter(l=>{const okId=!this.logFilter||l.hookID.includes(this.logFilter);const okSt=!this.logStatus||(this.logStatus==='success'?l.success:!l.success);return okId&&okSt;});},
       fmtTime(ts){if(!ts)return'—';return new Date(ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
     };

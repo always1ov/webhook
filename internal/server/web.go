@@ -311,7 +311,7 @@ func Launch(appFlags flags.AppFlags, addr string, ln net.Listener) *Server {
 		if conflict {
 			logger.Warnf("webui-path %q conflicts with reserved path; skipping Web UI route", webUIPath)
 		} else {
-			webUIHandler, err := webui.Handler(webUIPath, appFlags.NotifyConfigFile, appFlags.CustomHooksFile, appFlags.HooksDir, addr)
+			webUIHandler, err := webui.Handler(webUIPath, appFlags.CustomHooksFile, appFlags.HooksDir, addr)
 			if err != nil {
 				logger.Warnf("webui handler init failed: %v", err)
 			} else {

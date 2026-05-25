@@ -1027,7 +1027,7 @@ func handleHook(ctx context.Context, h *hook.Hook, r *hook.Request, w http.Respo
 		envs = append(envs, fmt.Sprintf("%s=%s", files[i].EnvName, fileName))
 	}
 
-	cmd.Env = append(os.Environ(), append(envs, notifyConfigEnvs(appFlags.NotifyConfigFile)...)...)
+	cmd.Env = append(os.Environ(), envs...)
 
 	// 使用安全验证器记录命令执行（脱敏处理）
 	if validator != nil {
@@ -1095,30 +1095,3 @@ func writeHttpResponseCode(w http.ResponseWriter, rid, hookId string, responseCo
 	}
 }
 
-// notifyConfigEnvs reads notify.config.json and returns the values as
-// environment variable strings (KEY=value), injected into every hook command
-// so that scripts like feishu.sh, dingtalk.sh, etc. can use them without
-// requiring separate docker-compose environment entries.
-func notifyConfigEnvs(filePath string) []string {
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		return nil
-	}
-	var cfg map[string]string
-	if err := json.Unmarshal(data, &cfg); err != nil {
-		return nil
-	}
-	keyMap := map[string]string{
-		"feishu_webhook_url":   "FEISHU_WEBHOOK_URL",
-		"dingtalk_webhook_url": "DINGTALK_WEBHOOK_URL",
-		"dingtalk_secret":      "DINGTALK_SECRET",
-		"wecom_webhook_url":    "WECOM_WEBHOOK_URL",
-	}
-	envs := make([]string, 0, len(keyMap))
-	for jsonKey, envKey := range keyMap {
-		if v, ok := cfg[jsonKey]; ok && v != "" {
-			envs = append(envs, envKey+"="+v)
-		}
-	}
-	return envs
-}

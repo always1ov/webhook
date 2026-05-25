@@ -27,22 +27,20 @@ type apiResponse struct {
 }
 
 type server struct {
-	basePath         string
-	notifyConfigFile string
-	customHooksFile  string
-	hooksDir         string
-	scriptsDir       string
-	addr             string
+	basePath        string
+	customHooksFile string
+	hooksDir        string
+	scriptsDir      string
+	addr            string
 }
 
-func newServer(basePath, notifyConfigFile, customHooksFile, hooksDir, addr string) *server {
+func newServer(basePath, customHooksFile, hooksDir, addr string) *server {
 	return &server{
-		basePath:         basePath,
-		notifyConfigFile: notifyConfigFile,
-		customHooksFile:  customHooksFile,
-		hooksDir:         hooksDir,
-		scriptsDir:       filepath.Join(filepath.Dir(customHooksFile), "scripts"),
-		addr:             addr,
+		basePath:        basePath,
+		customHooksFile: customHooksFile,
+		hooksDir:        hooksDir,
+		scriptsDir:      filepath.Join(filepath.Dir(customHooksFile), "scripts"),
+		addr:            addr,
 	}
 }
 
@@ -52,7 +50,6 @@ func (s *server) routes() *http.ServeMux {
 	mux.HandleFunc(s.basePath+"/api/hooks", s.listHooks)
 	mux.HandleFunc(s.basePath+"/api/hooks/", s.handleHookByID)
 	mux.HandleFunc(s.basePath+"/api/logs", s.listLogs)
-	mux.HandleFunc(s.basePath+"/api/config", s.handleConfig)
 	mux.HandleFunc(s.basePath+"/api/custom-hooks", s.handleCustomHooks)
 	mux.HandleFunc(s.basePath+"/api/custom-hooks/", s.handleCustomHookByID)
 	return mux
@@ -116,6 +113,66 @@ func (s *server) listHooks(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) handleHookByID(w http.ResponseWriter, r *http.Request) {
 	suffix := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, s.basePath+"/api/hooks/"), "/")
+
+	// GET|PUT /{id}/script
+	if strings.HasSuffix(suffix, "/script") {
+		hookID := strings.TrimSuffix(suffix, "/script")
+		if hookID == "" {
+			fail(w, http.StatusBadRequest, "hook id is required")
+			return
+		}
+		h := rules.MatchLoadedHook(hookID)
+		if h == nil {
+			fail(w, http.StatusNotFound, fmt.Sprintf("hook %q not found", hookID))
+			return
+		}
+		scriptPath := h.ExecuteCommand
+		switch r.Method {
+		case http.MethodGet:
+			data, err := os.ReadFile(scriptPath)
+			if err != nil {
+				fail(w, http.StatusInternalServerError, fmt.Sprintf("read script failed: %v", err))
+				return
+			}
+			okData(w, map[string]string{"content": string(data), "path": scriptPath})
+		case http.MethodPut:
+			var body struct {
+				Content string `json:"content"`
+			}
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				fail(w, http.StatusBadRequest, "invalid JSON")
+				return
+			}
+			dir := filepath.Dir(scriptPath)
+			if err := os.MkdirAll(dir, 0755); err != nil {
+				fail(w, http.StatusInternalServerError, "mkdir failed")
+				return
+			}
+			tmp, err := os.CreateTemp(dir, ".script-*.tmp")
+			if err != nil {
+				fail(w, http.StatusInternalServerError, "write failed")
+				return
+			}
+			name := tmp.Name()
+			if _, err := tmp.WriteString(body.Content); err != nil {
+				_ = tmp.Close()
+				_ = os.Remove(name)
+				fail(w, http.StatusInternalServerError, "write failed")
+				return
+			}
+			_ = tmp.Close()
+			_ = os.Chmod(name, 0755)
+			if err := os.Rename(name, scriptPath); err != nil {
+				_ = os.Remove(name)
+				fail(w, http.StatusInternalServerError, fmt.Sprintf("save failed: %v", err))
+				return
+			}
+			okMsg(w, "脚本已保存")
+		default:
+			fail(w, http.StatusMethodNotAllowed, "method not allowed")
+		}
+		return
+	}
 
 	// POST /{id}/test
 	if strings.HasSuffix(suffix, "/test") && r.Method == http.MethodPost {
@@ -197,30 +254,6 @@ func (s *server) listLogs(w http.ResponseWriter, r *http.Request) {
 	okData(w, ListLogs())
 }
 
-func (s *server) handleConfig(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		cfg, err := LoadNotifyConfig(s.notifyConfigFile)
-		if err != nil {
-			fail(w, http.StatusInternalServerError, fmt.Sprintf("load config failed: %v", err))
-			return
-		}
-		okData(w, cfg)
-	case http.MethodPost:
-		var cfg NotifyConfig
-		if err := json.NewDecoder(r.Body).Decode(&cfg); err != nil {
-			fail(w, http.StatusBadRequest, fmt.Sprintf("invalid JSON: %v", err))
-			return
-		}
-		if err := SaveNotifyConfig(s.notifyConfigFile, &cfg); err != nil {
-			fail(w, http.StatusInternalServerError, fmt.Sprintf("save config failed: %v", err))
-			return
-		}
-		okMsg(w, "配置已保存")
-	default:
-		fail(w, http.StatusMethodNotAllowed, "method not allowed")
-	}
-}
 
 func (s *server) handleCustomHooks(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
