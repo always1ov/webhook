@@ -133,7 +133,11 @@ func (s *server) testHook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_ = resp.Body.Close()
-	okMsg(w, fmt.Sprintf("test request sent to hook %q (status %d)", hookID, resp.StatusCode))
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		okMsg(w, fmt.Sprintf("Hook \"%s\" 测试成功，通知已发送", hookID))
+	} else {
+		fail(w, http.StatusBadGateway, fmt.Sprintf("Hook \"%s\" 返回异常状态码 %d", hookID, resp.StatusCode))
+	}
 }
 
 func (s *server) listLogs(w http.ResponseWriter, r *http.Request) {
