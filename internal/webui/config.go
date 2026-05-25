@@ -3,6 +3,7 @@ package webui
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 )
 
 // NotifyConfig 各通知平台的凭证配置
@@ -40,8 +41,8 @@ func SaveNotifyConfig(filePath string, cfg *NotifyConfig) error {
 	if err != nil {
 		return err
 	}
-	// 写临时文件再 rename，保证原子性
-	tmp, err := os.CreateTemp("", "notify-config-*.json.tmp")
+	// 写临时文件再 rename，保证原子性（必须与目标同设备，否则跨设备 rename 失败）
+	tmp, err := os.CreateTemp(filepath.Dir(filePath), ".notify-config-*.tmp")
 	if err != nil {
 		return err
 	}
