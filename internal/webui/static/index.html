@@ -1,252 +1,218 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="dark">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Webhook 控制台</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webhook Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            // Linear 调色板
-            bg:      '#0F0F0F',
-            surface: '#161616',
-            elevated:'#1C1C1C',
-            border:  'rgba(255,255,255,0.08)',
-            'border-strong': 'rgba(255,255,255,0.14)',
-            accent:  '#5E6AD2',
-            'accent-hover': '#4F5BBD',
-            't1': '#F4F4F5',   // 主文字
-            't2': '#A1A1AA',   // 次要文字
-            't3': '#52525B',   // 占位/弱文字
-            success: '#22C55E',
-            'success-bg': 'rgba(34,197,94,0.1)',
-            danger:  '#EF4444',
-            'danger-bg': 'rgba(239,68,68,0.1)',
-            warn:    '#F59E0B',
-            'warn-bg': 'rgba(245,158,11,0.1)',
+            bg:       '#000000',
+            surface:  '#111111',
+            elevated: '#1a1a1a',
+            border:   '#2e2e2e',
+            subtle:   '#1a1a1a',
+            ink:      '#ededed',
+            muted:    '#888888',
+            faint:    '#444444',
+            accent:   '#0070f3',
+            accenth:  '#0060df',
+            ok:       '#3ecf8e',
+            err:      '#ff4040',
+            warn:     '#f5a623',
           },
           fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-          },
-          borderRadius: {
-            sm: '4px',
-            DEFAULT: '6px',
-            md: '6px',
-            lg: '8px',
-            xl: '10px',
+            sans: ['Geist', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['Geist Mono', 'Fira Code', 'ui-monospace', 'monospace'],
           },
         }
       }
     }
   </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     [x-cloak] { display: none !important; }
-    body { background: #0F0F0F; color: #F4F4F5; font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
 
-    /* 滚动条 */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+    body {
+      background: #000;
+      color: #ededed;
+      font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
 
-    /* 输入框统一样式 */
-    .input {
-      width: 100%;
-      background: #111111;
-      border: 1px solid rgba(255,255,255,0.08);
+    .inp {
+      height: 34px;
+      background: #111;
+      border: 1px solid #2e2e2e;
       border-radius: 6px;
-      padding: 6px 10px;
+      padding: 0 10px;
+      color: #ededed;
       font-size: 13px;
-      color: #F4F4F5;
-      font-family: 'Inter', sans-serif;
-      transition: border-color 0.15s;
+      font-family: inherit;
       outline: none;
-      height: 32px;
+      width: 100%;
+      transition: border-color .15s, box-shadow .15s;
     }
-    .input::placeholder { color: #52525B; }
-    .input:focus { border-color: #5E6AD2; box-shadow: 0 0 0 2px rgba(94,106,210,0.2); }
+    .inp:focus { border-color: #0070f3; box-shadow: 0 0 0 3px rgba(0,112,243,.15); }
+    .inp::placeholder { color: #444; }
+    select.inp { cursor: pointer; }
 
-    select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2352525B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
-    select.input option { background: #1C1C1C; color: #F4F4F5; }
-
-    /* 按钮 */
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: #5E6AD2; color: #fff; border: none;
-      border-radius: 6px; padding: 0 12px; height: 30px;
-      font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif;
-      cursor: pointer; transition: background 0.15s; white-space: nowrap;
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      height: 34px; padding: 0 14px;
+      font-size: 13px; font-weight: 500; font-family: inherit;
+      border-radius: 6px; cursor: pointer; white-space: nowrap;
+      transition: background .15s, border-color .15s, opacity .15s;
+      border: 1px solid transparent;
     }
-    .btn-primary:hover:not(:disabled) { background: #4F5BBD; }
-    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-primary { background: #0070f3; color: #fff; }
+    .btn-primary:not(:disabled):hover { background: #0060df; }
+    .btn-ghost { background: transparent; color: #ededed; border-color: #2e2e2e; }
+    .btn-ghost:not(:disabled):hover { background: #111; border-color: #444; }
+    .btn-sm { height: 28px; padding: 0 10px; font-size: 12px; }
 
-    .btn-ghost {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: transparent; color: #A1A1AA;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 6px; padding: 0 10px; height: 28px;
-      font-size: 13px; font-family: 'Inter', sans-serif;
-      cursor: pointer; transition: all 0.15s;
+    .card { background: #111; border: 1px solid #1f1f1f; border-radius: 10px; overflow: hidden; }
+    .card-header {
+      padding: 14px 20px; border-bottom: 1px solid #1a1a1a;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .btn-ghost:hover { background: rgba(255,255,255,0.05); color: #F4F4F5; border-color: rgba(255,255,255,0.14); }
+    .card-title { font-size: 13px; font-weight: 500; color: #ededed; }
 
-    /* 卡片 */
-    .card { background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 4px;
+    }
+    .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .badge-ok   { color: #3ecf8e; background: rgba(62,207,142,.1); }
+    .badge-ok .dot   { background: #3ecf8e; }
+    .badge-err  { color: #ff4040; background: rgba(255,64,64,.1); }
+    .badge-err .dot  { background: #ff4040; }
 
-    /* Badge */
-    .badge { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; font-size: 12px; font-weight: 500; }
-    .badge-success { background: rgba(34,197,94,0.12); color: #4ADE80; }
-    .badge-error   { background: rgba(239,68,68,0.12);  color: #F87171; }
-    .badge-warn    { background: rgba(245,158,11,0.12); color: #FCD34D; }
-    .badge-muted   { background: rgba(255,255,255,0.06); color: #71717A; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      text-align: left; padding: 8px 20px;
+      font-size: 11px; font-weight: 500; color: #555;
+      text-transform: uppercase; letter-spacing: .06em;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    td { padding: 11px 20px; border-bottom: 1px solid #161616; color: #aaa; }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: rgba(255,255,255,.02); }
 
-    /* 表格 */
-    .tbl thead th { padding: 8px 16px; font-size: 11px; font-weight: 500; color: #52525B; text-transform: uppercase; letter-spacing: 0.06em; text-align: left; background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.06); }
-    .tbl tbody td { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
-    .tbl tbody tr:last-child td { border-bottom: none; }
-    .tbl tbody tr:hover td { background: rgba(255,255,255,0.025); }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2e2e2e; border-radius: 2px; }
 
-    /* Nav active tab */
-    .tab-active { background: rgba(255,255,255,0.07); color: #F4F4F5; }
+    .alert { padding: 10px 14px; border-radius: 8px; font-size: 13px; border: 1px solid; margin-bottom: 16px; }
+    .alert-ok  { color: #3ecf8e; background: rgba(62,207,142,.08); border-color: rgba(62,207,142,.2); }
+    .alert-err { color: #ff4040; background: rgba(255,64,64,.08); border-color: rgba(255,64,64,.2); }
 
-    /* 分割线 */
-    .divider { border-color: rgba(255,255,255,0.06); }
+    .mono { font-family: 'Geist Mono', 'Fira Code', monospace; }
 
-    pre { white-space: pre-wrap; word-break: break-all; font-family: 'JetBrains Mono', monospace; }
+    .tag {
+      display: inline-block; padding: 1px 6px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; font-family: monospace;
+      background: #1a1a1a; border: 1px solid #2e2e2e; color: #666;
+    }
 
-    /* Toast */
-    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    .toast-enter { animation: slideIn 0.2s ease-out; }
+    .stat { padding: 20px 24px; }
+    .stat-label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+    .stat-value { font-size: 30px; font-weight: 600; line-height: 1; }
   </style>
 </head>
-<body x-data="app()" x-init="init()" x-cloak>
 
-  <!-- 顶部导航 -->
-  <header style="background:#0F0F0F;border-bottom:1px solid rgba(255,255,255,0.08);" class="sticky top-0 z-10">
-    <div class="max-w-6xl mx-auto px-5 flex items-center justify-between" style="height:48px;">
+<body x-data="app()" x-init="init()">
 
-      <!-- Logo -->
-      <div class="flex items-center gap-2.5">
+  <!-- Header -->
+  <header style="position:sticky;top:0;z-index:50;border-bottom:1px solid #1a1a1a;background:rgba(0,0,0,.85);backdrop-filter:blur(16px);">
+    <div style="max-width:1100px;margin:0 auto;padding:0 24px;height:54px;display:flex;align-items:center;gap:32px;">
+
+      <div style="display:flex;align-items:center;gap:9px;flex-shrink:0;">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M9 1L16.5 5.25V12.75L9 17L1.5 12.75V5.25L9 1Z" fill="#5E6AD2" opacity="0.9"/>
-          <path d="M9 5L13.5 7.5V12.5L9 15L4.5 12.5V7.5L9 5Z" fill="#5E6AD2"/>
+          <polygon points="9,1 17,14 1,14" fill="#0070f3"/>
         </svg>
-        <span style="font-size:14px;font-weight:600;color:#F4F4F5;letter-spacing:-0.01em;">Webhook</span>
-        <span style="color:rgba(255,255,255,0.2);font-size:13px;">/</span>
-        <span style="color:#71717A;font-size:13px;">控制台</span>
+        <span style="font-weight:600;font-size:14px;color:#ededed;">Webhook</span>
       </div>
 
-      <!-- 导航标签 -->
-      <nav class="flex gap-0.5">
-        <button @click="tab='dashboard'"
-          :class="tab==='dashboard' ? 'tab-active' : 'text-[#71717A] hover:text-[#A1A1AA]'"
-          style="padding:4px 12px;border-radius:6px;font-size:13px;font-weight:500;transition:all 0.15s;background:transparent;border:none;cursor:pointer;">
-          Dashboard
-        </button>
-        <button @click="tab='config'; loadConfig()"
-          :class="tab==='config' ? 'tab-active' : 'text-[#71717A] hover:text-[#A1A1AA]'"
-          style="padding:4px 12px;border-radius:6px;font-size:13px;font-weight:500;transition:all 0.15s;background:transparent;border:none;cursor:pointer;">
-          通知配置
-        </button>
-        <button @click="tab='logs'; loadLogs()"
-          :class="tab==='logs' ? 'tab-active' : 'text-[#71717A] hover:text-[#A1A1AA]'"
-          style="padding:4px 12px;border-radius:6px;font-size:13px;font-weight:500;transition:all 0.15s;background:transparent;border:none;cursor:pointer;">
-          执行日志
-        </button>
+      <nav style="display:flex;height:54px;">
+        <template x-for="t in tabs" :key="t.id">
+          <button @click="switchTab(t.id)"
+            style="padding:0 14px;font-size:13px;font-weight:500;font-family:inherit;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:color .15s,border-color .15s;"
+            :style="tab===t.id?'color:#ededed;border-bottom-color:#ededed;':'color:#666;'"
+            x-text="t.label">
+          </button>
+        </template>
       </nav>
 
-      <!-- 状态 -->
-      <div class="flex items-center gap-2" style="color:#52525B;font-size:12px;">
-        <span style="width:6px;height:6px;background:#22C55E;border-radius:50%;display:inline-block;box-shadow:0 0 0 2px rgba(34,197,94,0.2);"></span>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:7px;font-size:12px;color:#555;">
+        <span style="width:6px;height:6px;border-radius:50%;background:#3ecf8e;display:inline-block;"></span>
         运行中
       </div>
     </div>
   </header>
 
-  <!-- Toast -->
-  <div x-show="toast.show" x-transition:enter="toast-enter"
-    style="position:fixed;top:16px;right:16px;z-index:100;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;max-width:320px;box-shadow:0 4px 24px rgba(0,0,0,0.4);"
-    :style="toast.ok ? 'background:#1A2E1A;border:1px solid rgba(34,197,94,0.2);color:#4ADE80;' : 'background:#2E1A1A;border:1px solid rgba(239,68,68,0.2);color:#F87171;'">
-    <span x-show="toast.ok">✓</span>
-    <span x-show="!toast.ok">✕</span>
-    <span x-text="toast.msg"></span>
-  </div>
+  <main style="max-width:1100px;margin:0 auto;padding:32px 24px 64px;">
 
-  <main class="max-w-6xl mx-auto px-5 py-6">
-
-    <!-- ===== Dashboard ===== -->
+    <!-- DASHBOARD -->
     <div x-show="tab==='dashboard'">
-
-      <!-- 统计行 -->
-      <div class="grid grid-cols-3 gap-3 mb-5">
-        <div class="card p-4">
-          <div style="font-size:28px;font-weight:600;color:#F4F4F5;letter-spacing:-0.02em;line-height:1;" x-text="hooks.length"></div>
-          <div style="font-size:12px;color:#52525B;margin-top:4px;">已加载 Hook</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;">
+        <div class="card stat">
+          <div class="stat-label">已加载 Hook</div>
+          <div class="stat-value" style="color:#ededed;" x-text="hooks.length">0</div>
         </div>
-        <div class="card p-4">
-          <div style="font-size:28px;font-weight:600;color:#22C55E;letter-spacing:-0.02em;line-height:1;" x-text="stats.success"></div>
-          <div style="font-size:12px;color:#52525B;margin-top:4px;">成功执行</div>
+        <div class="card stat">
+          <div class="stat-label">成功执行</div>
+          <div class="stat-value" style="color:#3ecf8e;" x-text="successCount">0</div>
         </div>
-        <div class="card p-4">
-          <div style="font-size:28px;font-weight:600;color:#EF4444;letter-spacing:-0.02em;line-height:1;" x-text="stats.failed"></div>
-          <div style="font-size:12px;color:#52525B;margin-top:4px;">执行失败</div>
+        <div class="card stat">
+          <div class="stat-label">失败执行</div>
+          <div class="stat-value" style="color:#ff4040;" x-text="errorCount">0</div>
         </div>
       </div>
 
-      <!-- Hook 列表 -->
-      <div class="card overflow-hidden">
-        <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:13px;font-weight:500;color:#F4F4F5;">已加载的 Webhook</span>
-          <button @click="loadHooks()" class="btn-ghost" style="height:26px;font-size:12px;">刷新</button>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">已注册的 Hook</span>
+          <button class="btn btn-ghost btn-sm" @click="loadHooks()">刷新</button>
         </div>
-
-        <div x-show="hooks.length === 0" style="padding:48px 16px;text-align:center;color:#52525B;font-size:13px;">
-          暂无已加载的 Hook，请检查 hooks/ 目录
+        <div x-show="hooks.length===0" style="padding:56px;text-align:center;color:#444;font-size:13px;">
+          hooks/ 目录下暂无配置文件
         </div>
-
-        <table x-show="hooks.length > 0" class="tbl w-full">
+        <table x-show="hooks.length>0">
           <thead>
             <tr>
               <th>Hook ID</th>
               <th>执行命令</th>
               <th>HTTP 方法</th>
               <th>触发规则</th>
-              <th>操作</th>
+              <th style="width:90px;"></th>
             </tr>
           </thead>
           <tbody>
             <template x-for="h in hooks" :key="h.id">
               <tr>
+                <td><span class="mono" style="color:#0070f3;font-size:13px;" x-text="h.id"></span></td>
+                <td><span class="mono" style="color:#666;font-size:12px;" x-text="h.executeCommand"></span></td>
                 <td>
-                  <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#818CF8;font-weight:500;" x-text="h.id"></span>
-                </td>
-                <td>
-                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#71717A;max-width:240px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" :title="h.executeCommand" x-text="h.executeCommand"></span>
-                </td>
-                <td>
-                  <span x-show="!h.httpMethods || h.httpMethods.length===0" style="color:#3F3F46;font-size:12px;">全部</span>
                   <template x-for="m in (h.httpMethods||[])" :key="m">
-                    <span style="display:inline-block;margin-right:4px;padding:1px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#A1A1AA;" x-text="m"></span>
+                    <span class="tag" x-text="m" style="margin-right:3px;"></span>
                   </template>
                 </td>
                 <td>
-                  <span x-show="h.hasTriggerRule" class="badge badge-muted">已配置</span>
-                  <span x-show="!h.hasTriggerRule" style="color:#3F3F46;font-size:12px;">—</span>
+                  <span x-show="h.hasTriggerRule" class="badge badge-ok"><span class="dot"></span>有规则</span>
+                  <span x-show="!h.hasTriggerRule" style="color:#333;">—</span>
                 </td>
                 <td>
-                  <button @click="testHook(h.id)" :disabled="testing[h.id]" class="btn-primary" style="height:26px;font-size:12px;">
-                    <span x-show="!testing[h.id]">发送测试</span>
-                    <span x-show="testing[h.id]" style="display:flex;align-items:center;gap:5px;">
-                      <svg width="12" height="12" viewBox="0 0 12 12" style="animation:spin 1s linear infinite;"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5" fill="none"/><path d="M6 1.5A4.5 4.5 0 0 1 10.5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
-                      发送中
-                    </span>
+                  <button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id">
+                    <span x-text="testing===h.id?'发送中…':'测试'"></span>
                   </button>
                 </td>
               </tr>
@@ -254,313 +220,198 @@
           </tbody>
         </table>
       </div>
+
+      <div x-show="testMsg" x-transition style="margin-top:12px;" :class="testOk?'alert alert-ok':'alert alert-err'" x-text="testMsg"></div>
     </div>
 
-    <!-- ===== 通知配置 ===== -->
-    <div x-show="tab==='config'">
-      <div class="grid grid-cols-2 gap-4" style="grid-template-columns:repeat(2,1fr);">
+    <!-- CONFIG -->
+    <div x-show="tab==='config'" x-cloak style="max-width:560px;">
+      <div style="margin-bottom:24px;">
+        <h2 style="font-size:15px;font-weight:600;color:#ededed;margin-bottom:4px;">通知平台配置</h2>
+        <p style="font-size:13px;color:#555;">填写需要的平台，保存后立即生效。不需要的平台留空即可。</p>
+      </div>
 
-        <!-- 飞书 -->
-        <div class="card p-5">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-            <span style="font-size:16px;">🐦</span>
-            <span style="font-size:13px;font-weight:500;color:#F4F4F5;">飞书 Feishu</span>
-          </div>
-          <label style="display:block;font-size:11px;color:#52525B;margin-bottom:5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;">Webhook URL</label>
-          <input x-model="cfg.feishu_webhook_url" type="url" placeholder="https://open.feishu.cn/open-apis/bot/v2/hook/…" class="input" />
-        </div>
+      <div x-show="saveMsg" x-transition :class="saveOk?'alert alert-ok':'alert alert-err'" x-text="saveMsg"></div>
 
-        <!-- 钉钉 -->
-        <div class="card p-5">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-            <span style="font-size:16px;">📌</span>
-            <span style="font-size:13px;font-weight:500;color:#F4F4F5;">钉钉 DingTalk</span>
-          </div>
-          <label style="display:block;font-size:11px;color:#52525B;margin-bottom:5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;">Webhook URL</label>
-          <input x-model="cfg.dingtalk_webhook_url" type="url" placeholder="https://oapi.dingtalk.com/robot/send?access_token=…" class="input" style="margin-bottom:10px;" />
-          <label style="display:block;font-size:11px;color:#52525B;margin-bottom:5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;">加签密钥（可选）</label>
-          <input x-model="cfg.dingtalk_secret" type="password" placeholder="SECxxxxxxx" class="input" />
-        </div>
-
-        <!-- 企业微信 -->
-        <div class="card p-5">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-            <span style="font-size:16px;">💬</span>
-            <span style="font-size:13px;font-weight:500;color:#F4F4F5;">企业微信 WeCom</span>
-          </div>
-          <label style="display:block;font-size:11px;color:#52525B;margin-bottom:5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;">Webhook URL</label>
-          <input x-model="cfg.wecom_webhook_url" type="url" placeholder="https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=…" class="input" />
-        </div>
-
-        <!-- Telegram -->
-        <div class="card p-5">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-            <span style="font-size:16px;">✈️</span>
-            <span style="font-size:13px;font-weight:500;color:#F4F4F5;">Telegram</span>
-          </div>
-          <label style="display:block;font-size:11px;color:#52525B;margin-bottom:5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;">Bot Token</label>
-          <input x-model="cfg.telegram_bot_token" type="password" placeholder="123456789:ABCxxxxx" class="input" style="margin-bottom:10px;" />
-          <label style="display:block;font-size:11px;color:#52525B;margin-bottom:5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;">Chat ID</label>
-          <input x-model="cfg.telegram_chat_id" type="text" placeholder="123456789" class="input" />
-        </div>
-
-        <!-- Slack -->
-        <div class="card p-5">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-            <span style="font-size:16px;">💼</span>
-            <span style="font-size:13px;font-weight:500;color:#F4F4F5;">Slack</span>
-          </div>
-          <label style="display:block;font-size:11px;color:#52525B;margin-bottom:5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;">Incoming Webhook URL</label>
-          <input x-model="cfg.slack_webhook_url" type="url" placeholder="https://hooks.slack.com/services/…" class="input" />
-        </div>
-
-        <!-- Discord -->
-        <div class="card p-5">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-            <span style="font-size:16px;">🎮</span>
-            <span style="font-size:13px;font-weight:500;color:#F4F4F5;">Discord</span>
-          </div>
-          <label style="display:block;font-size:11px;color:#52525B;margin-bottom:5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;">Webhook URL</label>
-          <input x-model="cfg.discord_webhook_url" type="url" placeholder="https://discord.com/api/webhooks/…" class="input" />
-        </div>
-
-        <!-- Server酱 - 占一行 -->
-        <div class="card p-5" style="grid-column:1/-1;">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span style="font-size:16px;">📱</span>
-              <span style="font-size:13px;font-weight:500;color:#F4F4F5;">Server酱（微信推送）</span>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <template x-for="p in platforms" :key="p.key">
+          <div class="card">
+            <div class="card-header" style="cursor:pointer;" @click="p.open=!p.open">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span class="card-title" x-text="p.name"></span>
+                <span x-show="hasPlatformValue(p)" class="badge badge-ok" style="font-size:10px;"><span class="dot"></span>已配置</span>
+              </div>
+              <svg :style="p.open?'transform:rotate(180deg);':''" style="transition:transform .2s;color:#555;flex-shrink:0;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
             </div>
-            <a href="https://sct.ftqq.com" target="_blank" style="font-size:12px;color:#5E6AD2;text-decoration:none;">获取 SendKey →</a>
+            <div x-show="p.open" style="padding:16px 20px;display:flex;flex-direction:column;gap:12px;">
+              <template x-for="f in p.fields" :key="f.key">
+                <div style="display:flex;flex-direction:column;gap:5px;">
+                  <label style="font-size:12px;color:#555;font-weight:500;" x-text="f.label"></label>
+                  <input class="inp" :type="f.secret?'password':'text'" x-model="cfg[f.key]" :placeholder="f.placeholder">
+                </div>
+              </template>
+            </div>
           </div>
-          <div style="margin-top:14px;max-width:480px;">
-            <label style="display:block;font-size:11px;color:#52525B;margin-bottom:5px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;">SendKey</label>
-            <input x-model="cfg.serverchan_sendkey" type="password" placeholder="SCTxxxxxxx" class="input" />
-          </div>
-        </div>
-
+        </template>
       </div>
 
-      <!-- 操作栏 -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;">
-        <p style="font-size:12px;color:#3F3F46;">
-          配置保存至 <code style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:4px;color:#71717A;">notify.config.json</code>，留空表示不启用该平台
-        </p>
-        <button @click="saveConfig()" :disabled="saving" class="btn-primary">
-          <span x-show="!saving">保存配置</span>
-          <span x-show="saving">保存中…</span>
+      <div style="margin-top:20px;display:flex;gap:10px;">
+        <button class="btn btn-primary" @click="saveConfig()" :disabled="saving">
+          <span x-text="saving?'保存中…':'保存配置'"></span>
         </button>
+        <button class="btn btn-ghost" @click="loadConfig()">重置</button>
       </div>
     </div>
 
-    <!-- ===== 执行日志 ===== -->
-    <div x-show="tab==='logs'">
-
-      <!-- 筛选栏 -->
-      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;">
-        <select x-model="logFilter.hookId" class="input" style="width:auto;min-width:140px;">
-          <option value="">所有 Hook</option>
-          <template x-for="id in logHookIds" :key="id">
-            <option :value="id" x-text="id"></option>
-          </template>
-        </select>
-        <select x-model="logFilter.status" class="input" style="width:auto;min-width:110px;">
-          <option value="">所有状态</option>
-          <option value="success">成功</option>
-          <option value="error">失败</option>
-          <option value="timeout">超时</option>
-          <option value="cancelled">取消</option>
-        </select>
-        <input x-model="logFilter.keyword" type="text" placeholder="搜索输出内容…" class="input" style="flex:1;min-width:160px;max-width:280px;" />
-        <button @click="loadLogs()" class="btn-ghost">刷新</button>
-        <span style="margin-left:auto;font-size:12px;color:#3F3F46;">每 10s 自动刷新</span>
+    <!-- LOGS -->
+    <div x-show="tab==='logs'" x-cloak>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;">
+        <div style="display:flex;gap:8px;">
+          <input class="inp" style="width:200px;" placeholder="搜索 Hook ID…" x-model="logFilter">
+          <select class="inp" style="width:110px;" x-model="logStatus">
+            <option value="">全部状态</option>
+            <option value="success">成功</option>
+            <option value="error">失败</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost btn-sm" @click="loadLogs()">刷新</button>
       </div>
 
-      <!-- 日志表格 -->
-      <div class="card overflow-hidden">
-        <div x-show="filteredLogs.length === 0" style="padding:48px 16px;text-align:center;color:#52525B;font-size:13px;">
-          暂无执行记录
-        </div>
-        <table x-show="filteredLogs.length > 0" class="tbl w-full">
+      <div class="card">
+        <div x-show="filteredLogs.length===0" style="padding:56px;text-align:center;color:#444;font-size:13px;">暂无日志记录</div>
+        <table x-show="filteredLogs.length>0">
           <thead>
             <tr>
-              <th>时间</th>
-              <th>Hook ID</th>
-              <th>状态</th>
-              <th>耗时</th>
-              <th>来源 IP</th>
-              <th>输出</th>
+              <th>状态</th><th>Hook ID</th><th>时间</th><th>耗时</th><th>来源 IP</th><th>输出</th>
             </tr>
           </thead>
           <tbody>
-            <template x-for="(log, idx) in filteredLogs" :key="log.id + idx">
+            <template x-for="l in filteredLogs" :key="l.id">
               <tr>
                 <td>
-                  <span :title="formatAbsTime(log.timestamp)" style="font-size:12px;color:#71717A;white-space:nowrap;" x-text="formatRelTime(log.timestamp)"></span>
+                  <span :class="l.success?'badge badge-ok':'badge badge-err'">
+                    <span class="dot"></span><span x-text="l.success?'成功':'失败'"></span>
+                  </span>
                 </td>
-                <td>
-                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#818CF8;" x-text="log.hookId"></span>
-                </td>
-                <td>
-                  <span :class="{
-                    'badge badge-success': log.status==='success',
-                    'badge badge-error':   log.status==='error',
-                    'badge badge-warn':    log.status==='timeout' || log.status==='cancelled',
-                  }" x-text="statusLabel(log.status)"></span>
-                </td>
-                <td>
-                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#52525B;" x-text="log.durationMs + 'ms'"></span>
-                </td>
-                <td>
-                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3F3F46;" x-text="log.ip || '—'"></span>
-                </td>
-                <td>
-                  <div>
-                    <button x-show="log.output" @click="log._expanded = !log._expanded"
-                      style="font-size:12px;color:#5E6AD2;background:none;border:none;cursor:pointer;padding:0;">
-                      <span x-text="log._expanded ? '收起' : '查看输出'"></span>
-                    </button>
-                    <span x-show="!log.output" style="color:#3F3F46;font-size:12px;">—</span>
-                    <div x-show="log._expanded" x-transition style="margin-top:8px;">
-                      <pre style="font-size:12px;background:#0A0A0A;border:1px solid rgba(255,255,255,0.06);color:#4ADE80;padding:10px 12px;border-radius:6px;max-height:160px;overflow-y:auto;" x-text="log.output"></pre>
-                    </div>
-                  </div>
-                </td>
+                <td><span class="mono" style="color:#0070f3;font-size:13px;" x-text="l.hookID"></span></td>
+                <td style="color:#555;font-size:12px;white-space:nowrap;" x-text="fmtTime(l.timestamp)"></td>
+                <td><span class="mono" style="color:#666;font-size:12px;" x-text="l.durationMS+'ms'"></span></td>
+                <td><span class="mono" style="color:#444;font-size:12px;" x-text="l.ip||'—'"></span></td>
+                <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#555;font-size:12px;" x-text="l.output||'—'"></td>
               </tr>
             </template>
           </tbody>
         </table>
       </div>
+      <div style="margin-top:10px;font-size:12px;color:#444;" x-text="`共 ${filteredLogs.length} 条`"></div>
     </div>
 
   </main>
 
-<style>
-  @keyframes spin { to { transform: rotate(360deg); } }
-</style>
-<script>
-function app() {
-  return {
-    tab: 'dashboard',
-    hooks: [],
-    logs: [],
-    cfg: {},
-    saving: false,
-    testing: {},
-    logFilter: { hookId: '', status: '', keyword: '' },
-    toast: { show: false, ok: true, msg: '' },
-    _logTimer: null,
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+  function app() {
+    return {
+      tab: 'dashboard',
+      tabs: [{id:'dashboard',label:'概览'},{id:'config',label:'通知配置'},{id:'logs',label:'执行日志'}],
+      hooks: [], logs: [], cfg: {},
+      testing: null, testMsg: '', testOk: false,
+      saveMsg: '', saveOk: false, saving: false,
+      logFilter: '', logStatus: '',
+      successCount: 0, errorCount: 0,
 
-    get stats() {
-      return {
-        success: this.logs.filter(l => l.status === 'success').length,
-        failed:  this.logs.filter(l => l.status !== 'success').length,
+      platforms: [
+        { key:'feishu', name:'飞书', open:false, fields:[
+          { key:'feishuWebhookURL', label:'Webhook URL', placeholder:'https://open.feishu.cn/open-apis/bot/v2/hook/...', secret:false }
+        ]},
+        { key:'dingtalk', name:'钉钉', open:false, fields:[
+          { key:'dingtalkWebhookURL', label:'Webhook URL', placeholder:'https://oapi.dingtalk.com/robot/send?access_token=...', secret:false },
+          { key:'dingtalkSecret', label:'加签密钥（可选）', placeholder:'SEC...', secret:true }
+        ]},
+        { key:'wecom', name:'企业微信', open:false, fields:[
+          { key:'wecomWebhookURL', label:'Webhook URL', placeholder:'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=...', secret:false }
+        ]},
+        { key:'telegram', name:'Telegram', open:false, fields:[
+          { key:'telegramBotToken', label:'Bot Token', placeholder:'123456789:AAxxxxxx', secret:true },
+          { key:'telegramChatID',   label:'Chat ID',   placeholder:'-100xxxxxxxxxx',     secret:false }
+        ]},
+        { key:'slack', name:'Slack', open:false, fields:[
+          { key:'slackWebhookURL', label:'Incoming Webhook URL', placeholder:'https://hooks.slack.com/services/...', secret:false }
+        ]},
+        { key:'discord', name:'Discord', open:false, fields:[
+          { key:'discordWebhookURL', label:'Webhook URL', placeholder:'https://discord.com/api/webhooks/...', secret:false }
+        ]},
+        { key:'serverchan', name:'Server酱', open:false, fields:[
+          { key:'serverChanSendKey', label:'SendKey', placeholder:'SCT...', secret:true }
+        ]},
+      ],
+
+      init() {
+        this.loadHooks();
+        this.loadConfig();
+        this.loadLogs();
+        setInterval(() => { if (this.tab==='logs') this.loadLogs(); }, 10000);
+      },
+
+      switchTab(t) { this.tab=t; if(t==='logs') this.loadLogs(); },
+
+      async loadHooks() {
+        try { const r=await fetch('api/hooks'); const j=await r.json(); if(j.ok) this.hooks=j.data||[]; } catch{}
+      },
+
+      async loadLogs() {
+        try {
+          const r=await fetch('api/logs'); const j=await r.json();
+          if(j.ok){
+            this.logs=j.data||[];
+            this.successCount=this.logs.filter(l=>l.success).length;
+            this.errorCount=this.logs.filter(l=>!l.success).length;
+          }
+        } catch{}
+      },
+
+      async loadConfig() {
+        try { const r=await fetch('api/config'); const j=await r.json(); if(j.ok) this.cfg=j.data||{}; } catch{}
+      },
+
+      async saveConfig() {
+        this.saving=true; this.saveMsg='';
+        try {
+          const r=await fetch('api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.cfg)});
+          const j=await r.json();
+          this.saveOk=j.ok; this.saveMsg=j.ok?'配置已保存':(j.msg||'保存失败');
+        } catch(e){ this.saveOk=false; this.saveMsg='网络错误：'+e.message; }
+        this.saving=false;
+        setTimeout(()=>this.saveMsg='',3000);
+      },
+
+      async testHook(id) {
+        this.testing=id; this.testMsg='';
+        try {
+          const r=await fetch(`api/hooks/${id}/test`,{method:'POST'});
+          const j=await r.json();
+          this.testOk=j.ok; this.testMsg=j.msg||(j.ok?'测试请求已发送':'发送失败');
+        } catch(e){ this.testOk=false; this.testMsg='网络错误：'+e.message; }
+        this.testing=null;
+        setTimeout(()=>this.testMsg='',4000);
+      },
+
+      hasPlatformValue(p) { return p.fields.some(f=>this.cfg[f.key]); },
+
+      get filteredLogs() {
+        return this.logs.filter(l=>{
+          const okId=!this.logFilter||l.hookID.includes(this.logFilter);
+          const okSt=!this.logStatus||(this.logStatus==='success'?l.success:!l.success);
+          return okId&&okSt;
+        });
+      },
+
+      fmtTime(ts) {
+        if(!ts) return '—';
+        return new Date(ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
       }
-    },
-    get logHookIds() {
-      return [...new Set(this.logs.map(l => l.hookId))].filter(Boolean)
-    },
-    get filteredLogs() {
-      return this.logs.filter(l => {
-        if (this.logFilter.hookId && l.hookId !== this.logFilter.hookId) return false
-        if (this.logFilter.status && l.status !== this.logFilter.status) return false
-        if (this.logFilter.keyword && !(l.output||'').includes(this.logFilter.keyword)) return false
-        return true
-      })
-    },
-
-    async init() {
-      await this.loadHooks()
-      await this.loadLogs()
-      this._logTimer = setInterval(() => this.loadLogs(), 10000)
-    },
-
-    async loadHooks() {
-      try {
-        const r = await fetch(this.apiBase() + '/hooks')
-        const d = await r.json()
-        this.hooks = d.data || []
-      } catch(e) { console.error(e) }
-    },
-
-    async loadLogs() {
-      try {
-        const r = await fetch(this.apiBase() + '/logs')
-        const d = await r.json()
-        const prev = {}
-        this.logs.forEach(l => { if (l._expanded) prev[l.id] = true })
-        this.logs = (d.data || []).map(l => ({ ...l, _expanded: !!prev[l.id] }))
-      } catch(e) { console.error(e) }
-    },
-
-    async loadConfig() {
-      try {
-        const r = await fetch(this.apiBase() + '/config')
-        const d = await r.json()
-        this.cfg = d.data || {}
-      } catch(e) { console.error(e) }
-    },
-
-    async saveConfig() {
-      this.saving = true
-      try {
-        const r = await fetch(this.apiBase() + '/config', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.cfg)
-        })
-        const d = await r.json()
-        this.showToast(d.ok, d.msg || (d.ok ? '配置已保存' : '保存失败'))
-      } catch(e) {
-        this.showToast(false, '网络错误: ' + e.message)
-      } finally {
-        this.saving = false
-      }
-    },
-
-    async testHook(id) {
-      this.testing = { ...this.testing, [id]: true }
-      try {
-        const r = await fetch(this.apiBase() + '/hooks/' + id + '/test', { method: 'POST' })
-        const d = await r.json()
-        this.showToast(d.ok, d.msg || (d.ok ? '测试请求已发送' : '发送失败'))
-        setTimeout(() => this.loadLogs(), 1500)
-      } catch(e) {
-        this.showToast(false, '网络错误: ' + e.message)
-      } finally {
-        this.testing = { ...this.testing, [id]: false }
-      }
-    },
-
-    apiBase() {
-      return location.pathname.replace(/\/+$/, '') + '/api'
-    },
-
-    showToast(ok, msg) {
-      this.toast = { show: true, ok, msg }
-      setTimeout(() => { this.toast.show = false }, 3500)
-    },
-
-    statusLabel(s) {
-      return { success: '成功', error: '失败', timeout: '超时', cancelled: '取消' }[s] || s
-    },
-
-    formatRelTime(ts) {
-      if (!ts) return '—'
-      const diff = (Date.now() - new Date(ts).getTime()) / 1000
-      if (diff < 5)    return '刚刚'
-      if (diff < 60)   return Math.round(diff) + '秒前'
-      if (diff < 3600) return Math.round(diff/60) + '分钟前'
-      if (diff < 86400)return Math.round(diff/3600) + '小时前'
-      return new Date(ts).toLocaleDateString()
-    },
-
-    formatAbsTime(ts) {
-      if (!ts) return '—'
-      return new Date(ts).toLocaleString()
-    },
+    };
   }
-}
-</script>
+  </script>
 </body>
 </html>
