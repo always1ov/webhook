@@ -24,6 +24,7 @@ import (
 	"github.com/soulteary/webhook/internal/metrics"
 	"github.com/soulteary/webhook/internal/rules"
 	"github.com/soulteary/webhook/internal/security"
+	"github.com/soulteary/webhook/internal/webui"
 )
 
 // asyncHookWaitGroup 跟踪所有异步执行的 hook goroutine，用于防止 goroutine 泄漏
@@ -462,8 +463,12 @@ func executeStreamingHook(w http.ResponseWriter, ctx context.Context, matchedHoo
 	} else {
 		// 记录成功的 hook 执行
 		metrics.RecordHookExecution(hookID, "success", duration)
-		// 记录审计日志：执行成功
 		audit.LogHookExecuted(requestID, hookID, ip, userAgent, durationMS)
+		webui.AppendLog(webui.ExecutionLog{
+			ID: requestID, HookID: hookID, Timestamp: time.Now(),
+			Success: true, Status: "success", Output: "[streaming output]",
+			DurationMS: durationMS, IP: ip,
+		})
 	}
 }
 
@@ -496,6 +501,11 @@ func executeCapturingHook(w http.ResponseWriter, ctx context.Context, matchedHoo
 			audit.LogHookFailed(requestID, hookID, ip, userAgent, err.Error(), durationMS)
 		}
 		metrics.RecordHookExecution(hookID, status, duration)
+		webui.AppendLog(webui.ExecutionLog{
+			ID: requestID, HookID: hookID, Timestamp: time.Now(),
+			Success: false, Status: status, Output: response,
+			DurationMS: durationMS, IP: ip,
+		})
 
 		// 如果配置了在错误时捕获输出，则返回输出内容
 		if matchedHook.CaptureCommandOutputOnError {
@@ -521,8 +531,12 @@ func executeCapturingHook(w http.ResponseWriter, ctx context.Context, matchedHoo
 	} else {
 		// 记录成功的 hook 执行
 		metrics.RecordHookExecution(hookID, "success", duration)
-		// 记录审计日志：执行成功
 		audit.LogHookExecuted(requestID, hookID, ip, userAgent, durationMS)
+		webui.AppendLog(webui.ExecutionLog{
+			ID: requestID, HookID: hookID, Timestamp: time.Now(),
+			Success: true, Status: "success", Output: response,
+			DurationMS: durationMS, IP: ip,
+		})
 
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		// Check if a success return code is configured for the hook
@@ -571,11 +585,20 @@ func executeAsyncHook(w http.ResponseWriter, ctx context.Context, matchedHook *h
 				audit.LogHookFailed(requestID, hookID, ip, userAgent, err.Error(), durationMS)
 			}
 			metrics.RecordHookExecution(hookID, status, duration)
+			webui.AppendLog(webui.ExecutionLog{
+				ID: requestID, HookID: hookID, Timestamp: time.Now(),
+				Success: false, Status: status, Output: err.Error(),
+				DurationMS: durationMS, IP: ip,
+			})
 		} else {
 			// 记录成功的 hook 执行
 			metrics.RecordHookExecution(hookID, "success", duration)
-			// 记录审计日志：执行成功
 			audit.LogHookExecuted(requestID, hookID, ip, userAgent, durationMS)
+			webui.AppendLog(webui.ExecutionLog{
+				ID: requestID, HookID: hookID, Timestamp: time.Now(),
+				Success: true, Status: "success", Output: "",
+				DurationMS: durationMS, IP: ip,
+			})
 		}
 	}()
 

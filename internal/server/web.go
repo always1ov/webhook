@@ -19,6 +19,7 @@ import (
 	versionkit "github.com/soulteary/version-kit"
 	"github.com/soulteary/webhook/internal/configui"
 	"github.com/soulteary/webhook/internal/flags"
+	"github.com/soulteary/webhook/internal/webui"
 	"github.com/soulteary/webhook/internal/link"
 	"github.com/soulteary/webhook/internal/logger"
 	"github.com/soulteary/webhook/internal/metrics"
@@ -283,6 +284,44 @@ func Launch(appFlags flags.AppFlags, addr string, ln net.Listener) *Server {
 		}
 	}
 
+	var webUIPathLogged string
+	if appFlags.WebUIEnabled {
+		webUIPath := strings.TrimSuffix(strings.TrimSpace(appFlags.WebUIPath), "/")
+		if webUIPath == "" || !strings.HasPrefix(webUIPath, "/") {
+			webUIPath = "/ui"
+		}
+		hookBaseForWebUI := link.MakeBaseURL(&appFlags.HooksURLPrefix)
+		if hookBaseForWebUI == "" {
+			hookBaseForWebUI = "/hooks"
+		}
+		reservedPaths := []string{"/", "/health", "/livez", "/readyz", "/version", "/metrics", hookBaseForWebUI}
+		if openapiPathLogged != "" {
+			reservedPaths = append(reservedPaths, openapiPathLogged)
+		}
+		if configUIPathLogged != "" {
+			reservedPaths = append(reservedPaths, configUIPathLogged)
+		}
+		conflict := false
+		for _, p := range reservedPaths {
+			if webUIPath == p || (p != "/" && strings.HasPrefix(webUIPath, p+"/")) {
+				conflict = true
+				break
+			}
+		}
+		if conflict {
+			logger.Warnf("webui-path %q conflicts with reserved path; skipping Web UI route", webUIPath)
+		} else {
+			webUIHandler, err := webui.Handler(webUIPath, appFlags.NotifyConfigFile, addr)
+			if err != nil {
+				logger.Warnf("webui handler init failed: %v", err)
+			} else {
+				app.All(webUIPath, adaptor.HTTPHandler(webUIHandler))
+				app.All(webUIPath+"/*", adaptor.HTTPHandler(webUIHandler))
+				webUIPathLogged = webUIPath
+			}
+		}
+	}
+
 	s := &Server{
 		app:      app,
 		listener: ln,
@@ -310,6 +349,9 @@ func Launch(appFlags flags.AppFlags, addr string, ln net.Listener) *Server {
 		}
 		if configUIPathLogged != "" {
 			logger.Infof("config UI: http://%s%s", addr, configUIPathLogged)
+		}
+		if webUIPathLogged != "" {
+			logger.Infof("web UI dashboard: http://%s%s", addr, webUIPathLogged)
 		}
 		if err := app.Listener(ln); err != nil {
 			logger.Error(fmt.Sprintf("server error: %v", err))
