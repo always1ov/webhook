@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -16,6 +17,7 @@ type HookSummary struct {
 	ExecuteCommand string   `json:"executeCommand"`
 	HTTPMethods    []string `json:"httpMethods"`
 	HasTriggerRule bool     `json:"hasTriggerRule"`
+	IsCustom       bool     `json:"isCustom"`
 }
 
 type apiResponse struct {
@@ -48,7 +50,7 @@ func (s *server) routes() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc(s.basePath+"/", s.serveIndex)
 	mux.HandleFunc(s.basePath+"/api/hooks", s.listHooks)
-	mux.HandleFunc(s.basePath+"/api/hooks/", s.testHook)
+	mux.HandleFunc(s.basePath+"/api/hooks/", s.handleHookByID)
 	mux.HandleFunc(s.basePath+"/api/logs", s.listLogs)
 	mux.HandleFunc(s.basePath+"/api/config", s.handleConfig)
 	mux.HandleFunc(s.basePath+"/api/custom-hooks", s.handleCustomHooks)
@@ -93,6 +95,11 @@ func (s *server) listHooks(w http.ResponseWriter, r *http.Request) {
 		fail(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
+	customHooks, _ := LoadCustomHooks(s.customHooksFile)
+	customIDs := make(map[string]bool, len(customHooks))
+	for _, ch := range customHooks {
+		customIDs[ch.ID] = true
+	}
 	all := rules.GetAllHooks()
 	summaries := make([]HookSummary, 0, len(all))
 	for _, h := range all {
@@ -101,43 +108,85 @@ func (s *server) listHooks(w http.ResponseWriter, r *http.Request) {
 			ExecuteCommand: h.ExecuteCommand,
 			HTTPMethods:    h.HTTPMethods,
 			HasTriggerRule: h.TriggerRule != nil,
+			IsCustom:       customIDs[h.ID],
 		})
 	}
 	okData(w, summaries)
 }
 
-func (s *server) testHook(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		fail(w, http.StatusMethodNotAllowed, "method not allowed")
+func (s *server) handleHookByID(w http.ResponseWriter, r *http.Request) {
+	suffix := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, s.basePath+"/api/hooks/"), "/")
+
+	// POST /{id}/test
+	if strings.HasSuffix(suffix, "/test") && r.Method == http.MethodPost {
+		hookID := strings.TrimSuffix(suffix, "/test")
+		if hookID == "" {
+			fail(w, http.StatusBadRequest, "hook id is required")
+			return
+		}
+		if rules.MatchLoadedHook(hookID) == nil {
+			fail(w, http.StatusNotFound, fmt.Sprintf("hook %q not found", hookID))
+			return
+		}
+		testURL := fmt.Sprintf("http://%s/hooks/%s?msg=测试消息&title=WebUI+Test", s.addr, hookID)
+		resp, err := http.Get(testURL) // #nosec G107 -- internal URL, hookID validated
+		if err != nil {
+			fail(w, http.StatusInternalServerError, fmt.Sprintf("test request failed: %v", err))
+			return
+		}
+		_ = resp.Body.Close()
+		if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+			okMsg(w, fmt.Sprintf("Hook \"%s\" 测试成功，通知已发送", hookID))
+		} else {
+			fail(w, http.StatusBadGateway, fmt.Sprintf("Hook \"%s\" 返回异常状态码 %d", hookID, resp.StatusCode))
+		}
 		return
 	}
-	suffix := strings.TrimPrefix(r.URL.Path, s.basePath+"/api/hooks/")
-	parts := strings.SplitN(suffix, "/", 2)
-	if len(parts) != 2 || parts[1] != "test" {
-		http.NotFound(w, r)
-		return
-	}
-	hookID := parts[0]
+
+	// DELETE /{id}
+	hookID := suffix
 	if hookID == "" {
 		fail(w, http.StatusBadRequest, "hook id is required")
+		return
+	}
+	if r.Method != http.MethodDelete {
+		fail(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
 	if rules.MatchLoadedHook(hookID) == nil {
 		fail(w, http.StatusNotFound, fmt.Sprintf("hook %q not found", hookID))
 		return
 	}
-	testURL := fmt.Sprintf("http://%s/hooks/%s?msg=测试消息&title=WebUI+Test", s.addr, hookID)
-	resp, err := http.Get(testURL) // #nosec G107 -- internal URL, hookID validated
+
+	// 自定义 hook：完整删除（JSON记录 + YAML + 脚本）
+	hooks, err := LoadCustomHooks(s.customHooksFile)
 	if err != nil {
-		fail(w, http.StatusInternalServerError, fmt.Sprintf("test request failed: %v", err))
+		fail(w, http.StatusInternalServerError, fmt.Sprintf("load failed: %v", err))
 		return
 	}
-	_ = resp.Body.Close()
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		okMsg(w, fmt.Sprintf("Hook \"%s\" 测试成功，通知已发送", hookID))
-	} else {
-		fail(w, http.StatusBadGateway, fmt.Sprintf("Hook \"%s\" 返回异常状态码 %d", hookID, resp.StatusCode))
+	idx := -1
+	for i, h := range hooks {
+		if h.ID == hookID {
+			idx = i
+			break
+		}
 	}
+	if idx >= 0 {
+		hooks = append(hooks[:idx], hooks[idx+1:]...)
+		DeleteCustomHookFiles(s.hooksDir, s.scriptsDir, hookID)
+		if err := SaveCustomHooks(s.customHooksFile, hooks); err != nil {
+			fail(w, http.StatusInternalServerError, fmt.Sprintf("save failed: %v", err))
+			return
+		}
+	} else {
+		// 内置 hook：只删除 YAML 文件
+		yamlPath := filepath.Join(s.hooksDir, hookID+".yaml")
+		if err := os.Remove(yamlPath); err != nil && !os.IsNotExist(err) {
+			fail(w, http.StatusInternalServerError, fmt.Sprintf("delete failed: %v", err))
+			return
+		}
+	}
+	okMsg(w, fmt.Sprintf("Hook \"%s\" 已删除", hookID))
 }
 
 func (s *server) listLogs(w http.ResponseWriter, r *http.Request) {

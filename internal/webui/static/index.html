@@ -146,18 +146,31 @@
         </div>
         <div x-show="hooks.length===0" style="padding:60px;text-align:center;color:var(--faint);font-size:13px;">hooks/ 目录下暂无配置文件</div>
         <table x-show="hooks.length>0">
-          <thead><tr><th>Hook ID</th><th>执行命令</th><th>HTTP 方法</th><th>触发规则</th><th style="width:90px;"></th></tr></thead>
+          <thead><tr><th>Hook ID</th><th>执行命令</th><th>HTTP 方法</th><th>触发规则</th><th style="width:180px;text-align:right;padding-right:20px;"></th></tr></thead>
           <tbody>
             <template x-for="h in hooks" :key="h.id">
               <tr>
-                <td><span class="mono" style="color:var(--accent);font-size:13px;" x-text="h.id"></span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span class="mono" style="color:var(--accent);font-size:13px;" x-text="h.id"></span>
+                    <span x-show="h.isCustom" style="font-size:10px;padding:1px 5px;background:rgba(59,130,246,.15);color:var(--accent);border-radius:3px;">自定义</span>
+                  </div>
+                </td>
                 <td><span class="mono" style="color:var(--faint);font-size:12px;" x-text="h.executeCommand"></span></td>
                 <td><template x-for="m in (h.httpMethods||[])" :key="m"><span class="tag" x-text="m" style="margin-right:3px;"></span></template></td>
                 <td>
                   <span x-show="h.hasTriggerRule" class="badge badge-ok"><span class="dot"></span>有规则</span>
                   <span x-show="!h.hasTriggerRule" style="color:var(--faint);">—</span>
                 </td>
-                <td><button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id"><span x-text="testing===h.id?'发送中…':'测试'"></span></button></td>
+                <td style="text-align:right;">
+                  <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;">
+                    <template x-if="h.isCustom">
+                      <button class="btn btn-ghost btn-sm" @click="editHookFromOverview(h.id)">编辑</button>
+                    </template>
+                    <button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id"><span x-text="testing===h.id?'发送中…':'测试'"></span></button>
+                    <button class="btn btn-danger btn-sm" @click="deleteHook(h.id)">删除</button>
+                  </div>
+                </td>
               </tr>
             </template>
           </tbody>
@@ -376,7 +389,7 @@
           const isEdit=!!this.editingHook;
           const r=await fetch(isEdit?`api/custom-hooks/${this.form.id}`:'api/custom-hooks',{method:isEdit?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.form)});
           const j=await r.json();
-          if(j.ok){this.modalOpen=false;this.customOk=true;this.customMsg=j.msg||'操作成功';await this.loadCustomHooks();await this.loadHooks();setTimeout(()=>this.customMsg='',3000);}
+          if(j.ok){this.modalOpen=false;const msg=j.msg||'操作成功';this.customOk=true;this.customMsg=msg;this.testOk=true;this.testMsg=msg;await this.loadCustomHooks();await this.loadHooks();setTimeout(()=>{this.customMsg='';this.testMsg='';},3000);}
           else{this.modalErr=j.msg||'操作失败';}
         }catch(e){this.modalErr='网络错误：'+e.message;}
         this.modalSaving=false;
@@ -389,6 +402,19 @@
           if(j.ok){await this.loadCustomHooks();await this.loadHooks();}
           setTimeout(()=>this.customMsg='',3000);
         }catch(e){this.customOk=false;this.customMsg='网络错误：'+e.message;}
+      },
+      async deleteHook(id){
+        if(!confirm(`确认删除 Hook "${id}"？此操作不可撤销。`))return;
+        try{
+          const r=await fetch(`api/hooks/${id}`,{method:'DELETE'});const j=await r.json();
+          this.testOk=j.ok;this.testMsg=j.msg||(j.ok?'已删除':'删除失败');
+          if(j.ok){await this.loadHooks();await this.loadCustomHooks();}
+          setTimeout(()=>this.testMsg='',3000);
+        }catch(e){this.testOk=false;this.testMsg='网络错误：'+e.message;}
+      },
+      editHookFromOverview(id){
+        const h=this.customHooks.find(c=>c.id===id);
+        if(h){this.openEditModal(h);}
       },
       hasPlatformValue(p){return p.fields.some(f=>this.cfg[f.key]);},
       get filteredLogs(){return this.logs.filter(l=>{const okId=!this.logFilter||l.hookID.includes(this.logFilter);const okSt=!this.logStatus||(this.logStatus==='success'?l.success:!l.success);return okId&&okSt;});},
