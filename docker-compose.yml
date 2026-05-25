@@ -38,7 +38,7 @@ services:
     volumes:
       # hooks 目录：存放各平台的 hook 配置 YAML
       - ./hooks:/hooks:ro
-      # notify 目录：存放各平台的通知脚本
+      # notify 目录：存放各平台的通知脚本（可选，没有此目录也能正常启动）
       - ./notify:/notify
-    # 确保通知脚本有执行权限
-    entrypoint: ["/bin/sh", "-c", "chmod +x /notify/*.sh && /usr/bin/webhook"]
+    # 若 notify 目录为空或不存在，chmod 报错不影响启动
+    entrypoint: ["/bin/sh", "-c", "chmod +x /notify/*.sh 2>/dev/null || true; exec /usr/bin/webhook"]
