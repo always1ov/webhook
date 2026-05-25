@@ -14,29 +14,6 @@ services:
       WEBUI: "true"
       CUSTOM_HOOKS_FILE: "/data/custom-hooks.json"
       NOTIFY_CONFIG_FILE: "/data/notify.config.json"
-
-      # 飞书
-      FEISHU_WEBHOOK_URL: ""
-
-      # 钉钉
-      DINGTALK_WEBHOOK_URL: ""
-      DINGTALK_SECRET: ""
-
-      # 企业微信
-      WECOM_WEBHOOK_URL: ""
-
-      # Telegram
-      TELEGRAM_BOT_TOKEN: ""
-      TELEGRAM_CHAT_ID: ""
-
-      # Slack
-      SLACK_WEBHOOK_URL: ""
-
-      # Discord
-      DISCORD_WEBHOOK_URL: ""
-
-      # Server酱
-      SERVERCHAN_SENDKEY: ""
     volumes:
       - ./hooks:/hooks
       - ./data:/data

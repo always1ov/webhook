@@ -11,11 +11,6 @@ type NotifyConfig struct {
 	DingtalkWebhookURL string `json:"dingtalk_webhook_url"`
 	DingtalkSecret     string `json:"dingtalk_secret"`
 	WecomWebhookURL    string `json:"wecom_webhook_url"`
-	TelegramBotToken   string `json:"telegram_bot_token"`
-	TelegramChatID     string `json:"telegram_chat_id"`
-	SlackWebhookURL    string `json:"slack_webhook_url"`
-	DiscordWebhookURL  string `json:"discord_webhook_url"`
-	ServerChanSendKey  string `json:"serverchan_sendkey"`
 }
 
 func LoadNotifyConfig(filePath string) (*NotifyConfig, error) {

@@ -1113,11 +1113,6 @@ func notifyConfigEnvs(filePath string) []string {
 		"dingtalk_webhook_url": "DINGTALK_WEBHOOK_URL",
 		"dingtalk_secret":      "DINGTALK_SECRET",
 		"wecom_webhook_url":    "WECOM_WEBHOOK_URL",
-		"telegram_bot_token":   "TELEGRAM_BOT_TOKEN",
-		"telegram_chat_id":     "TELEGRAM_CHAT_ID",
-		"slack_webhook_url":    "SLACK_WEBHOOK_URL",
-		"discord_webhook_url":  "DISCORD_WEBHOOK_URL",
-		"serverchan_sendkey":   "SERVERCHAN_SENDKEY",
 	}
 	envs := make([]string, 0, len(keyMap))
 	for jsonKey, envKey := range keyMap {
