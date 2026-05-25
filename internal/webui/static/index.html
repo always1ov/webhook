@@ -112,7 +112,6 @@
       background: var(--surface); border: 1px solid var(--border2);
       border-radius: var(--radius); overflow: hidden;
     }
-    .card + .card { margin-top: 10px; }
     .card-head {
       padding: 16px 22px; border-bottom: 1px solid var(--border2);
       display: flex; align-items: center; justify-content: space-between;
@@ -377,7 +376,7 @@
           </div>
         </template>
 
-        <div class="code-hint" x-show="customHooks.length>0">
+        <div class="code-hint">
           <span style="color:var(--faint)">GET &nbsp;</span> http://192.168.0.168:9000/hooks/<span style="color:var(--accent)">{id}</span>?msg=消息&amp;title=标题<br>
           <span style="color:var(--faint)">POST</span> http://192.168.0.168:9000/hooks/<span style="color:var(--accent)">{id}</span>
         </div>
@@ -385,39 +384,45 @@
     </div>
 
     <!-- ═══ 通知配置 ═══ -->
-    <div x-show="tab==='config'" x-cloak style="max-width:540px">
-      <div class="section-title" style="margin-bottom:4px">通知平台配置</div>
-      <div class="section-sub">填写需要接入的平台，保存后立即生效。</div>
+    <div x-show="tab==='config'" x-cloak>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap">
+        <div>
+          <div class="section-title">通知平台配置</div>
+          <div class="section-sub" style="margin-bottom:0">选择需要接入的平台展开填写，保存后立即生效。</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-shrink:0">
+          <button class="btn btn-secondary" @click="loadConfig()">重置</button>
+          <button class="btn btn-primary" @click="saveConfig()" :disabled="saving">
+            <span x-text="saving?'保存中…':'保存配置'"></span>
+          </button>
+        </div>
+      </div>
 
       <div x-show="saveMsg" x-transition :class="saveOk?'alert alert-ok':'alert alert-err'" x-text="saveMsg"></div>
 
-      <div style="display:flex;flex-direction:column;gap:8px">
+      <!-- 2-column grid on wide screens -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;align-items:start">
         <template x-for="p in platforms" :key="p.key">
-          <div class="card">
-            <div class="card-head" style="cursor:pointer" @click="p.open=!p.open">
-              <div style="display:flex;align-items:center;gap:10px">
-                <span class="card-head-title" x-text="p.name"></span>
-                <span x-show="hasPlatformValue(p)" class="badge badge-ok"><span class="bdot"></span>已配置</span>
-              </div>
-              <svg :style="p.open?'transform:rotate(180deg)':''" style="transition:transform .2s;color:var(--muted)" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-            </div>
-            <div x-show="p.open" style="padding:18px 22px;display:flex;flex-direction:column;gap:14px">
-              <template x-for="f in p.fields" :key="f.key">
-                <div class="field" style="margin-bottom:0">
-                  <label class="field-label" x-text="f.label"></label>
-                  <input class="inp" :type="f.secret?'password':'text'" x-model="cfg[f.key]" :placeholder="f.placeholder">
+          <div>
+            <div class="card">
+              <div class="card-head" style="cursor:pointer" @click="p.open=!p.open">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span class="card-head-title" x-text="p.name"></span>
+                  <span x-show="hasPlatformValue(p)" class="badge badge-ok"><span class="bdot"></span>已配置</span>
                 </div>
-              </template>
+                <svg :style="p.open?'transform:rotate(180deg)':''" style="transition:transform .2s;color:var(--muted);flex-shrink:0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+              <div x-show="p.open" style="padding:18px 22px;display:flex;flex-direction:column;gap:14px">
+                <template x-for="f in p.fields" :key="f.key">
+                  <div class="field" style="margin-bottom:0">
+                    <label class="field-label" x-text="f.label"></label>
+                    <input class="inp" :type="f.secret?'password':'text'" x-model="cfg[f.key]" :placeholder="f.placeholder">
+                  </div>
+                </template>
+              </div>
             </div>
           </div>
         </template>
-      </div>
-
-      <div style="display:flex;gap:10px;margin-top:20px">
-        <button class="btn btn-primary" @click="saveConfig()" :disabled="saving">
-          <span x-text="saving?'保存中…':'保存配置'"></span>
-        </button>
-        <button class="btn btn-secondary" @click="loadConfig()">重置</button>
       </div>
     </div>
 
