@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/soulteary/webhook/internal/rules"
 )
@@ -30,12 +32,12 @@ func writeJSON(w http.ResponseWriter, status int, v interface{}) {
 }
 
 // newMux 创建 WebUI 的 HTTP 路由
-func newMux(basePath, notifyConfigFile string) *http.ServeMux {
+func newMux(basePath, notifyConfigFile, customHooksFile, hooksDir string) *http.ServeMux {
 	mux := http.NewServeMux()
+	scriptsDir := filepath.Join(filepath.Dir(customHooksFile), "scripts")
 
 	// 静态页面
 	mux.HandleFunc(basePath+"/", func(w http.ResponseWriter, r *http.Request) {
-		// 只服务根路径，非 API 的请求都返回 SPA
 		if strings.HasPrefix(r.URL.Path, basePath+"/api/") {
 			http.NotFound(w, r)
 			return
@@ -70,7 +72,6 @@ func newMux(basePath, notifyConfigFile string) *http.ServeMux {
 			writeJSON(w, http.StatusMethodNotAllowed, apiResponse{Msg: "method not allowed"})
 			return
 		}
-		// 解析 /api/hooks/{id}/test
 		suffix := strings.TrimPrefix(r.URL.Path, basePath+"/api/hooks/")
 		parts := strings.SplitN(suffix, "/", 2)
 		if len(parts) != 2 || parts[1] != "test" {
@@ -86,8 +87,6 @@ func newMux(basePath, notifyConfigFile string) *http.ServeMux {
 			writeJSON(w, http.StatusNotFound, apiResponse{Msg: fmt.Sprintf("hook %q not found", hookID)})
 			return
 		}
-		// 用 HTTP client 向本服务自身发送测试请求
-		// serverAddr 在 Handler 初始化时注入
 		testURL := fmt.Sprintf("http://%s/hooks/%s?msg=测试消息&title=WebUI+Test", serverAddr, hookID)
 		resp, err := http.Get(testURL) // #nosec G107 -- URL 由内部构造，hookID 已校验存在
 		if err != nil {
@@ -118,7 +117,6 @@ func newMux(basePath, notifyConfigFile string) *http.ServeMux {
 				return
 			}
 			writeJSON(w, http.StatusOK, apiResponse{OK: true, Data: cfg})
-
 		case http.MethodPost:
 			var cfg NotifyConfig
 			if err := json.NewDecoder(r.Body).Decode(&cfg); err != nil {
@@ -130,6 +128,142 @@ func newMux(basePath, notifyConfigFile string) *http.ServeMux {
 				return
 			}
 			writeJSON(w, http.StatusOK, apiResponse{OK: true, Msg: "配置已保存"})
+		default:
+			writeJSON(w, http.StatusMethodNotAllowed, apiResponse{Msg: "method not allowed"})
+		}
+	})
+
+	// GET  /api/custom-hooks        — 列出自定义推送 Hook
+	// POST /api/custom-hooks        — 新增自定义推送 Hook
+	mux.HandleFunc(basePath+"/api/custom-hooks", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			hooks, err := LoadCustomHooks(customHooksFile)
+			if err != nil {
+				writeJSON(w, http.StatusInternalServerError, apiResponse{Msg: fmt.Sprintf("load failed: %v", err)})
+				return
+			}
+			writeJSON(w, http.StatusOK, apiResponse{OK: true, Data: hooks})
+
+		case http.MethodPost:
+			var h CustomHook
+			if err := json.NewDecoder(r.Body).Decode(&h); err != nil {
+				writeJSON(w, http.StatusBadRequest, apiResponse{Msg: fmt.Sprintf("invalid JSON: %v", err)})
+				return
+			}
+			if err := ValidateCustomHookID(h.ID); err != nil {
+				writeJSON(w, http.StatusBadRequest, apiResponse{Msg: err.Error()})
+				return
+			}
+			if h.TargetURL == "" {
+				writeJSON(w, http.StatusBadRequest, apiResponse{Msg: "targetURL 不能为空"})
+				return
+			}
+			hooks, err := LoadCustomHooks(customHooksFile)
+			if err != nil {
+				writeJSON(w, http.StatusInternalServerError, apiResponse{Msg: fmt.Sprintf("load failed: %v", err)})
+				return
+			}
+			for _, existing := range hooks {
+				if existing.ID == h.ID {
+					writeJSON(w, http.StatusConflict, apiResponse{Msg: fmt.Sprintf("ID %q 已存在", h.ID)})
+					return
+				}
+			}
+			h.CreatedAt = time.Now()
+			h.UpdatedAt = h.CreatedAt
+			if err := WriteCustomHookFiles(hooksDir, scriptsDir, h); err != nil {
+				writeJSON(w, http.StatusInternalServerError, apiResponse{Msg: fmt.Sprintf("write files failed: %v", err)})
+				return
+			}
+			hooks = append(hooks, h)
+			if err := SaveCustomHooks(customHooksFile, hooks); err != nil {
+				writeJSON(w, http.StatusInternalServerError, apiResponse{Msg: fmt.Sprintf("save failed: %v", err)})
+				return
+			}
+			writeJSON(w, http.StatusOK, apiResponse{OK: true, Msg: fmt.Sprintf("推送 %q 已创建", h.ID), Data: h})
+
+		default:
+			writeJSON(w, http.StatusMethodNotAllowed, apiResponse{Msg: "method not allowed"})
+		}
+	})
+
+	// PUT    /api/custom-hooks/{id} — 更新自定义推送 Hook
+	// DELETE /api/custom-hooks/{id} — 删除自定义推送 Hook
+	mux.HandleFunc(basePath+"/api/custom-hooks/", func(w http.ResponseWriter, r *http.Request) {
+		id := strings.TrimPrefix(r.URL.Path, basePath+"/api/custom-hooks/")
+		id = strings.TrimSuffix(id, "/")
+		if id == "" {
+			writeJSON(w, http.StatusBadRequest, apiResponse{Msg: "id is required"})
+			return
+		}
+
+		switch r.Method {
+		case http.MethodPut:
+			var h CustomHook
+			if err := json.NewDecoder(r.Body).Decode(&h); err != nil {
+				writeJSON(w, http.StatusBadRequest, apiResponse{Msg: fmt.Sprintf("invalid JSON: %v", err)})
+				return
+			}
+			h.ID = id
+			if h.TargetURL == "" {
+				writeJSON(w, http.StatusBadRequest, apiResponse{Msg: "targetURL 不能为空"})
+				return
+			}
+			hooks, err := LoadCustomHooks(customHooksFile)
+			if err != nil {
+				writeJSON(w, http.StatusInternalServerError, apiResponse{Msg: fmt.Sprintf("load failed: %v", err)})
+				return
+			}
+			found := false
+			for i, existing := range hooks {
+				if existing.ID == id {
+					h.CreatedAt = existing.CreatedAt
+					h.UpdatedAt = time.Now()
+					hooks[i] = h
+					found = true
+					break
+				}
+			}
+			if !found {
+				writeJSON(w, http.StatusNotFound, apiResponse{Msg: fmt.Sprintf("hook %q not found", id)})
+				return
+			}
+			if err := WriteCustomHookFiles(hooksDir, scriptsDir, h); err != nil {
+				writeJSON(w, http.StatusInternalServerError, apiResponse{Msg: fmt.Sprintf("write files failed: %v", err)})
+				return
+			}
+			if err := SaveCustomHooks(customHooksFile, hooks); err != nil {
+				writeJSON(w, http.StatusInternalServerError, apiResponse{Msg: fmt.Sprintf("save failed: %v", err)})
+				return
+			}
+			writeJSON(w, http.StatusOK, apiResponse{OK: true, Msg: fmt.Sprintf("推送 %q 已更新", id), Data: h})
+
+		case http.MethodDelete:
+			hooks, err := LoadCustomHooks(customHooksFile)
+			if err != nil {
+				writeJSON(w, http.StatusInternalServerError, apiResponse{Msg: fmt.Sprintf("load failed: %v", err)})
+				return
+			}
+			newHooks := hooks[:0]
+			found := false
+			for _, h := range hooks {
+				if h.ID == id {
+					found = true
+				} else {
+					newHooks = append(newHooks, h)
+				}
+			}
+			if !found {
+				writeJSON(w, http.StatusNotFound, apiResponse{Msg: fmt.Sprintf("hook %q not found", id)})
+				return
+			}
+			DeleteCustomHookFiles(hooksDir, scriptsDir, id)
+			if err := SaveCustomHooks(customHooksFile, newHooks); err != nil {
+				writeJSON(w, http.StatusInternalServerError, apiResponse{Msg: fmt.Sprintf("save failed: %v", err)})
+				return
+			}
+			writeJSON(w, http.StatusOK, apiResponse{OK: true, Msg: fmt.Sprintf("推送 %q 已删除", id)})
 
 		default:
 			writeJSON(w, http.StatusMethodNotAllowed, apiResponse{Msg: "method not allowed"})

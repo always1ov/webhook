@@ -10,23 +10,13 @@
       theme: {
         extend: {
           colors: {
-            bg:       '#000000',
-            surface:  '#111111',
-            elevated: '#1a1a1a',
-            border:   '#2e2e2e',
-            subtle:   '#1a1a1a',
-            ink:      '#ededed',
-            muted:    '#888888',
-            faint:    '#444444',
-            accent:   '#0070f3',
-            accenth:  '#0060df',
-            ok:       '#3ecf8e',
-            err:      '#ff4040',
-            warn:     '#f5a623',
+            bg:'#000',surface:'#111',elevated:'#1a1a1a',border:'#2e2e2e',subtle:'#1a1a1a',
+            ink:'#ededed',muted:'#888',faint:'#444',
+            accent:'#0070f3',accenth:'#0060df',ok:'#3ecf8e',err:'#ff4040',warn:'#f5a623',
           },
-          fontFamily: {
-            sans: ['Geist', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-            mono: ['Geist Mono', 'Fira Code', 'ui-monospace', 'monospace'],
+          fontFamily:{
+            sans:['Geist','Inter','-apple-system','BlinkMacSystemFont','sans-serif'],
+            mono:['Geist Mono','Fira Code','ui-monospace','monospace'],
           },
         }
       }
@@ -35,97 +25,64 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    [x-cloak] { display: none !important; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    [x-cloak]{display:none!important;}
+    body{background:#000;color:#ededed;font-family:'Geist','Inter',-apple-system,sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
 
-    body {
-      background: #000;
-      color: #ededed;
-      font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 14px;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
+    .inp{height:34px;background:#111;border:1px solid #2e2e2e;border-radius:6px;padding:0 10px;color:#ededed;font-size:13px;font-family:inherit;outline:none;width:100%;transition:border-color .15s,box-shadow .15s;}
+    .inp:focus{border-color:#0070f3;box-shadow:0 0 0 3px rgba(0,112,243,.15);}
+    .inp::placeholder{color:#444;}
+    textarea.inp{height:auto;padding:8px 10px;resize:vertical;font-family:'Geist Mono','Fira Code',monospace;font-size:12px;}
+    select.inp{cursor:pointer;}
 
-    .inp {
-      height: 34px;
-      background: #111;
-      border: 1px solid #2e2e2e;
-      border-radius: 6px;
-      padding: 0 10px;
-      color: #ededed;
-      font-size: 13px;
-      font-family: inherit;
-      outline: none;
-      width: 100%;
-      transition: border-color .15s, box-shadow .15s;
-    }
-    .inp:focus { border-color: #0070f3; box-shadow: 0 0 0 3px rgba(0,112,243,.15); }
-    .inp::placeholder { color: #444; }
-    select.inp { cursor: pointer; }
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 14px;font-size:13px;font-weight:500;font-family:inherit;border-radius:6px;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s,opacity .15s;border:1px solid transparent;}
+    .btn:disabled{opacity:.4;cursor:not-allowed;}
+    .btn-primary{background:#0070f3;color:#fff;}
+    .btn-primary:not(:disabled):hover{background:#0060df;}
+    .btn-ghost{background:transparent;color:#ededed;border-color:#2e2e2e;}
+    .btn-ghost:not(:disabled):hover{background:#111;border-color:#444;}
+    .btn-danger{background:transparent;color:#ff4040;border-color:rgba(255,64,64,.3);}
+    .btn-danger:not(:disabled):hover{background:rgba(255,64,64,.08);}
+    .btn-sm{height:28px;padding:0 10px;font-size:12px;}
 
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      height: 34px; padding: 0 14px;
-      font-size: 13px; font-weight: 500; font-family: inherit;
-      border-radius: 6px; cursor: pointer; white-space: nowrap;
-      transition: background .15s, border-color .15s, opacity .15s;
-      border: 1px solid transparent;
-    }
-    .btn:disabled { opacity: .4; cursor: not-allowed; }
-    .btn-primary { background: #0070f3; color: #fff; }
-    .btn-primary:not(:disabled):hover { background: #0060df; }
-    .btn-ghost { background: transparent; color: #ededed; border-color: #2e2e2e; }
-    .btn-ghost:not(:disabled):hover { background: #111; border-color: #444; }
-    .btn-sm { height: 28px; padding: 0 10px; font-size: 12px; }
+    .card{background:#111;border:1px solid #1f1f1f;border-radius:10px;overflow:hidden;}
+    .card-header{padding:14px 20px;border-bottom:1px solid #1a1a1a;display:flex;align-items:center;justify-content:space-between;}
+    .card-title{font-size:13px;font-weight:500;color:#ededed;}
 
-    .card { background: #111; border: 1px solid #1f1f1f; border-radius: 10px; overflow: hidden; }
-    .card-header {
-      padding: 14px 20px; border-bottom: 1px solid #1a1a1a;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .card-title { font-size: 13px; font-weight: 500; color: #ededed; }
+    .badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;}
+    .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+    .badge-ok{color:#3ecf8e;background:rgba(62,207,142,.1);}.badge-ok .dot{background:#3ecf8e;}
+    .badge-err{color:#ff4040;background:rgba(255,64,64,.1);}.badge-err .dot{background:#ff4040;}
 
-    .badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 4px;
-    }
-    .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .badge-ok   { color: #3ecf8e; background: rgba(62,207,142,.1); }
-    .badge-ok .dot   { background: #3ecf8e; }
-    .badge-err  { color: #ff4040; background: rgba(255,64,64,.1); }
-    .badge-err .dot  { background: #ff4040; }
+    table{width:100%;border-collapse:collapse;}
+    th{text-align:left;padding:8px 20px;font-size:11px;font-weight:500;color:#555;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #1a1a1a;}
+    td{padding:11px 20px;border-bottom:1px solid #161616;color:#aaa;}
+    tr:last-child td{border-bottom:none;}
+    tbody tr:hover td{background:rgba(255,255,255,.02);}
 
-    table { width: 100%; border-collapse: collapse; }
-    th {
-      text-align: left; padding: 8px 20px;
-      font-size: 11px; font-weight: 500; color: #555;
-      text-transform: uppercase; letter-spacing: .06em;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    td { padding: 11px 20px; border-bottom: 1px solid #161616; color: #aaa; }
-    tr:last-child td { border-bottom: none; }
-    tbody tr:hover td { background: rgba(255,255,255,.02); }
+    ::-webkit-scrollbar{width:4px;height:4px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:#2e2e2e;border-radius:2px;}
 
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #2e2e2e; border-radius: 2px; }
+    .alert{padding:10px 14px;border-radius:8px;font-size:13px;border:1px solid;margin-bottom:16px;}
+    .alert-ok{color:#3ecf8e;background:rgba(62,207,142,.08);border-color:rgba(62,207,142,.2);}
+    .alert-err{color:#ff4040;background:rgba(255,64,64,.08);border-color:rgba(255,64,64,.2);}
 
-    .alert { padding: 10px 14px; border-radius: 8px; font-size: 13px; border: 1px solid; margin-bottom: 16px; }
-    .alert-ok  { color: #3ecf8e; background: rgba(62,207,142,.08); border-color: rgba(62,207,142,.2); }
-    .alert-err { color: #ff4040; background: rgba(255,64,64,.08); border-color: rgba(255,64,64,.2); }
+    .mono{font-family:'Geist Mono','Fira Code',monospace;}
+    .tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600;font-family:monospace;background:#1a1a1a;border:1px solid #2e2e2e;color:#666;}
+    .stat{padding:20px 24px;}
+    .stat-label{font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+    .stat-value{font-size:30px;font-weight:600;line-height:1;}
 
-    .mono { font-family: 'Geist Mono', 'Fira Code', monospace; }
-
-    .tag {
-      display: inline-block; padding: 1px 6px; border-radius: 4px;
-      font-size: 11px; font-weight: 600; font-family: monospace;
-      background: #1a1a1a; border: 1px solid #2e2e2e; color: #666;
-    }
-
-    .stat { padding: 20px 24px; }
-    .stat-label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
-    .stat-value { font-size: 30px; font-weight: 600; line-height: 1; }
+    /* 模态框 */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .modal{background:#111;border:1px solid #2e2e2e;border-radius:12px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+    .modal-header{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between;}
+    .modal-body{padding:20px 24px;}
+    .modal-footer{padding:0 24px 20px;display:flex;gap:10px;justify-content:flex-end;}
+    .field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+    .field-label{font-size:12px;color:#555;font-weight:500;}
+    .field-hint{font-size:11px;color:#444;margin-top:3px;}
   </style>
 </head>
 
@@ -134,14 +91,10 @@
   <!-- Header -->
   <header style="position:sticky;top:0;z-index:50;border-bottom:1px solid #1a1a1a;background:rgba(0,0,0,.85);backdrop-filter:blur(16px);">
     <div style="max-width:1100px;margin:0 auto;padding:0 24px;height:54px;display:flex;align-items:center;gap:32px;">
-
       <div style="display:flex;align-items:center;gap:9px;flex-shrink:0;">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <polygon points="9,1 17,14 1,14" fill="#0070f3"/>
-        </svg>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polygon points="9,1 17,14 1,14" fill="#0070f3"/></svg>
         <span style="font-weight:600;font-size:14px;color:#ededed;">Webhook</span>
       </div>
-
       <nav style="display:flex;height:54px;">
         <template x-for="t in tabs" :key="t.id">
           <button @click="switchTab(t.id)"
@@ -151,7 +104,6 @@
           </button>
         </template>
       </nav>
-
       <div style="margin-left:auto;display:flex;align-items:center;gap:7px;font-size:12px;color:#555;">
         <span style="width:6px;height:6px;border-radius:50%;background:#3ecf8e;display:inline-block;"></span>
         运行中
@@ -161,78 +113,103 @@
 
   <main style="max-width:1100px;margin:0 auto;padding:32px 24px 64px;">
 
-    <!-- DASHBOARD -->
+    <!-- ═══ DASHBOARD ═══ -->
     <div x-show="tab==='dashboard'">
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;">
-        <div class="card stat">
-          <div class="stat-label">已加载 Hook</div>
-          <div class="stat-value" style="color:#ededed;" x-text="hooks.length">0</div>
-        </div>
-        <div class="card stat">
-          <div class="stat-label">成功执行</div>
-          <div class="stat-value" style="color:#3ecf8e;" x-text="successCount">0</div>
-        </div>
-        <div class="card stat">
-          <div class="stat-label">失败执行</div>
-          <div class="stat-value" style="color:#ff4040;" x-text="errorCount">0</div>
-        </div>
+        <div class="card stat"><div class="stat-label">已加载 Hook</div><div class="stat-value" style="color:#ededed;" x-text="hooks.length">0</div></div>
+        <div class="card stat"><div class="stat-label">成功执行</div><div class="stat-value" style="color:#3ecf8e;" x-text="successCount">0</div></div>
+        <div class="card stat"><div class="stat-label">失败执行</div><div class="stat-value" style="color:#ff4040;" x-text="errorCount">0</div></div>
       </div>
-
       <div class="card">
         <div class="card-header">
           <span class="card-title">已注册的 Hook</span>
           <button class="btn btn-ghost btn-sm" @click="loadHooks()">刷新</button>
         </div>
-        <div x-show="hooks.length===0" style="padding:56px;text-align:center;color:#444;font-size:13px;">
-          hooks/ 目录下暂无配置文件
-        </div>
+        <div x-show="hooks.length===0" style="padding:56px;text-align:center;color:#444;font-size:13px;">hooks/ 目录下暂无配置文件</div>
         <table x-show="hooks.length>0">
-          <thead>
-            <tr>
-              <th>Hook ID</th>
-              <th>执行命令</th>
-              <th>HTTP 方法</th>
-              <th>触发规则</th>
-              <th style="width:90px;"></th>
-            </tr>
-          </thead>
+          <thead><tr><th>Hook ID</th><th>执行命令</th><th>HTTP 方法</th><th>触发规则</th><th style="width:90px;"></th></tr></thead>
           <tbody>
             <template x-for="h in hooks" :key="h.id">
               <tr>
                 <td><span class="mono" style="color:#0070f3;font-size:13px;" x-text="h.id"></span></td>
                 <td><span class="mono" style="color:#666;font-size:12px;" x-text="h.executeCommand"></span></td>
-                <td>
-                  <template x-for="m in (h.httpMethods||[])" :key="m">
-                    <span class="tag" x-text="m" style="margin-right:3px;"></span>
-                  </template>
-                </td>
+                <td><template x-for="m in (h.httpMethods||[])" :key="m"><span class="tag" x-text="m" style="margin-right:3px;"></span></template></td>
                 <td>
                   <span x-show="h.hasTriggerRule" class="badge badge-ok"><span class="dot"></span>有规则</span>
                   <span x-show="!h.hasTriggerRule" style="color:#333;">—</span>
                 </td>
-                <td>
-                  <button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id">
-                    <span x-text="testing===h.id?'发送中…':'测试'"></span>
-                  </button>
-                </td>
+                <td><button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id"><span x-text="testing===h.id?'发送中…':'测试'"></span></button></td>
               </tr>
             </template>
           </tbody>
         </table>
       </div>
-
       <div x-show="testMsg" x-transition style="margin-top:12px;" :class="testOk?'alert alert-ok':'alert alert-err'" x-text="testMsg"></div>
     </div>
 
-    <!-- CONFIG -->
+    <!-- ═══ 自定义推送 ═══ -->
+    <div x-show="tab==='custom'" x-cloak>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div>
+          <h2 style="font-size:15px;font-weight:600;color:#ededed;margin-bottom:3px;">自定义推送</h2>
+          <p style="font-size:13px;color:#555;">添加任意 HTTP Webhook 推送，保存后热重载立即生效。</p>
+        </div>
+        <button class="btn btn-primary" @click="openCreateModal()">+ 新建推送</button>
+      </div>
+
+      <div x-show="customMsg" x-transition :class="customOk?'alert alert-ok':'alert alert-err'" style="margin-bottom:16px;" x-text="customMsg"></div>
+
+      <!-- 空状态 -->
+      <div x-show="customHooks.length===0" class="card" style="padding:56px;text-align:center;color:#444;">
+        <div style="font-size:13px;margin-bottom:8px;">还没有自定义推送</div>
+        <div style="font-size:12px;color:#333;">点击右上角「新建推送」添加第一个</div>
+      </div>
+
+      <!-- Hook 卡片列表 -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <template x-for="h in customHooks" :key="h.id">
+          <div class="card">
+            <div style="padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+              <div style="min-width:0;flex:1;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                  <span style="font-size:14px;font-weight:500;color:#ededed;" x-text="h.name"></span>
+                  <span class="tag" x-text="h.method||'POST'"></span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                  <span style="font-size:11px;color:#555;">触发地址:</span>
+                  <span class="mono" style="font-size:12px;color:#0070f3;" x-text="'/hooks/'+h.id"></span>
+                </div>
+                <div style="font-size:12px;color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" x-text="h.targetURL"></div>
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id">
+                  <span x-text="testing===h.id?'发送中…':'测试'"></span>
+                </button>
+                <button class="btn btn-ghost btn-sm" @click="openEditModal(h)">编辑</button>
+                <button class="btn btn-danger btn-sm" @click="deleteCustomHook(h.id)">删除</button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- 使用说明 -->
+      <div x-show="customHooks.length>0" style="margin-top:20px;padding:16px 20px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;">
+        <div style="font-size:12px;color:#555;margin-bottom:8px;font-weight:500;">调用方式</div>
+        <div class="mono" style="font-size:12px;color:#666;">
+          GET &nbsp;http://192.168.0.168:9000/hooks/<span style="color:#0070f3;">{id}</span>?msg=消息内容&amp;title=标题<br>
+          POST http://192.168.0.168:9000/hooks/<span style="color:#0070f3;">{id}</span> &nbsp;{"msg":"消息内容","title":"标题"}
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 通知配置 ═══ -->
     <div x-show="tab==='config'" x-cloak style="max-width:560px;">
       <div style="margin-bottom:24px;">
         <h2 style="font-size:15px;font-weight:600;color:#ededed;margin-bottom:4px;">通知平台配置</h2>
-        <p style="font-size:13px;color:#555;">填写需要的平台，保存后立即生效。不需要的平台留空即可。</p>
+        <p style="font-size:13px;color:#555;">填写需要的平台，保存后立即生效。</p>
       </div>
-
       <div x-show="saveMsg" x-transition :class="saveOk?'alert alert-ok':'alert alert-err'" x-text="saveMsg"></div>
-
       <div style="display:flex;flex-direction:column;gap:8px;">
         <template x-for="p in platforms" :key="p.key">
           <div class="card">
@@ -254,16 +231,13 @@
           </div>
         </template>
       </div>
-
       <div style="margin-top:20px;display:flex;gap:10px;">
-        <button class="btn btn-primary" @click="saveConfig()" :disabled="saving">
-          <span x-text="saving?'保存中…':'保存配置'"></span>
-        </button>
+        <button class="btn btn-primary" @click="saveConfig()" :disabled="saving"><span x-text="saving?'保存中…':'保存配置'"></span></button>
         <button class="btn btn-ghost" @click="loadConfig()">重置</button>
       </div>
     </div>
 
-    <!-- LOGS -->
+    <!-- ═══ 执行日志 ═══ -->
     <div x-show="tab==='logs'" x-cloak>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;">
         <div style="display:flex;gap:8px;">
@@ -276,23 +250,14 @@
         </div>
         <button class="btn btn-ghost btn-sm" @click="loadLogs()">刷新</button>
       </div>
-
       <div class="card">
         <div x-show="filteredLogs.length===0" style="padding:56px;text-align:center;color:#444;font-size:13px;">暂无日志记录</div>
         <table x-show="filteredLogs.length>0">
-          <thead>
-            <tr>
-              <th>状态</th><th>Hook ID</th><th>时间</th><th>耗时</th><th>来源 IP</th><th>输出</th>
-            </tr>
-          </thead>
+          <thead><tr><th>状态</th><th>Hook ID</th><th>时间</th><th>耗时</th><th>来源 IP</th><th>输出</th></tr></thead>
           <tbody>
             <template x-for="l in filteredLogs" :key="l.id">
               <tr>
-                <td>
-                  <span :class="l.success?'badge badge-ok':'badge badge-err'">
-                    <span class="dot"></span><span x-text="l.success?'成功':'失败'"></span>
-                  </span>
-                </td>
+                <td><span :class="l.success?'badge badge-ok':'badge badge-err'"><span class="dot"></span><span x-text="l.success?'成功':'失败'"></span></span></td>
                 <td><span class="mono" style="color:#0070f3;font-size:13px;" x-text="l.hookID"></span></td>
                 <td style="color:#555;font-size:12px;white-space:nowrap;" x-text="fmtTime(l.timestamp)"></td>
                 <td><span class="mono" style="color:#666;font-size:12px;" x-text="l.durationMS+'ms'"></span></td>
@@ -308,97 +273,196 @@
 
   </main>
 
+  <!-- ═══ 新建/编辑 模态框 ═══ -->
+  <div class="modal-backdrop" x-show="modalOpen" x-cloak @click.self="modalOpen=false" x-transition>
+    <div class="modal" @click.stop>
+      <div class="modal-header">
+        <span style="font-size:15px;font-weight:600;color:#ededed;" x-text="editingHook?'编辑推送':'新建推送'"></span>
+        <button class="btn btn-ghost btn-sm" @click="modalOpen=false" style="border:none;color:#666;">✕</button>
+      </div>
+      <div class="modal-body">
+        <div x-show="modalErr" :class="'alert alert-err'" x-text="modalErr" style="margin-bottom:16px;"></div>
+
+        <div class="field">
+          <label class="field-label">推送 ID <span style="color:#ff4040;">*</span></label>
+          <input class="inp" placeholder="my-notify（小写字母、数字、连字符）" x-model="form.id" :readonly="!!editingHook" :style="editingHook?'color:#555;cursor:not-allowed;':''">
+          <div class="field-hint">决定触发地址：/hooks/<span class="mono" x-text="form.id||'your-id'"></span></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">显示名称 <span style="color:#ff4040;">*</span></label>
+          <input class="inp" placeholder="我的钉钉群" x-model="form.name">
+        </div>
+
+        <div class="field">
+          <label class="field-label">目标 URL <span style="color:#ff4040;">*</span></label>
+          <input class="inp" placeholder="https://your-api.example.com/notify" x-model="form.targetURL">
+          <div class="field-hint">消息会以 HTTP 请求发送到此地址</div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">HTTP 方法</label>
+          <select class="inp" x-model="form.method">
+            <option value="POST">POST（推荐）</option>
+            <option value="GET">GET</option>
+            <option value="PUT">PUT</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label">请求体模板（jq 表达式）</label>
+          <textarea class="inp" rows="3" placeholder='{"msg":$msg,"title":$title}' x-model="form.bodyTemplate"></textarea>
+          <div class="field-hint">
+            可用变量：<span class="mono" style="color:#0070f3;">$msg</span>（消息内容）、<span class="mono" style="color:#0070f3;">$title</span>（标题）。
+            留空使用默认格式。
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label class="field-label">附加请求头（可选）</label>
+          <textarea class="inp" rows="3" placeholder="Authorization: Bearer token123&#10;X-Custom-Header: value" x-model="form.headers"></textarea>
+          <div class="field-hint">每行一个，格式：Key: Value</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" @click="modalOpen=false">取消</button>
+        <button class="btn btn-primary" @click="submitModal()" :disabled="modalSaving">
+          <span x-text="modalSaving?'保存中…':(editingHook?'保存修改':'创建推送')"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script>
   function app() {
     return {
       tab: 'dashboard',
-      tabs: [{id:'dashboard',label:'概览'},{id:'config',label:'通知配置'},{id:'logs',label:'执行日志'}],
-      hooks: [], logs: [], cfg: {},
-      testing: null, testMsg: '', testOk: false,
-      saveMsg: '', saveOk: false, saving: false,
-      logFilter: '', logStatus: '',
-      successCount: 0, errorCount: 0,
+      tabs: [
+        {id:'dashboard',label:'概览'},
+        {id:'custom',label:'自定义推送'},
+        {id:'config',label:'通知配置'},
+        {id:'logs',label:'执行日志'},
+      ],
 
-      platforms: [
-        { key:'feishu', name:'飞书', open:false, fields:[
-          { key:'feishuWebhookURL', label:'Webhook URL', placeholder:'https://open.feishu.cn/open-apis/bot/v2/hook/...', secret:false }
+      // dashboard
+      hooks:[], successCount:0, errorCount:0,
+      testing:null, testMsg:'', testOk:false,
+
+      // custom hooks
+      customHooks:[], customMsg:'', customOk:false,
+
+      // modal
+      modalOpen:false, editingHook:null, modalSaving:false, modalErr:'',
+      form:{id:'',name:'',targetURL:'',method:'POST',bodyTemplate:'',headers:''},
+
+      // config
+      cfg:{}, saveMsg:'', saveOk:false, saving:false,
+
+      // logs
+      logs:[], logFilter:'', logStatus:'',
+
+      platforms:[
+        {key:'feishu',name:'飞书',open:false,fields:[{key:'feishuWebhookURL',label:'Webhook URL',placeholder:'https://open.feishu.cn/open-apis/bot/v2/hook/...',secret:false}]},
+        {key:'dingtalk',name:'钉钉',open:false,fields:[
+          {key:'dingtalkWebhookURL',label:'Webhook URL',placeholder:'https://oapi.dingtalk.com/robot/send?access_token=...',secret:false},
+          {key:'dingtalkSecret',label:'加签密钥（可选）',placeholder:'SEC...',secret:true}
         ]},
-        { key:'dingtalk', name:'钉钉', open:false, fields:[
-          { key:'dingtalkWebhookURL', label:'Webhook URL', placeholder:'https://oapi.dingtalk.com/robot/send?access_token=...', secret:false },
-          { key:'dingtalkSecret', label:'加签密钥（可选）', placeholder:'SEC...', secret:true }
+        {key:'wecom',name:'企业微信',open:false,fields:[{key:'wecomWebhookURL',label:'Webhook URL',placeholder:'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=...',secret:false}]},
+        {key:'telegram',name:'Telegram',open:false,fields:[
+          {key:'telegramBotToken',label:'Bot Token',placeholder:'123456789:AAxxxxxx',secret:true},
+          {key:'telegramChatID',label:'Chat ID',placeholder:'-100xxxxxxxxxx',secret:false}
         ]},
-        { key:'wecom', name:'企业微信', open:false, fields:[
-          { key:'wecomWebhookURL', label:'Webhook URL', placeholder:'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=...', secret:false }
-        ]},
-        { key:'telegram', name:'Telegram', open:false, fields:[
-          { key:'telegramBotToken', label:'Bot Token', placeholder:'123456789:AAxxxxxx', secret:true },
-          { key:'telegramChatID',   label:'Chat ID',   placeholder:'-100xxxxxxxxxx',     secret:false }
-        ]},
-        { key:'slack', name:'Slack', open:false, fields:[
-          { key:'slackWebhookURL', label:'Incoming Webhook URL', placeholder:'https://hooks.slack.com/services/...', secret:false }
-        ]},
-        { key:'discord', name:'Discord', open:false, fields:[
-          { key:'discordWebhookURL', label:'Webhook URL', placeholder:'https://discord.com/api/webhooks/...', secret:false }
-        ]},
-        { key:'serverchan', name:'Server酱', open:false, fields:[
-          { key:'serverChanSendKey', label:'SendKey', placeholder:'SCT...', secret:true }
-        ]},
+        {key:'slack',name:'Slack',open:false,fields:[{key:'slackWebhookURL',label:'Incoming Webhook URL',placeholder:'https://hooks.slack.com/services/...',secret:false}]},
+        {key:'discord',name:'Discord',open:false,fields:[{key:'discordWebhookURL',label:'Webhook URL',placeholder:'https://discord.com/api/webhooks/...',secret:false}]},
+        {key:'serverchan',name:'Server酱',open:false,fields:[{key:'serverChanSendKey',label:'SendKey',placeholder:'SCT...',secret:true}]},
       ],
 
       init() {
-        this.loadHooks();
-        this.loadConfig();
-        this.loadLogs();
-        setInterval(() => { if (this.tab==='logs') this.loadLogs(); }, 10000);
+        this.loadHooks(); this.loadConfig(); this.loadLogs(); this.loadCustomHooks();
+        setInterval(()=>{ if(this.tab==='logs') this.loadLogs(); },10000);
       },
 
-      switchTab(t) { this.tab=t; if(t==='logs') this.loadLogs(); },
+      switchTab(t){ this.tab=t; if(t==='logs') this.loadLogs(); if(t==='custom') this.loadCustomHooks(); },
 
-      async loadHooks() {
-        try { const r=await fetch('api/hooks'); const j=await r.json(); if(j.ok) this.hooks=j.data||[]; } catch{}
+      async loadHooks(){
+        try{const r=await fetch('api/hooks');const j=await r.json();if(j.ok)this.hooks=j.data||[];}catch{}
+      },
+      async loadLogs(){
+        try{const r=await fetch('api/logs');const j=await r.json();if(j.ok){this.logs=j.data||[];this.successCount=this.logs.filter(l=>l.success).length;this.errorCount=this.logs.filter(l=>!l.success).length;}}catch{}
+      },
+      async loadConfig(){
+        try{const r=await fetch('api/config');const j=await r.json();if(j.ok)this.cfg=j.data||{};}catch{}
+      },
+      async loadCustomHooks(){
+        try{const r=await fetch('api/custom-hooks');const j=await r.json();if(j.ok)this.customHooks=j.data||[];}catch{}
       },
 
-      async loadLogs() {
-        try {
-          const r=await fetch('api/logs'); const j=await r.json();
+      async saveConfig(){
+        this.saving=true;this.saveMsg='';
+        try{const r=await fetch('api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.cfg)});const j=await r.json();this.saveOk=j.ok;this.saveMsg=j.ok?'配置已保存':(j.msg||'保存失败');}
+        catch(e){this.saveOk=false;this.saveMsg='网络错误：'+e.message;}
+        this.saving=false;setTimeout(()=>this.saveMsg='',3000);
+      },
+
+      async testHook(id){
+        this.testing=id;this.testMsg='';
+        try{const r=await fetch(`api/hooks/${id}/test`,{method:'POST'});const j=await r.json();this.testOk=j.ok;this.testMsg=j.msg||(j.ok?'测试请求已发送':'发送失败');}
+        catch(e){this.testOk=false;this.testMsg='网络错误：'+e.message;}
+        this.testing=null;setTimeout(()=>this.testMsg='',4000);
+      },
+
+      openCreateModal(){
+        this.editingHook=null;
+        this.form={id:'',name:'',targetURL:'',method:'POST',bodyTemplate:'',headers:''};
+        this.modalErr='';this.modalOpen=true;
+      },
+
+      openEditModal(h){
+        this.editingHook=h;
+        this.form={id:h.id,name:h.name,targetURL:h.targetURL,method:h.method||'POST',bodyTemplate:h.bodyTemplate||'',headers:h.headers||''};
+        this.modalErr='';this.modalOpen=true;
+      },
+
+      async submitModal(){
+        this.modalErr='';
+        if(!this.form.id){this.modalErr='请填写推送 ID';return;}
+        if(!this.form.name){this.modalErr='请填写显示名称';return;}
+        if(!this.form.targetURL){this.modalErr='请填写目标 URL';return;}
+        this.modalSaving=true;
+        try{
+          const isEdit=!!this.editingHook;
+          const url=isEdit?`api/custom-hooks/${this.form.id}`:'api/custom-hooks';
+          const method=isEdit?'PUT':'POST';
+          const r=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(this.form)});
+          const j=await r.json();
           if(j.ok){
-            this.logs=j.data||[];
-            this.successCount=this.logs.filter(l=>l.success).length;
-            this.errorCount=this.logs.filter(l=>!l.success).length;
+            this.modalOpen=false;
+            this.customOk=true;this.customMsg=j.msg||'操作成功';
+            await this.loadCustomHooks();
+            await this.loadHooks();
+            setTimeout(()=>this.customMsg='',3000);
+          } else {
+            this.modalErr=j.msg||'操作失败';
           }
-        } catch{}
+        }catch(e){this.modalErr='网络错误：'+e.message;}
+        this.modalSaving=false;
       },
 
-      async loadConfig() {
-        try { const r=await fetch('api/config'); const j=await r.json(); if(j.ok) this.cfg=j.data||{}; } catch{}
-      },
-
-      async saveConfig() {
-        this.saving=true; this.saveMsg='';
-        try {
-          const r=await fetch('api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.cfg)});
+      async deleteCustomHook(id){
+        if(!confirm(`确认删除推送 "${id}"？此操作不可撤销。`))return;
+        try{
+          const r=await fetch(`api/custom-hooks/${id}`,{method:'DELETE'});
           const j=await r.json();
-          this.saveOk=j.ok; this.saveMsg=j.ok?'配置已保存':(j.msg||'保存失败');
-        } catch(e){ this.saveOk=false; this.saveMsg='网络错误：'+e.message; }
-        this.saving=false;
-        setTimeout(()=>this.saveMsg='',3000);
+          this.customOk=j.ok;this.customMsg=j.msg||(j.ok?'已删除':'删除失败');
+          if(j.ok){await this.loadCustomHooks();await this.loadHooks();}
+          setTimeout(()=>this.customMsg='',3000);
+        }catch(e){this.customOk=false;this.customMsg='网络错误：'+e.message;}
       },
 
-      async testHook(id) {
-        this.testing=id; this.testMsg='';
-        try {
-          const r=await fetch(`api/hooks/${id}/test`,{method:'POST'});
-          const j=await r.json();
-          this.testOk=j.ok; this.testMsg=j.msg||(j.ok?'测试请求已发送':'发送失败');
-        } catch(e){ this.testOk=false; this.testMsg='网络错误：'+e.message; }
-        this.testing=null;
-        setTimeout(()=>this.testMsg='',4000);
-      },
+      hasPlatformValue(p){return p.fields.some(f=>this.cfg[f.key]);},
 
-      hasPlatformValue(p) { return p.fields.some(f=>this.cfg[f.key]); },
-
-      get filteredLogs() {
+      get filteredLogs(){
         return this.logs.filter(l=>{
           const okId=!this.logFilter||l.hookID.includes(this.logFilter);
           const okSt=!this.logStatus||(this.logStatus==='success'?l.success:!l.success);
@@ -406,8 +470,8 @@
         });
       },
 
-      fmtTime(ts) {
-        if(!ts) return '—';
+      fmtTime(ts){
+        if(!ts)return'—';
         return new Date(ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
       }
     };
