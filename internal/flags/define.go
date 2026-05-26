@@ -91,8 +91,9 @@ const (
 	// WebUI defaults
 	DEFAULT_WEBUI_ENABLED     = true
 	DEFAULT_WEBUI_PATH        = "/ui"
-	DEFAULT_NOTIFY_CONFIG_FILE = "./notify.config.json"
-	DEFAULT_CUSTOM_HOOKS_FILE  = "./data/custom-hooks.json"
+	DEFAULT_NOTIFY_CONFIG_FILE  = "./notify.config.json"
+	DEFAULT_CUSTOM_HOOKS_FILE   = "./data/custom-hooks.json"
+	DEFAULT_NOTIFY_TARGETS_FILE = "./data/notify-targets.json"
 )
 
 const (
@@ -181,10 +182,11 @@ const (
 	ENV_KEY_HOOKS_DIR = "HOOKS_DIR"
 
 	// WebUI environment keys
-	ENV_KEY_WEBUI_ENABLED      = "WEBUI_ENABLED"
-	ENV_KEY_WEBUI_PATH         = "WEBUI_PATH"
-	ENV_KEY_NOTIFY_CONFIG_FILE = "NOTIFY_CONFIG_FILE"
-	ENV_KEY_CUSTOM_HOOKS_FILE  = "CUSTOM_HOOKS_FILE"
+	ENV_KEY_WEBUI_ENABLED        = "WEBUI_ENABLED"
+	ENV_KEY_WEBUI_PATH           = "WEBUI_PATH"
+	ENV_KEY_NOTIFY_CONFIG_FILE   = "NOTIFY_CONFIG_FILE"
+	ENV_KEY_CUSTOM_HOOKS_FILE    = "CUSTOM_HOOKS_FILE"
+	ENV_KEY_NOTIFY_TARGETS_FILE  = "NOTIFY_TARGETS_FILE"
 )
 
 type AppFlags struct {
@@ -275,8 +277,9 @@ type AppFlags struct {
 	HooksDir string
 
 	// WebUI settings
-	WebUIEnabled      bool
-	WebUIPath         string
-	NotifyConfigFile  string
-	CustomHooksFile   string
+	WebUIEnabled        bool
+	WebUIPath           string
+	NotifyConfigFile    string
+	CustomHooksFile     string
+	NotifyTargetsFile   string
 }

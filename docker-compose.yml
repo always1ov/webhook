@@ -13,7 +13,7 @@ services:
       LANGUAGE: "zh-CN"
       WEBUI: "true"
       CUSTOM_HOOKS_FILE: "/data/custom-hooks.json"
-      NOTIFY_CONFIG_FILE: "/data/notify.config.json"
+      NOTIFY_TARGETS_FILE: "/data/notify-targets.json"
     volumes:
       - ./hooks:/hooks
       - ./data:/data

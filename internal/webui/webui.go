@@ -8,7 +8,7 @@ import (
 //go:embed static/index.html
 var staticFiles embed.FS
 
-func Handler(basePath, customHooksFile, hooksDir, addr string) (http.Handler, error) {
-	s := newServer(basePath, customHooksFile, hooksDir, addr)
+func Handler(basePath, customHooksFile, hooksDir, notifyTargetsFile, addr string) (http.Handler, error) {
+	s := newServer(basePath, customHooksFile, hooksDir, notifyTargetsFile, addr)
 	return s.routes(), nil
 }

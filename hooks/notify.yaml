@@ -1,0 +1,20 @@
+- id: notify
+  execute-command: /notify/notify.sh
+  command-working-directory: /
+  http-methods:
+    - GET
+    - POST
+  pass-arguments-to-command:
+    - source: entire-payload
+      name: payload
+  pass-environment-to-command:
+    - source: url
+      name: msg
+      env-name: MSG
+    - source: url
+      name: title
+      env-name: TITLE
+    - source: header
+      name: X-Webhook-Title
+      env-name: TITLE
+  response-message: "通知已发送"

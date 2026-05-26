@@ -27,20 +27,22 @@ type apiResponse struct {
 }
 
 type server struct {
-	basePath        string
-	customHooksFile string
-	hooksDir        string
-	scriptsDir      string
-	addr            string
+	basePath           string
+	customHooksFile    string
+	hooksDir           string
+	scriptsDir         string
+	notifyTargetsFile  string
+	addr               string
 }
 
-func newServer(basePath, customHooksFile, hooksDir, addr string) *server {
+func newServer(basePath, customHooksFile, hooksDir, notifyTargetsFile, addr string) *server {
 	return &server{
-		basePath:        basePath,
-		customHooksFile: customHooksFile,
-		hooksDir:        hooksDir,
-		scriptsDir:      filepath.Join(filepath.Dir(customHooksFile), "scripts"),
-		addr:            addr,
+		basePath:          basePath,
+		customHooksFile:   customHooksFile,
+		hooksDir:          hooksDir,
+		scriptsDir:        filepath.Join(filepath.Dir(customHooksFile), "scripts"),
+		notifyTargetsFile: notifyTargetsFile,
+		addr:              addr,
 	}
 }
 
@@ -52,6 +54,7 @@ func (s *server) routes() *http.ServeMux {
 	mux.HandleFunc(s.basePath+"/api/logs", s.listLogs)
 	mux.HandleFunc(s.basePath+"/api/custom-hooks", s.handleCustomHooks)
 	mux.HandleFunc(s.basePath+"/api/custom-hooks/", s.handleCustomHookByID)
+	mux.HandleFunc(s.basePath+"/api/notify-targets", s.handleNotifyTargets)
 	return mux
 }
 
@@ -380,6 +383,38 @@ func (s *server) handleCustomHookByID(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		okMsg(w, fmt.Sprintf("推送 %q 已删除", id))
+
+	default:
+		fail(w, http.StatusMethodNotAllowed, "method not allowed")
+	}
+}
+
+func (s *server) handleNotifyTargets(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		targets, err := LoadNotifyTargets(s.notifyTargetsFile)
+		if err != nil {
+			fail(w, http.StatusInternalServerError, fmt.Sprintf("load failed: %v", err))
+			return
+		}
+		okData(w, targets)
+
+	case http.MethodPut:
+		var targets []NotifyTarget
+		if err := json.NewDecoder(r.Body).Decode(&targets); err != nil {
+			fail(w, http.StatusBadRequest, fmt.Sprintf("invalid JSON: %v", err))
+			return
+		}
+		for i, t := range targets {
+			if t.ID == "" {
+				targets[i].ID = fmt.Sprintf("%d", time.Now().UnixNano()+int64(i))
+			}
+		}
+		if err := SaveNotifyTargets(s.notifyTargetsFile, targets); err != nil {
+			fail(w, http.StatusInternalServerError, fmt.Sprintf("save failed: %v", err))
+			return
+		}
+		okMsgData(w, "通知目标已保存", targets)
 
 	default:
 		fail(w, http.StatusMethodNotAllowed, "method not allowed")

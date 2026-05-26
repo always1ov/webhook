@@ -61,13 +61,19 @@
 
     .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;}
     .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
-    .modal-wide{max-width:780px;}
+    .modal-wide{max-width:820px;}
     .modal-header{padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between;}
     .modal-body{padding:20px 24px;}
     .modal-footer{padding:0 24px 22px;display:flex;gap:10px;justify-content:flex-end;}
     .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
     .field-label{font-size:12px;color:var(--muted);font-weight:500;}
     .field-hint{font-size:11px;color:var(--faint);}
+
+    .target-row{display:grid;grid-template-columns:110px 1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px;}
+    .target-row.has-secret{grid-template-columns:110px 1fr 1fr 160px auto;}
+    .usage-box{background:var(--elevated);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px 16px;margin-top:14px;}
+    .usage-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+    .usage-line{font-size:12px;color:var(--faint);line-height:2;}
   </style>
 </head>
 
@@ -84,9 +90,17 @@
           <button class="nav-tab" :class="tab===t.id?'active':''" @click="switchTab(t.id)" x-text="t.label"></button>
         </template>
       </nav>
-      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--faint);flex-shrink:0;">
-        <span style="width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;flex-shrink:0;"></span>
-        运行中
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+        <button class="btn btn-ghost btn-sm" @click="openNotifyConfig()" style="position:relative;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          通知配置
+          <span x-show="notifyTargets.length>0" x-text="notifyTargets.length"
+            style="position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;border-radius:8px;font-size:10px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px;"></span>
+        </button>
+        <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--faint);">
+          <span style="width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;flex-shrink:0;"></span>
+          运行中
+        </div>
       </div>
     </div>
   </header>
@@ -135,6 +149,47 @@
           </tbody>
         </table>
       </div>
+
+      <!-- notify hook 使用说明 -->
+      <div x-show="hasNotifyHook" x-transition class="card" style="margin-top:20px;">
+        <div class="card-header">
+          <span class="card-title">通知 Hook 使用说明</span>
+          <span style="font-size:11px;color:var(--faint);">当前配置了 <span x-text="notifyTargets.length"></span> 个通知目标</span>
+        </div>
+        <div style="padding:18px 20px;">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">
+            调用 <span class="mono" style="color:var(--accent);">/hooks/notify</span> 即可向所有已配置的飞书、钉钉、企业微信目标发送通知。
+          </div>
+          <div class="usage-box">
+            <div class="usage-title">触发方式</div>
+            <div class="usage-line mono">
+              GET &nbsp; http://your-host:9000/hooks/notify?msg=消息内容<span style="color:var(--border);">&amp;</span>title=标题<br>
+              POST &nbsp;http://your-host:9000/hooks/notify<br>
+              <span style="color:var(--border);">      </span>Body: {"msg":"消息内容","title":"标题"}<br>
+              <span style="color:var(--border);">      </span>或 Query: ?msg=消息内容&amp;title=标题
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:16px;font-size:12px;color:var(--faint);">
+            <span><span class="mono" style="color:var(--muted);">msg</span> — 消息正文（必填）</span>
+            <span><span class="mono" style="color:var(--muted);">title</span> — 通知标题（可选）</span>
+          </div>
+          <div x-show="notifyTargets.length===0" class="alert alert-err" style="margin-top:14px;font-size:12px;">
+            尚未配置通知目标，请点击右上角「通知配置」添加飞书/钉钉/企业微信地址。
+          </div>
+          <div x-show="notifyTargets.length>0" style="margin-top:14px;">
+            <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">当前通知目标</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              <template x-for="t in notifyTargets" :key="t.id">
+                <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--elevated);border:1px solid var(--border2);border-radius:20px;font-size:12px;">
+                  <span x-text="typeLabel(t.type)" style="color:var(--accent);font-size:11px;font-weight:600;"></span>
+                  <span x-text="t.name||t.url" style="color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                </span>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div x-show="testMsg" x-transition style="margin-top:14px;" :class="testOk?'alert alert-ok':'alert alert-err'" x-text="testMsg"></div>
     </div>
 
@@ -220,6 +275,74 @@
 
   </main>
 
+  <!-- 通知配置弹窗 -->
+  <div class="modal-backdrop" x-show="notifyOpen" x-cloak @click.self="notifyOpen=false" x-transition>
+    <div class="modal modal-wide" @click.stop>
+      <div class="modal-header">
+        <div>
+          <span style="font-size:16px;font-weight:700;color:var(--ink);">通知配置</span>
+          <span style="font-size:12px;color:var(--faint);margin-left:10px;">配置飞书、钉钉、企业微信通知目标（可混合多个）</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" @click="notifyOpen=false" style="border:none;color:var(--faint);">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- 表头 -->
+        <div style="display:grid;grid-template-columns:110px 130px 1fr 160px 36px;gap:8px;margin-bottom:6px;padding:0 2px;">
+          <span style="font-size:11px;color:var(--faint);font-weight:600;">平台</span>
+          <span style="font-size:11px;color:var(--faint);font-weight:600;">名称</span>
+          <span style="font-size:11px;color:var(--faint);font-weight:600;">Webhook URL</span>
+          <span style="font-size:11px;color:var(--faint);font-weight:600;">签名密钥（钉钉可选）</span>
+          <span></span>
+        </div>
+
+        <!-- 目标列表 -->
+        <div x-show="notifyDraft.length===0" style="padding:30px;text-align:center;color:var(--faint);font-size:13px;background:var(--elevated);border:1px dashed var(--border);border-radius:var(--radius-sm);margin-bottom:12px;">
+          还没有通知目标，点下方「+ 添加目标」开始配置
+        </div>
+        <template x-for="(t,i) in notifyDraft" :key="i">
+          <div style="display:grid;grid-template-columns:110px 130px 1fr 160px 36px;gap:8px;margin-bottom:8px;align-items:center;">
+            <select class="inp" x-model="t.type" style="height:34px;">
+              <option value="feishu">飞书</option>
+              <option value="dingtalk">钉钉</option>
+              <option value="wecom">企业微信</option>
+            </select>
+            <input class="inp" style="height:34px;" placeholder="群名称" x-model="t.name">
+            <input class="inp" style="height:34px;" placeholder="https://open.feishu.cn/open-apis/bot/v2/hook/..." x-model="t.url">
+            <input class="inp" style="height:34px;" :placeholder="t.type==='dingtalk'?'SEC... (可选)':'—'" :disabled="t.type!=='dingtalk'" x-model="t.secret">
+            <button class="btn btn-danger btn-sm" style="height:34px;padding:0 8px;" @click="notifyDraft.splice(i,1)" title="删除">✕</button>
+          </div>
+        </template>
+
+        <button class="btn btn-ghost btn-sm" style="margin-bottom:16px;" @click="notifyDraft.push({type:'feishu',name:'',url:'',secret:''})">+ 添加目标</button>
+
+        <!-- 使用说明 -->
+        <div style="background:var(--elevated);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px 16px;">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">如何触发通知</div>
+          <div class="mono" style="font-size:12px;color:var(--faint);line-height:2;">
+            GET &nbsp; http://your-host:9000/hooks/notify?msg=消息内容&amp;title=标题<br>
+            POST &nbsp; http://your-host:9000/hooks/notify &nbsp;&nbsp;Content-Type: application/json<br>
+            <span style="color:var(--border);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>{"msg": "消息内容", "title": "标题"}
+          </div>
+          <div style="margin-top:10px;display:flex;gap:20px;font-size:12px;color:var(--faint);">
+            <span><span class="mono" style="color:var(--muted);">msg</span> — 消息正文（必填）</span>
+            <span><span class="mono" style="color:var(--muted);">title</span> — 通知标题（可选）</span>
+          </div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border2);font-size:11px;color:var(--faint);">
+            脚本路径：<span class="mono" style="color:var(--muted);">/notify/notify.sh</span>
+            &nbsp;·&nbsp; 通知目标文件：<span class="mono" style="color:var(--muted);">/data/notify-targets.json</span>
+            &nbsp;·&nbsp; 同时发送到所有已配置目标
+          </div>
+        </div>
+
+        <div x-show="notifyMsg" x-transition style="margin-top:12px;" :class="notifyOk?'alert alert-ok':'alert alert-err'" x-text="notifyMsg"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" @click="notifyOpen=false">取消</button>
+        <button class="btn btn-primary" @click="saveNotifyTargets()" :disabled="notifySaving"><span x-text="notifySaving?'保存中…':'保存配置'"></span></button>
+      </div>
+    </div>
+  </div>
+
   <!-- 新建自定义推送弹窗 -->
   <div class="modal-backdrop" x-show="modalOpen" x-cloak @click.self="modalOpen=false" x-transition>
     <div class="modal" @click.stop>
@@ -276,7 +399,7 @@
             style="height:420px;resize:none;font-size:12px;line-height:1.6;tab-size:2;"
             spellcheck="false" @keydown.tab.prevent="insertTab($event)"></textarea>
           <div style="margin-top:8px;font-size:11px;color:var(--faint);">
-            MSG / MSG_QUERY = 消息正文 &nbsp;·&nbsp; TITLE / TITLE_QUERY = 标题 &nbsp;·&nbsp; Tab 键缩进
+            MSG = 消息正文 &nbsp;·&nbsp; TITLE = 标题 &nbsp;·&nbsp; Tab 键缩进
           </div>
         </div>
         <div x-show="scriptMsg" x-transition style="margin-top:10px;" :class="scriptOk?'alert alert-ok':'alert alert-err'" x-text="scriptMsg"></div>
@@ -301,11 +424,37 @@
       scriptOpen:false,scriptHookID:'',scriptContent:'',scriptLoading:false,scriptSaving:false,scriptMsg:'',scriptOk:false,
       logs:[],logFilter:'',logStatus:'',
 
-      init(){this.loadHooks();this.loadLogs();this.loadCustomHooks();setInterval(()=>{if(this.tab==='logs')this.loadLogs();},10000);},
+      // notify targets
+      notifyOpen:false,notifySaving:false,notifyMsg:'',notifyOk:false,
+      notifyTargets:[],notifyDraft:[],
+
+      get hasNotifyHook(){return this.hooks.some(h=>h.id==='notify');},
+
+      typeLabel(t){return{feishu:'飞书',dingtalk:'钉钉',wecom:'企业微信'}[t]||t;},
+
+      init(){this.loadHooks();this.loadLogs();this.loadCustomHooks();this.loadNotifyTargets();setInterval(()=>{if(this.tab==='logs')this.loadLogs();},10000);},
       switchTab(t){this.tab=t;if(t==='logs')this.loadLogs();if(t==='custom')this.loadCustomHooks();},
       async loadHooks(){try{const r=await fetch('api/hooks');const j=await r.json();if(j.ok)this.hooks=j.data||[];}catch{}},
       async loadLogs(){try{const r=await fetch('api/logs');const j=await r.json();if(j.ok){this.logs=j.data||[];this.successCount=this.logs.filter(l=>l.success).length;this.errorCount=this.logs.filter(l=>!l.success).length;}}catch{}},
       async loadCustomHooks(){try{const r=await fetch('api/custom-hooks');const j=await r.json();if(j.ok)this.customHooks=j.data||[];}catch{}},
+      async loadNotifyTargets(){try{const r=await fetch('api/notify-targets');const j=await r.json();if(j.ok)this.notifyTargets=j.data||[];}catch{}},
+
+      openNotifyConfig(){
+        this.notifyDraft=this.notifyTargets.map(t=>({...t}));
+        this.notifyMsg='';this.notifyOk=false;this.notifyOpen=true;
+      },
+      async saveNotifyTargets(){
+        this.notifySaving=true;this.notifyMsg='';
+        const targets=this.notifyDraft.filter(t=>t.url.trim());
+        try{
+          const r=await fetch('api/notify-targets',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(targets)});
+          const j=await r.json();
+          this.notifyOk=j.ok;
+          this.notifyMsg=j.ok?`已保存 ${(j.data||[]).length} 个通知目标`:(j.msg||'保存失败');
+          if(j.ok){this.notifyTargets=j.data||[];setTimeout(()=>{this.notifyMsg='';this.notifyOpen=false;},1500);}
+        }catch(e){this.notifyOk=false;this.notifyMsg='网络错误：'+e.message;}
+        this.notifySaving=false;
+      },
 
       async testHook(id){
         this.testing=id;this.testMsg='';
