@@ -122,16 +122,16 @@ func generateYAML(h CustomHook, scriptPath string) string {
   pass-environment-to-command:
     - source: payload
       name: msg
-      env-name: MSG
+      envname: MSG
     - source: payload
       name: title
-      env-name: TITLE
+      envname: TITLE
     - source: url
       name: msg
-      env-name: MSG
+      envname: MSG
     - source: url
       name: title
-      env-name: TITLE
+      envname: TITLE
 `,
 		h.Name,
 		h.ID,

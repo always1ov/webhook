@@ -4,17 +4,17 @@
   http-methods:
     - GET
     - POST
-  pass-arguments-to-command:
-    - source: entire-payload
-      name: payload
   pass-environment-to-command:
     - source: url
       name: msg
-      env-name: MSG
+      envname: MSG
     - source: url
       name: title
-      env-name: TITLE
-    - source: header
-      name: X-Webhook-Title
-      env-name: TITLE
+      envname: TITLE
+    - source: payload
+      name: msg
+      envname: MSG
+    - source: payload
+      name: title
+      envname: TITLE
   response-message: "通知已发送"
