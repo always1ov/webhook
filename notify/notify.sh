@@ -1,10 +1,11 @@
 #!/bin/bash
-# Universal notification script
-# Reads /data/notify-targets.json and sends to all configured targets
-# Env vars: MSG (message body), TITLE (optional title)
+# Universal notification engine
+# HOOK_ID env var selects which hook's targets to use from TARGETS_FILE
+# MSG env var = message body (required), TITLE env var = title (optional)
 
+HOOK_ID="${HOOK_ID:-notify}"
 TARGETS_FILE="${NOTIFY_TARGETS_FILE:-/data/notify-targets.json}"
-MSG="${MSG:-$(cat /dev/stdin 2>/dev/null)}"
+MSG="${MSG:-}"
 TITLE="${TITLE:-Webhook 通知}"
 
 if [ -z "$MSG" ]; then
@@ -13,13 +14,16 @@ if [ -z "$MSG" ]; then
 fi
 
 if [ ! -f "$TARGETS_FILE" ]; then
-  echo "ERROR: targets file not found: $TARGETS_FILE" >&2
-  exit 1
+  echo "WARN: targets file not found: $TARGETS_FILE"
+  exit 0
 fi
 
-count=$(jq 'length' "$TARGETS_FILE" 2>/dev/null)
-if [ -z "$count" ] || [ "$count" -eq 0 ]; then
-  echo "WARN: no targets configured in $TARGETS_FILE"
+# Extract targets for this hook from the object map
+targets_json=$(jq -e --arg id "$HOOK_ID" '.[$id] // []' "$TARGETS_FILE" 2>/dev/null || echo "[]")
+count=$(echo "$targets_json" | jq 'length' 2>/dev/null || echo 0)
+
+if [ "$count" -eq 0 ]; then
+  echo "WARN: no targets configured for hook \"$HOOK_ID\""
   exit 0
 fi
 
@@ -35,10 +39,8 @@ send_feishu() {
     -H "Content-Type: application/json" -d "$body" "$url")
   if [ "$resp" = "200" ]; then
     code=$(jq -r '.code // 0' /tmp/feishu_resp.json 2>/dev/null)
-    if [ "$code" = "0" ]; then
-      return 0
-    fi
-    echo "WARN: feishu API error code=$code msg=$(jq -r '.msg // ""' /tmp/feishu_resp.json)"
+    if [ "$code" = "0" ]; then return 0; fi
+    echo "WARN: feishu API code=$code msg=$(jq -r '.msg // ""' /tmp/feishu_resp.json)"
     return 1
   fi
   echo "WARN: feishu HTTP $resp"
@@ -63,10 +65,8 @@ send_dingtalk() {
     -H "Content-Type: application/json" -d "$body" "$url")
   if [ "$resp" = "200" ]; then
     errcode=$(jq -r '.errcode // 0' /tmp/dingtalk_resp.json 2>/dev/null)
-    if [ "$errcode" = "0" ]; then
-      return 0
-    fi
-    echo "WARN: dingtalk API error=$errcode msg=$(jq -r '.errmsg // ""' /tmp/dingtalk_resp.json)"
+    if [ "$errcode" = "0" ]; then return 0; fi
+    echo "WARN: dingtalk error=$errcode msg=$(jq -r '.errmsg // ""' /tmp/dingtalk_resp.json)"
     return 1
   fi
   echo "WARN: dingtalk HTTP $resp"
@@ -82,10 +82,8 @@ send_wecom() {
     -H "Content-Type: application/json" -d "$body" "$url")
   if [ "$resp" = "200" ]; then
     errcode=$(jq -r '.errcode // 0' /tmp/wecom_resp.json 2>/dev/null)
-    if [ "$errcode" = "0" ]; then
-      return 0
-    fi
-    echo "WARN: wecom API error=$errcode msg=$(jq -r '.errmsg // ""' /tmp/wecom_resp.json)"
+    if [ "$errcode" = "0" ]; then return 0; fi
+    echo "WARN: wecom error=$errcode msg=$(jq -r '.errmsg // ""' /tmp/wecom_resp.json)"
     return 1
   fi
   echo "WARN: wecom HTTP $resp"
@@ -97,45 +95,20 @@ while IFS= read -r target; do
   name=$(echo "$target" | jq -r '.name // ""')
   url=$(echo "$target" | jq -r '.url // ""')
   secret=$(echo "$target" | jq -r '.secret // ""')
-
-  if [ -z "$url" ]; then
-    echo "SKIP: target \"$name\" has no url"
-    continue
-  fi
-
+  [ -z "$url" ] && { echo "SKIP: \"$name\" has no url"; continue; }
   case "$type" in
     feishu)
-      if send_feishu "$url"; then
-        echo "OK: feishu \"$name\""
-        success=$((success+1))
-      else
-        echo "FAIL: feishu \"$name\""
-        failure=$((failure+1))
-      fi
-      ;;
+      if send_feishu "$url"; then echo "OK: feishu \"$name\""; success=$((success+1));
+      else echo "FAIL: feishu \"$name\""; failure=$((failure+1)); fi ;;
     dingtalk)
-      if send_dingtalk "$url" "$secret"; then
-        echo "OK: dingtalk \"$name\""
-        success=$((success+1))
-      else
-        echo "FAIL: dingtalk \"$name\""
-        failure=$((failure+1))
-      fi
-      ;;
+      if send_dingtalk "$url" "$secret"; then echo "OK: dingtalk \"$name\""; success=$((success+1));
+      else echo "FAIL: dingtalk \"$name\""; failure=$((failure+1)); fi ;;
     wecom)
-      if send_wecom "$url"; then
-        echo "OK: wecom \"$name\""
-        success=$((success+1))
-      else
-        echo "FAIL: wecom \"$name\""
-        failure=$((failure+1))
-      fi
-      ;;
-    *)
-      echo "SKIP: unknown type \"$type\" for \"$name\""
-      ;;
+      if send_wecom "$url"; then echo "OK: wecom \"$name\""; success=$((success+1));
+      else echo "FAIL: wecom \"$name\""; failure=$((failure+1)); fi ;;
+    *) echo "SKIP: unknown type \"$type\" for \"$name\"" ;;
   esac
-done < <(jq -c '.[]' "$TARGETS_FILE")
+done < <(echo "$targets_json" | jq -c '.[]')
 
 echo "DONE: success=$success failure=$failure"
 [ "$failure" -eq 0 ]

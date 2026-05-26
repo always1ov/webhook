@@ -7,80 +7,66 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     [x-cloak]{display:none!important;}
-
     :root{
       --bg:#18181b;--surface:#232326;--elevated:#2a2a2e;
       --border:#3a3a3e;--border2:#2e2e32;--ink:#f0f0f0;
       --muted:#a0a0a8;--faint:#55555c;--accent:#3b82f6;--accent-h:#2563eb;
       --ok:#34d399;--err:#f87171;--radius:10px;--radius-sm:6px;
     }
-
     body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
-
     .inp{height:36px;background:var(--elevated);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 12px;color:var(--ink);font-size:13px;font-family:inherit;outline:none;width:100%;transition:border-color .15s,box-shadow .15s;}
     .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.18);}
     .inp::placeholder{color:var(--faint);}
     textarea.inp{height:auto;padding:9px 12px;resize:vertical;font-family:ui-monospace,SFMono-Regular,'SF Mono',monospace;font-size:12px;}
     select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;}
-
+    .inp:disabled{opacity:.4;cursor:not-allowed;}
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 16px;font-size:13px;font-weight:500;font-family:inherit;border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;transition:background .15s,opacity .15s;border:1px solid transparent;}
     .btn:disabled{opacity:.4;cursor:not-allowed;}
     .btn-primary{background:var(--accent);color:#fff;}.btn-primary:not(:disabled):hover{background:var(--accent-h);}
     .btn-ghost{background:transparent;color:var(--ink);border-color:var(--border);}.btn-ghost:not(:disabled):hover{background:var(--elevated);}
     .btn-danger{background:transparent;color:var(--err);border-color:rgba(248,113,113,.3);}.btn-danger:not(:disabled):hover{background:rgba(248,113,113,.08);}
     .btn-sm{height:28px;padding:0 12px;font-size:12px;}
-
     .card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;}
     .card-header{padding:14px 20px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;}
     .card-title{font-size:13px;font-weight:600;color:var(--ink);}
-
     .badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;}
     .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
     .badge-ok{color:var(--ok);background:rgba(52,211,153,.12);}.badge-ok .dot{background:var(--ok);}
     .badge-err{color:var(--err);background:rgba(248,113,113,.12);}.badge-err .dot{background:var(--err);}
-
     table{width:100%;border-collapse:collapse;}
-    th{text-align:left;padding:9px 20px;font-size:11px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border2);}
-    td{padding:12px 20px;border-bottom:1px solid var(--border2);color:var(--muted);}
+    th{text-align:left;padding:9px 16px;font-size:11px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border2);}
+    td{padding:11px 16px;border-bottom:1px solid var(--border2);color:var(--muted);}
     tr:last-child td{border-bottom:none;}
-    tbody tr:hover td{background:rgba(255,255,255,.03);}
-
+    tbody tr:hover td{background:rgba(255,255,255,.025);}
     ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-
     .alert{padding:11px 16px;border-radius:var(--radius-sm);font-size:13px;border:1px solid;}
     .alert-ok{color:var(--ok);background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.25);}
     .alert-err{color:var(--err);background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.25);}
-
     .mono{font-family:ui-monospace,SFMono-Regular,'SF Mono',monospace;}
-    .tag{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:600;font-family:monospace;background:var(--elevated);border:1px solid var(--border);color:var(--muted);}
-    .stat{padding:22px 24px;}.stat-label{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}.stat-value{font-size:32px;font-weight:700;line-height:1;}
-
+    .tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600;font-family:monospace;background:var(--elevated);border:1px solid var(--border);color:var(--muted);}
+    .stat{padding:20px 22px;}.stat-label{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}.stat-value{font-size:30px;font-weight:700;line-height:1;}
     .nav-tab{height:54px;padding:0 16px;font-size:13px;font-weight:500;font-family:inherit;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;color:var(--faint);transition:color .15s,border-color .15s;white-space:nowrap;}
     .nav-tab:hover{color:var(--muted);}
     .nav-tab.active{color:var(--ink);border-bottom-color:var(--ink);}
-
-    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;}
     .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
-    .modal-wide{max-width:820px;}
-    .modal-header{padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between;}
+    .modal-wide{max-width:800px;}
+    .modal-header{padding:22px 24px 0;display:flex;align-items:flex-start;justify-content:space-between;}
     .modal-body{padding:20px 24px;}
     .modal-footer{padding:0 24px 22px;display:flex;gap:10px;justify-content:flex-end;}
     .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
     .field-label{font-size:12px;color:var(--muted);font-weight:500;}
     .field-hint{font-size:11px;color:var(--faint);}
-
-    .target-row{display:grid;grid-template-columns:110px 1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px;}
-    .target-row.has-secret{grid-template-columns:110px 1fr 1fr 160px auto;}
-    .usage-box{background:var(--elevated);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px 16px;margin-top:14px;}
-    .usage-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
-    .usage-line{font-size:12px;color:var(--faint);line-height:2;}
+    .ntarget-row{display:grid;grid-template-columns:100px 120px 1fr 36px;gap:7px;align-items:center;margin-bottom:7px;}
+    .ntarget-row.has-secret{grid-template-columns:100px 120px 1fr 150px 36px;}
+    .cnt-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;background:var(--accent);color:#fff;border-radius:9px;font-size:10px;font-weight:700;}
   </style>
 </head>
 
 <body x-data="app()" x-init="init()">
 
   <header style="position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border2);background:rgba(24,24,27,.92);backdrop-filter:blur(16px);">
-    <div style="max-width:1200px;margin:0 auto;padding:0 28px;height:54px;display:flex;align-items:center;gap:4px;">
+    <div style="max-width:1280px;margin:0 auto;padding:0 24px;height:54px;display:flex;align-items:center;gap:4px;">
       <div style="display:flex;align-items:center;gap:10px;margin-right:20px;flex-shrink:0;">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polygon points="9,1 17,14 1,14" fill="#3b82f6"/></svg>
         <span style="font-weight:700;font-size:14px;color:var(--ink);">Webhook</span>
@@ -90,158 +76,100 @@
           <button class="nav-tab" :class="tab===t.id?'active':''" @click="switchTab(t.id)" x-text="t.label"></button>
         </template>
       </nav>
-      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-        <button class="btn btn-ghost btn-sm" @click="openNotifyConfig()" style="position:relative;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          通知配置
-          <span x-show="notifyTargets.length>0" x-text="notifyTargets.length"
-            style="position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;border-radius:8px;font-size:10px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px;"></span>
-        </button>
-        <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--faint);">
-          <span style="width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;flex-shrink:0;"></span>
-          运行中
-        </div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--faint);flex-shrink:0;">
+        <span style="width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;flex-shrink:0;"></span>运行中
       </div>
     </div>
   </header>
 
-  <main style="max-width:1200px;margin:0 auto;padding:32px 28px 80px;">
+  <main style="max-width:1280px;margin:0 auto;padding:28px 24px 80px;">
 
-    <!-- 概览 -->
+    <!-- 已注册的 Hook -->
     <div x-show="tab==='dashboard'">
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;">
-        <div class="card stat"><div class="stat-label">已加载 Hook</div><div class="stat-value" style="color:var(--ink);" x-text="hooks.length">0</div></div>
-        <div class="card stat"><div class="stat-label">成功执行</div><div class="stat-value" style="color:var(--ok);" x-text="successCount">0</div></div>
-        <div class="card stat"><div class="stat-label">失败执行</div><div class="stat-value" style="color:var(--err);" x-text="errorCount">0</div></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;">
+        <div class="card stat"><div class="stat-label">已注册 Hook</div><div class="stat-value" style="color:var(--ink);" x-text="hooks.length"></div></div>
+        <div class="card stat"><div class="stat-label">成功执行</div><div class="stat-value" style="color:var(--ok);" x-text="successCount"></div></div>
+        <div class="card stat"><div class="stat-label">失败执行</div><div class="stat-value" style="color:var(--err);" x-text="errorCount"></div></div>
       </div>
+
       <div class="card">
         <div class="card-header">
           <span class="card-title">已注册的 Hook</span>
-          <button class="btn btn-ghost btn-sm" @click="loadHooks()">刷新</button>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary btn-sm" @click="openCreateModal()">+ 新建推送</button>
+            <button class="btn btn-ghost btn-sm" @click="loadHooks()">刷新</button>
+          </div>
         </div>
         <div x-show="hooks.length===0" style="padding:60px;text-align:center;color:var(--faint);font-size:13px;">hooks/ 目录下暂无配置文件</div>
-        <table x-show="hooks.length>0">
-          <thead><tr><th>Hook ID</th><th>脚本路径</th><th>HTTP 方法</th><th>触发规则</th><th style="width:200px;text-align:right;padding-right:20px;"></th></tr></thead>
-          <tbody>
-            <template x-for="h in hooks" :key="h.id">
+        <div x-show="hooks.length>0" style="overflow-x:auto;">
+          <table>
+            <thead>
               <tr>
-                <td>
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <span class="mono" style="color:var(--accent);font-size:13px;" x-text="h.id"></span>
-                    <span x-show="h.isCustom" style="font-size:10px;padding:1px 5px;background:rgba(59,130,246,.15);color:var(--accent);border-radius:3px;">自定义</span>
-                  </div>
-                </td>
-                <td><span class="mono" style="color:var(--faint);font-size:12px;" x-text="h.executeCommand"></span></td>
-                <td><template x-for="m in (h.httpMethods||[])" :key="m"><span class="tag" x-text="m" style="margin-right:3px;"></span></template></td>
-                <td>
-                  <span x-show="h.hasTriggerRule" class="badge badge-ok"><span class="dot"></span>有规则</span>
-                  <span x-show="!h.hasTriggerRule" style="color:var(--faint);">—</span>
-                </td>
-                <td style="text-align:right;">
-                  <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;">
-                    <button class="btn btn-ghost btn-sm" @click="openScriptEditor(h.id)">编辑脚本</button>
-                    <button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id"><span x-text="testing===h.id?'发送中…':'测试'"></span></button>
-                    <button class="btn btn-danger btn-sm" @click="deleteHook(h.id)">删除</button>
-                  </div>
-                </td>
+                <th>Hook ID</th>
+                <th>脚本路径</th>
+                <th>HTTP 方法</th>
+                <th>触发规则</th>
+                <th>通知目标</th>
+                <th style="text-align:right;padding-right:16px;">操作</th>
               </tr>
-            </template>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- notify hook 使用说明 -->
-      <div x-show="hasNotifyHook" x-transition class="card" style="margin-top:20px;">
-        <div class="card-header">
-          <span class="card-title">通知 Hook 使用说明</span>
-          <span style="font-size:11px;color:var(--faint);">当前配置了 <span x-text="notifyTargets.length"></span> 个通知目标</span>
-        </div>
-        <div style="padding:18px 20px;">
-          <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">
-            调用 <span class="mono" style="color:var(--accent);">/hooks/notify</span> 即可向所有已配置的飞书、钉钉、企业微信目标发送通知。
-          </div>
-          <div class="usage-box">
-            <div class="usage-title">触发方式</div>
-            <div class="usage-line mono">
-              GET &nbsp; http://your-host:9000/hooks/notify?msg=消息内容<span style="color:var(--border);">&amp;</span>title=标题<br>
-              POST &nbsp;http://your-host:9000/hooks/notify<br>
-              <span style="color:var(--border);">      </span>Body: {"msg":"消息内容","title":"标题"}<br>
-              <span style="color:var(--border);">      </span>或 Query: ?msg=消息内容&amp;title=标题
-            </div>
-          </div>
-          <div style="margin-top:12px;display:flex;gap:16px;font-size:12px;color:var(--faint);">
-            <span><span class="mono" style="color:var(--muted);">msg</span> — 消息正文（必填）</span>
-            <span><span class="mono" style="color:var(--muted);">title</span> — 通知标题（可选）</span>
-          </div>
-          <div x-show="notifyTargets.length===0" class="alert alert-err" style="margin-top:14px;font-size:12px;">
-            尚未配置通知目标，请点击右上角「通知配置」添加飞书/钉钉/企业微信地址。
-          </div>
-          <div x-show="notifyTargets.length>0" style="margin-top:14px;">
-            <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">当前通知目标</div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px;">
-              <template x-for="t in notifyTargets" :key="t.id">
-                <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--elevated);border:1px solid var(--border2);border-radius:20px;font-size:12px;">
-                  <span x-text="typeLabel(t.type)" style="color:var(--accent);font-size:11px;font-weight:600;"></span>
-                  <span x-text="t.name||t.url" style="color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-                </span>
+            </thead>
+            <tbody>
+              <template x-for="h in hooks" :key="h.id">
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span class="mono" style="color:var(--accent);font-size:13px;" x-text="h.id"></span>
+                      <span x-show="h.isCustom" style="font-size:10px;padding:1px 5px;background:rgba(59,130,246,.15);color:var(--accent);border-radius:3px;">自定义</span>
+                    </div>
+                  </td>
+                  <td><span class="mono" style="color:var(--faint);font-size:11px;" x-text="h.executeCommand"></span></td>
+                  <td>
+                    <template x-for="m in (h.httpMethods||[])" :key="m">
+                      <span class="tag" x-text="m" style="margin-right:3px;"></span>
+                    </template>
+                  </td>
+                  <td>
+                    <span x-show="h.hasTriggerRule" class="badge badge-ok"><span class="dot"></span>有规则</span>
+                    <span x-show="!h.hasTriggerRule" style="color:var(--faint);">—</span>
+                  </td>
+                  <td>
+                    <button class="btn btn-ghost btn-sm" style="gap:5px;" @click="openNotifyConfig(h.id)">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                      通知配置
+                      <span x-show="targetCount(h.id)>0" class="cnt-badge" x-text="targetCount(h.id)"></span>
+                    </button>
+                  </td>
+                  <td style="text-align:right;">
+                    <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;">
+                      <button class="btn btn-ghost btn-sm" @click="openScriptEditor(h.id)">编辑脚本</button>
+                      <button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id">
+                        <span x-text="testing===h.id?'发送中…':'测试'"></span>
+                      </button>
+                      <button class="btn btn-danger btn-sm" @click="deleteHook(h.id)">删除</button>
+                    </div>
+                  </td>
+                </tr>
               </template>
-            </div>
-          </div>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div x-show="testMsg" x-transition style="margin-top:14px;" :class="testOk?'alert alert-ok':'alert alert-err'" x-text="testMsg"></div>
-    </div>
+      <!-- 触发说明 -->
+      <div style="margin-top:16px;padding:16px 20px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px;">触发方式</div>
+        <div class="mono" style="font-size:12px;color:var(--faint);line-height:2;">
+          GET &nbsp; http://your-host:9000/hooks/<span style="color:var(--accent);">{id}</span>?msg=消息内容&amp;title=标题<br>
+          POST &nbsp; http://your-host:9000/hooks/<span style="color:var(--accent);">{id}</span> &nbsp; {"msg":"消息内容","title":"标题"}
+        </div>
+      </div>
 
-    <!-- 自定义推送 -->
-    <div x-show="tab==='custom'" x-cloak>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
-        <div>
-          <h2 style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px;">自定义推送</h2>
-          <p style="font-size:13px;color:var(--muted);">创建后可直接编辑生成的 .sh 脚本自定义逻辑。</p>
-        </div>
-        <button class="btn btn-primary" @click="openCreateModal()">+ 新建推送</button>
-      </div>
-      <div x-show="customMsg" x-transition :class="customOk?'alert alert-ok':'alert alert-err'" style="margin-bottom:18px;" x-text="customMsg"></div>
-      <div x-show="customHooks.length===0" class="card" style="padding:60px;text-align:center;color:var(--faint);">
-        <div style="font-size:13px;margin-bottom:6px;">还没有自定义推送</div>
-        <div style="font-size:12px;">点击右上角「新建推送」添加第一个</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <template x-for="h in customHooks" :key="h.id">
-          <div class="card">
-            <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
-              <div style="min-width:0;flex:1;">
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-                  <span style="font-size:14px;font-weight:600;color:var(--ink);" x-text="h.name||h.id"></span>
-                  <span class="tag" x-text="h.method||'POST'"></span>
-                </div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                  <span style="font-size:11px;color:var(--faint);">触发地址:</span>
-                  <span class="mono" style="font-size:12px;color:var(--accent);" x-text="'/hooks/'+h.id"></span>
-                </div>
-              </div>
-              <div style="display:flex;gap:6px;flex-shrink:0;">
-                <button class="btn btn-ghost btn-sm" @click="openScriptEditor(h.id)" :disabled="testing===h.id">编辑脚本</button>
-                <button class="btn btn-ghost btn-sm" @click="testHook(h.id)" :disabled="testing===h.id"><span x-text="testing===h.id?'发送中…':'测试'"></span></button>
-                <button class="btn btn-danger btn-sm" @click="deleteCustomHook(h.id)">删除</button>
-              </div>
-            </div>
-          </div>
-        </template>
-      </div>
-      <div x-show="customHooks.length>0" style="margin-top:22px;padding:16px 20px;background:var(--elevated);border:1px solid var(--border2);border-radius:var(--radius);">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;">调用方式</div>
-        <div class="mono" style="font-size:12px;color:var(--faint);">
-          GET &nbsp;http://your-host:9000/hooks/<span style="color:var(--accent);">{id}</span>?msg=消息内容&amp;title=标题<br>
-          POST http://your-host:9000/hooks/<span style="color:var(--accent);">{id}</span> &nbsp;{"msg":"消息内容","title":"标题"}
-        </div>
-      </div>
+      <div x-show="dashMsg" x-transition style="margin-top:14px;" :class="dashOk?'alert alert-ok':'alert alert-err'" x-text="dashMsg"></div>
     </div>
 
     <!-- 执行日志 -->
     <div x-show="tab==='logs'" x-cloak>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:10px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;">
         <div style="display:flex;gap:8px;">
           <input class="inp" style="width:200px;" placeholder="搜索 Hook ID…" x-model="logFilter">
           <select class="inp" style="width:110px;" x-model="logStatus">
@@ -264,7 +192,7 @@
                 <td style="color:var(--faint);font-size:12px;white-space:nowrap;" x-text="fmtTime(l.timestamp)"></td>
                 <td><span class="mono" style="color:var(--muted);font-size:12px;" x-text="l.durationMS+'ms'"></span></td>
                 <td><span class="mono" style="color:var(--faint);font-size:12px;" x-text="l.ip||'—'"></span></td>
-                <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--faint);font-size:12px;" x-text="l.output||'—'"></td>
+                <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--faint);font-size:12px;" x-text="l.output||'—'"></td>
               </tr>
             </template>
           </tbody>
@@ -275,19 +203,22 @@
 
   </main>
 
-  <!-- 通知配置弹窗 -->
+  <!-- 通知配置弹窗（per-hook） -->
   <div class="modal-backdrop" x-show="notifyOpen" x-cloak @click.self="notifyOpen=false" x-transition>
     <div class="modal modal-wide" @click.stop>
       <div class="modal-header">
         <div>
-          <span style="font-size:16px;font-weight:700;color:var(--ink);">通知配置</span>
-          <span style="font-size:12px;color:var(--faint);margin-left:10px;">配置飞书、钉钉、企业微信通知目标（可混合多个）</span>
+          <div style="font-size:16px;font-weight:700;color:var(--ink);">通知配置</div>
+          <div style="font-size:12px;color:var(--faint);margin-top:3px;">
+            Hook: <span class="mono" style="color:var(--accent);" x-text="notifyHookID"></span>
+            &nbsp;·&nbsp; 可添加多个飞书 / 钉钉 / 企业微信地址
+          </div>
         </div>
         <button class="btn btn-ghost btn-sm" @click="notifyOpen=false" style="border:none;color:var(--faint);">✕</button>
       </div>
       <div class="modal-body">
-        <!-- 表头 -->
-        <div style="display:grid;grid-template-columns:110px 130px 1fr 160px 36px;gap:8px;margin-bottom:6px;padding:0 2px;">
+        <!-- 列头 -->
+        <div style="display:grid;grid-template-columns:100px 120px 1fr 150px 36px;gap:7px;margin-bottom:5px;padding:0 1px;">
           <span style="font-size:11px;color:var(--faint);font-weight:600;">平台</span>
           <span style="font-size:11px;color:var(--faint);font-weight:600;">名称</span>
           <span style="font-size:11px;color:var(--faint);font-weight:600;">Webhook URL</span>
@@ -295,42 +226,36 @@
           <span></span>
         </div>
 
-        <!-- 目标列表 -->
-        <div x-show="notifyDraft.length===0" style="padding:30px;text-align:center;color:var(--faint);font-size:13px;background:var(--elevated);border:1px dashed var(--border);border-radius:var(--radius-sm);margin-bottom:12px;">
-          还没有通知目标，点下方「+ 添加目标」开始配置
+        <div x-show="notifyDraft.length===0" style="padding:28px;text-align:center;color:var(--faint);font-size:13px;background:var(--elevated);border:1px dashed var(--border);border-radius:var(--radius-sm);margin-bottom:10px;">
+          点击「+ 添加目标」配置通知地址
         </div>
+
         <template x-for="(t,i) in notifyDraft" :key="i">
-          <div style="display:grid;grid-template-columns:110px 130px 1fr 160px 36px;gap:8px;margin-bottom:8px;align-items:center;">
-            <select class="inp" x-model="t.type" style="height:34px;">
+          <div style="display:grid;grid-template-columns:100px 120px 1fr 150px 36px;gap:7px;margin-bottom:7px;align-items:center;">
+            <select class="inp" style="height:33px;" x-model="t.type">
               <option value="feishu">飞书</option>
               <option value="dingtalk">钉钉</option>
               <option value="wecom">企业微信</option>
             </select>
-            <input class="inp" style="height:34px;" placeholder="群名称" x-model="t.name">
-            <input class="inp" style="height:34px;" placeholder="https://open.feishu.cn/open-apis/bot/v2/hook/..." x-model="t.url">
-            <input class="inp" style="height:34px;" :placeholder="t.type==='dingtalk'?'SEC... (可选)':'—'" :disabled="t.type!=='dingtalk'" x-model="t.secret">
-            <button class="btn btn-danger btn-sm" style="height:34px;padding:0 8px;" @click="notifyDraft.splice(i,1)" title="删除">✕</button>
+            <input class="inp" style="height:33px;" placeholder="群名称" x-model="t.name">
+            <input class="inp" style="height:33px;" placeholder="https://..." x-model="t.url">
+            <input class="inp" style="height:33px;" :placeholder="t.type==='dingtalk'?'SEC... (可选)':'—'" :disabled="t.type!=='dingtalk'" x-model="t.secret">
+            <button class="btn btn-danger btn-sm" style="height:33px;padding:0 8px;" @click="notifyDraft.splice(i,1)">✕</button>
           </div>
         </template>
 
-        <button class="btn btn-ghost btn-sm" style="margin-bottom:16px;" @click="notifyDraft.push({type:'feishu',name:'',url:'',secret:''})">+ 添加目标</button>
+        <button class="btn btn-ghost btn-sm" style="margin-top:4px;margin-bottom:16px;" @click="notifyDraft.push({type:'feishu',name:'',url:'',secret:''})">+ 添加目标</button>
 
         <!-- 使用说明 -->
-        <div style="background:var(--elevated);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px 16px;">
-          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">如何触发通知</div>
+        <div style="background:var(--elevated);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 14px;">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">触发方式</div>
           <div class="mono" style="font-size:12px;color:var(--faint);line-height:2;">
-            GET &nbsp; http://your-host:9000/hooks/notify?msg=消息内容&amp;title=标题<br>
-            POST &nbsp; http://your-host:9000/hooks/notify &nbsp;&nbsp;Content-Type: application/json<br>
-            <span style="color:var(--border);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>{"msg": "消息内容", "title": "标题"}
+            GET &nbsp; http://your-host:9000/hooks/<span style="color:var(--accent);" x-text="notifyHookID"></span>?msg=消息内容&amp;title=标题<br>
+            POST &nbsp; http://your-host:9000/hooks/<span style="color:var(--accent);" x-text="notifyHookID"></span>
+            &nbsp; {"msg":"消息内容","title":"标题"}
           </div>
-          <div style="margin-top:10px;display:flex;gap:20px;font-size:12px;color:var(--faint);">
-            <span><span class="mono" style="color:var(--muted);">msg</span> — 消息正文（必填）</span>
-            <span><span class="mono" style="color:var(--muted);">title</span> — 通知标题（可选）</span>
-          </div>
-          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border2);font-size:11px;color:var(--faint);">
-            脚本路径：<span class="mono" style="color:var(--muted);">/notify/notify.sh</span>
-            &nbsp;·&nbsp; 通知目标文件：<span class="mono" style="color:var(--muted);">/data/notify-targets.json</span>
-            &nbsp;·&nbsp; 同时发送到所有已配置目标
+          <div style="margin-top:8px;font-size:11px;color:var(--faint);">
+            保存后立即生效 &nbsp;·&nbsp; 通知目标文件：<span class="mono">/data/notify-targets.json</span>
           </div>
         </div>
 
@@ -338,12 +263,14 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" @click="notifyOpen=false">取消</button>
-        <button class="btn btn-primary" @click="saveNotifyTargets()" :disabled="notifySaving"><span x-text="notifySaving?'保存中…':'保存配置'"></span></button>
+        <button class="btn btn-primary" @click="saveNotifyTargets()" :disabled="notifySaving">
+          <span x-text="notifySaving?'保存中…':'保存配置'"></span>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- 新建自定义推送弹窗 -->
+  <!-- 新建推送弹窗 -->
   <div class="modal-backdrop" x-show="modalOpen" x-cloak @click.self="modalOpen=false" x-transition>
     <div class="modal" @click.stop>
       <div class="modal-header">
@@ -354,30 +281,20 @@
         <div x-show="modalErr" class="alert alert-err" x-text="modalErr" style="margin-bottom:16px;"></div>
         <div class="field">
           <label class="field-label">推送 ID <span style="color:var(--err);">*</span></label>
-          <input class="inp" placeholder="my-notify（小写字母、数字、连字符）" x-model="form.id">
+          <input class="inp" placeholder="my-alert（小写字母、数字、连字符）" x-model="form.id">
           <div class="field-hint">触发地址：/hooks/<span class="mono" x-text="form.id||'your-id'"></span></div>
         </div>
-        <div class="field">
-          <label class="field-label">显示名称</label>
-          <input class="inp" placeholder="我的钉钉群" x-model="form.name">
-        </div>
-        <div class="field">
-          <label class="field-label">目标 URL <span style="color:var(--err);">*</span></label>
-          <input class="inp" placeholder="https://your-api.example.com/notify" x-model="form.targetURL">
-          <div class="field-hint">创建后可点「编辑脚本」进一步自定义发送逻辑</div>
-        </div>
         <div class="field" style="margin-bottom:0;">
-          <label class="field-label">HTTP 方法</label>
-          <select class="inp" x-model="form.method">
-            <option value="POST">POST（推荐）</option>
-            <option value="GET">GET</option>
-            <option value="PUT">PUT</option>
-          </select>
+          <label class="field-label">显示名称</label>
+          <input class="inp" placeholder="我的告警通知" x-model="form.name">
+          <div class="field-hint">创建后在「通知配置」中添加飞书/钉钉/企业微信地址</div>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" @click="modalOpen=false">取消</button>
-        <button class="btn btn-primary" @click="submitModal()" :disabled="modalSaving"><span x-text="modalSaving?'创建中…':'创建推送'"></span></button>
+        <button class="btn btn-primary" @click="submitModal()" :disabled="modalSaving">
+          <span x-text="modalSaving?'创建中…':'创建推送'"></span>
+        </button>
       </div>
     </div>
   </div>
@@ -396,17 +313,19 @@
         <div x-show="scriptLoading" style="text-align:center;padding:40px;color:var(--faint);">加载中…</div>
         <div x-show="!scriptLoading">
           <textarea class="inp" x-model="scriptContent"
-            style="height:420px;resize:none;font-size:12px;line-height:1.6;tab-size:2;"
+            style="height:400px;resize:none;font-size:12px;line-height:1.6;tab-size:2;"
             spellcheck="false" @keydown.tab.prevent="insertTab($event)"></textarea>
           <div style="margin-top:8px;font-size:11px;color:var(--faint);">
-            MSG = 消息正文 &nbsp;·&nbsp; TITLE = 标题 &nbsp;·&nbsp; Tab 键缩进
+            <span class="mono">MSG</span> = 消息正文 &nbsp;·&nbsp; <span class="mono">TITLE</span> = 标题 &nbsp;·&nbsp; Tab 键缩进
           </div>
         </div>
         <div x-show="scriptMsg" x-transition style="margin-top:10px;" :class="scriptOk?'alert alert-ok':'alert alert-err'" x-text="scriptMsg"></div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" @click="scriptOpen=false">取消</button>
-        <button class="btn btn-primary" @click="saveScript()" :disabled="scriptSaving||scriptLoading"><span x-text="scriptSaving?'保存中…':'保存脚本'"></span></button>
+        <button class="btn btn-primary" @click="saveScript()" :disabled="scriptSaving||scriptLoading">
+          <span x-text="scriptSaving?'保存中…':'保存脚本'"></span>
+        </button>
       </div>
     </div>
   </div>
@@ -415,112 +334,165 @@
   <script>
   function app() {
     return {
-      tab:'dashboard',
-      tabs:[{id:'dashboard',label:'概览'},{id:'custom',label:'自定义推送'},{id:'logs',label:'执行日志'}],
-      hooks:[],successCount:0,errorCount:0,testing:null,testMsg:'',testOk:false,
-      customHooks:[],customMsg:'',customOk:false,
-      modalOpen:false,modalSaving:false,modalErr:'',
-      form:{id:'',name:'',targetURL:'',method:'POST'},
-      scriptOpen:false,scriptHookID:'',scriptContent:'',scriptLoading:false,scriptSaving:false,scriptMsg:'',scriptOk:false,
-      logs:[],logFilter:'',logStatus:'',
+      tab: 'dashboard',
+      tabs: [{id:'dashboard',label:'已注册 Hook'},{id:'logs',label:'执行日志'}],
+      hooks: [], successCount: 0, errorCount: 0,
+      testing: null, dashMsg: '', dashOk: false,
 
-      // notify targets
-      notifyOpen:false,notifySaving:false,notifyMsg:'',notifyOk:false,
-      notifyTargets:[],notifyDraft:[],
+      // per-hook notify targets
+      allTargets: {},
+      notifyOpen: false, notifySaving: false, notifyMsg: '', notifyOk: false,
+      notifyHookID: '', notifyDraft: [],
 
-      get hasNotifyHook(){return this.hooks.some(h=>h.id==='notify');},
+      // create modal
+      modalOpen: false, modalSaving: false, modalErr: '',
+      form: {id:'', name:''},
 
-      typeLabel(t){return{feishu:'飞书',dingtalk:'钉钉',wecom:'企业微信'}[t]||t;},
+      // script editor
+      scriptOpen: false, scriptHookID: '', scriptContent: '',
+      scriptLoading: false, scriptSaving: false, scriptMsg: '', scriptOk: false,
 
-      init(){this.loadHooks();this.loadLogs();this.loadCustomHooks();this.loadNotifyTargets();setInterval(()=>{if(this.tab==='logs')this.loadLogs();},10000);},
-      switchTab(t){this.tab=t;if(t==='logs')this.loadLogs();if(t==='custom')this.loadCustomHooks();},
-      async loadHooks(){try{const r=await fetch('api/hooks');const j=await r.json();if(j.ok)this.hooks=j.data||[];}catch{}},
-      async loadLogs(){try{const r=await fetch('api/logs');const j=await r.json();if(j.ok){this.logs=j.data||[];this.successCount=this.logs.filter(l=>l.success).length;this.errorCount=this.logs.filter(l=>!l.success).length;}}catch{}},
-      async loadCustomHooks(){try{const r=await fetch('api/custom-hooks');const j=await r.json();if(j.ok)this.customHooks=j.data||[];}catch{}},
-      async loadNotifyTargets(){try{const r=await fetch('api/notify-targets');const j=await r.json();if(j.ok)this.notifyTargets=j.data||[];}catch{}},
+      // logs
+      logs: [], logFilter: '', logStatus: '',
 
-      openNotifyConfig(){
-        this.notifyDraft=this.notifyTargets.map(t=>({...t}));
-        this.notifyMsg='';this.notifyOk=false;this.notifyOpen=true;
+      targetCount(id) { return (this.allTargets[id] || []).length; },
+
+      init() {
+        this.loadHooks();
+        this.loadLogs();
+        this.loadAllTargets();
+        setInterval(() => { if (this.tab==='logs') this.loadLogs(); }, 10000);
       },
-      async saveNotifyTargets(){
-        this.notifySaving=true;this.notifyMsg='';
-        const targets=this.notifyDraft.filter(t=>t.url.trim());
-        try{
-          const r=await fetch('api/notify-targets',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(targets)});
-          const j=await r.json();
-          this.notifyOk=j.ok;
-          this.notifyMsg=j.ok?`已保存 ${(j.data||[]).length} 个通知目标`:(j.msg||'保存失败');
-          if(j.ok){this.notifyTargets=j.data||[];setTimeout(()=>{this.notifyMsg='';this.notifyOpen=false;},1500);}
-        }catch(e){this.notifyOk=false;this.notifyMsg='网络错误：'+e.message;}
-        this.notifySaving=false;
-      },
+      switchTab(t) { this.tab = t; if (t==='logs') this.loadLogs(); },
 
-      async testHook(id){
-        this.testing=id;this.testMsg='';
-        try{const r=await fetch(`api/hooks/${id}/test`,{method:'POST'});const j=await r.json();this.testOk=j.ok;this.testMsg=j.msg||(j.ok?'测试成功':'发送失败');}catch(e){this.testOk=false;this.testMsg='网络错误：'+e.message;}
-        this.testing=null;setTimeout(()=>this.testMsg='',4000);
+      async loadHooks() {
+        try { const r = await fetch('api/hooks'); const j = await r.json(); if (j.ok) this.hooks = j.data||[]; } catch {}
       },
-
-      async openScriptEditor(hookId){
-        this.scriptHookID=hookId;this.scriptContent='';this.scriptMsg='';this.scriptLoading=true;this.scriptOpen=true;
-        try{
-          const r=await fetch(`api/hooks/${hookId}/script`);const j=await r.json();
-          if(j.ok)this.scriptContent=j.data.content;
-          else this.scriptMsg=j.msg||'加载失败';
-        }catch(e){this.scriptMsg='网络错误：'+e.message;}
-        this.scriptLoading=false;
+      async loadLogs() {
+        try {
+          const r = await fetch('api/logs'); const j = await r.json();
+          if (j.ok) {
+            this.logs = j.data||[];
+            this.successCount = this.logs.filter(l=>l.success).length;
+            this.errorCount = this.logs.filter(l=>!l.success).length;
+          }
+        } catch {}
       },
-      async saveScript(){
-        this.scriptSaving=true;this.scriptMsg='';
-        try{
-          const r=await fetch(`api/hooks/${this.scriptHookID}/script`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:this.scriptContent})});
-          const j=await r.json();this.scriptOk=j.ok;this.scriptMsg=j.ok?'脚本已保存':(j.msg||'保存失败');
-          if(j.ok)setTimeout(()=>this.scriptMsg='',3000);
-        }catch(e){this.scriptOk=false;this.scriptMsg='网络错误：'+e.message;}
-        this.scriptSaving=false;
-      },
-      insertTab(e){
-        const el=e.target,s=el.selectionStart,end=el.selectionEnd;
-        this.scriptContent=this.scriptContent.substring(0,s)+'  '+this.scriptContent.substring(end);
-        this.$nextTick(()=>{el.selectionStart=el.selectionEnd=s+2;});
+      async loadAllTargets() {
+        try { const r = await fetch('api/notify-targets'); const j = await r.json(); if (j.ok) this.allTargets = j.data||{}; } catch {}
       },
 
-      openCreateModal(){this.form={id:'',name:'',targetURL:'',method:'POST'};this.modalErr='';this.modalOpen=true;},
-      async submitModal(){
-        this.modalErr='';
-        if(!this.form.id){this.modalErr='请填写推送 ID';return;}
-        if(!this.form.targetURL){this.modalErr='请填写目标 URL';return;}
-        this.modalSaving=true;
-        try{
-          const r=await fetch('api/custom-hooks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.form)});
-          const j=await r.json();
-          if(j.ok){this.modalOpen=false;this.customOk=true;this.customMsg=j.msg||'创建成功';await this.loadCustomHooks();await this.loadHooks();setTimeout(()=>this.customMsg='',3000);}
-          else{this.modalErr=j.msg||'创建失败';}
-        }catch(e){this.modalErr='网络错误：'+e.message;}
-        this.modalSaving=false;
+      async openNotifyConfig(hookId) {
+        this.notifyHookID = hookId;
+        this.notifyMsg = ''; this.notifyOk = false;
+        this.notifyDraft = (this.allTargets[hookId]||[]).map(t => ({...t}));
+        this.notifyOpen = true;
       },
-      async deleteCustomHook(id){
-        if(!confirm(`确认删除推送 "${id}"？`))return;
-        try{
-          const r=await fetch(`api/custom-hooks/${id}`,{method:'DELETE'});const j=await r.json();
-          this.customOk=j.ok;this.customMsg=j.msg||(j.ok?'已删除':'删除失败');
-          if(j.ok){await this.loadCustomHooks();await this.loadHooks();}
-          setTimeout(()=>this.customMsg='',3000);
-        }catch(e){this.customOk=false;this.customMsg='网络错误：'+e.message;}
-      },
-      async deleteHook(id){
-        if(!confirm(`确认删除 Hook "${id}"？`))return;
-        try{
-          const r=await fetch(`api/hooks/${id}`,{method:'DELETE'});const j=await r.json();
-          this.testOk=j.ok;this.testMsg=j.msg||(j.ok?'已删除':'删除失败');
-          if(j.ok){await this.loadHooks();await this.loadCustomHooks();}
-          setTimeout(()=>this.testMsg='',3000);
-        }catch(e){this.testOk=false;this.testMsg='网络错误：'+e.message;}
+      async saveNotifyTargets() {
+        this.notifySaving = true; this.notifyMsg = '';
+        const targets = this.notifyDraft.filter(t => t.url.trim());
+        try {
+          const r = await fetch(`api/hooks/${this.notifyHookID}/targets`, {
+            method: 'PUT',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(targets)
+          });
+          const j = await r.json();
+          this.notifyOk = j.ok;
+          this.notifyMsg = j.ok ? `已保存 ${(j.data||[]).length} 个目标` : (j.msg||'保存失败');
+          if (j.ok) {
+            this.allTargets = {...this.allTargets, [this.notifyHookID]: j.data||[]};
+            if (!targets.length) delete this.allTargets[this.notifyHookID];
+            setTimeout(() => { this.notifyMsg=''; this.notifyOpen=false; }, 1200);
+          }
+        } catch(e) { this.notifyOk=false; this.notifyMsg='网络错误：'+e.message; }
+        this.notifySaving = false;
       },
 
-      get filteredLogs(){return this.logs.filter(l=>{const okId=!this.logFilter||l.hookID.includes(this.logFilter);const okSt=!this.logStatus||(this.logStatus==='success'?l.success:!l.success);return okId&&okSt;});},
-      fmtTime(ts){if(!ts)return'—';return new Date(ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+      async testHook(id) {
+        this.testing = id; this.dashMsg = '';
+        try {
+          const r = await fetch(`api/hooks/${id}/test`, {method:'POST'});
+          const j = await r.json();
+          this.dashOk = j.ok; this.dashMsg = j.msg||(j.ok?'测试成功':'发送失败');
+        } catch(e) { this.dashOk=false; this.dashMsg='网络错误：'+e.message; }
+        this.testing = null;
+        setTimeout(() => this.dashMsg='', 4000);
+      },
+
+      async openScriptEditor(hookId) {
+        this.scriptHookID = hookId; this.scriptContent = ''; this.scriptMsg = '';
+        this.scriptLoading = true; this.scriptOpen = true;
+        try {
+          const r = await fetch(`api/hooks/${hookId}/script`); const j = await r.json();
+          if (j.ok) this.scriptContent = j.data.content;
+          else this.scriptMsg = j.msg||'加载失败';
+        } catch(e) { this.scriptMsg='网络错误：'+e.message; }
+        this.scriptLoading = false;
+      },
+      async saveScript() {
+        this.scriptSaving = true; this.scriptMsg = '';
+        try {
+          const r = await fetch(`api/hooks/${this.scriptHookID}/script`, {
+            method: 'PUT', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({content: this.scriptContent})
+          });
+          const j = await r.json();
+          this.scriptOk = j.ok; this.scriptMsg = j.ok?'脚本已保存':(j.msg||'保存失败');
+          if (j.ok) setTimeout(()=>this.scriptMsg='', 3000);
+        } catch(e) { this.scriptOk=false; this.scriptMsg='网络错误：'+e.message; }
+        this.scriptSaving = false;
+      },
+      insertTab(e) {
+        const el=e.target, s=el.selectionStart, end=el.selectionEnd;
+        this.scriptContent = this.scriptContent.substring(0,s)+'  '+this.scriptContent.substring(end);
+        this.$nextTick(()=>{ el.selectionStart=el.selectionEnd=s+2; });
+      },
+
+      openCreateModal() { this.form={id:'',name:''}; this.modalErr=''; this.modalOpen=true; },
+      async submitModal() {
+        this.modalErr = '';
+        if (!this.form.id) { this.modalErr='请填写推送 ID'; return; }
+        this.modalSaving = true;
+        try {
+          const r = await fetch('api/custom-hooks', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({...this.form, targetURL: '', method: 'POST'})
+          });
+          const j = await r.json();
+          if (j.ok) {
+            this.modalOpen = false;
+            this.dashOk = true;
+            this.dashMsg = `推送 "${this.form.id}" 已创建，请点击「通知配置」添加目标地址`;
+            await this.loadHooks();
+            setTimeout(()=>this.dashMsg='', 5000);
+          } else { this.modalErr = j.msg||'创建失败'; }
+        } catch(e) { this.modalErr='网络错误：'+e.message; }
+        this.modalSaving = false;
+      },
+
+      async deleteHook(id) {
+        if (!confirm(`确认删除 Hook "${id}"？`)) return;
+        try {
+          const r = await fetch(`api/hooks/${id}`, {method:'DELETE'});
+          const j = await r.json();
+          this.dashOk = j.ok; this.dashMsg = j.msg||(j.ok?'已删除':'删除失败');
+          if (j.ok) { await this.loadHooks(); }
+          setTimeout(()=>this.dashMsg='', 3000);
+        } catch(e) { this.dashOk=false; this.dashMsg='网络错误：'+e.message; }
+      },
+
+      get filteredLogs() {
+        return this.logs.filter(l => {
+          const okId = !this.logFilter || l.hookID.includes(this.logFilter);
+          const okSt = !this.logStatus || (this.logStatus==='success'?l.success:!l.success);
+          return okId && okSt;
+        });
+      },
+      fmtTime(ts) {
+        if (!ts) return '—';
+        return new Date(ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      }
     };
   }
   </script>

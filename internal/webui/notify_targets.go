@@ -14,23 +14,54 @@ type NotifyTarget struct {
 	Secret string `json:"secret,omitempty"`
 }
 
-func LoadNotifyTargets(file string) ([]NotifyTarget, error) {
+// HookTargetsMap maps hookID → list of notification targets for that hook.
+type HookTargetsMap map[string][]NotifyTarget
+
+func LoadHookTargets(file string) (HookTargetsMap, error) {
 	data, err := os.ReadFile(file)
 	if os.IsNotExist(err) {
-		return []NotifyTarget{}, nil
+		return HookTargetsMap{}, nil
 	}
 	if err != nil {
 		return nil, err
 	}
-	var targets []NotifyTarget
-	if err := json.Unmarshal(data, &targets); err != nil {
+	var m HookTargetsMap
+	if err := json.Unmarshal(data, &m); err != nil {
 		return nil, err
 	}
-	return targets, nil
+	if m == nil {
+		m = HookTargetsMap{}
+	}
+	return m, nil
 }
 
-func SaveNotifyTargets(file string, targets []NotifyTarget) error {
-	data, err := json.MarshalIndent(targets, "", "  ")
+func GetHookTargets(file, hookID string) ([]NotifyTarget, error) {
+	m, err := LoadHookTargets(file)
+	if err != nil {
+		return nil, err
+	}
+	t := m[hookID]
+	if t == nil {
+		t = []NotifyTarget{}
+	}
+	return t, nil
+}
+
+func SetHookTargets(file, hookID string, targets []NotifyTarget) error {
+	m, err := LoadHookTargets(file)
+	if err != nil {
+		return err
+	}
+	if len(targets) == 0 {
+		delete(m, hookID)
+	} else {
+		m[hookID] = targets
+	}
+	return saveHookTargetsFile(file, m)
+}
+
+func saveHookTargetsFile(file string, m HookTargetsMap) error {
+	data, err := json.MarshalIndent(m, "", "  ")
 	if err != nil {
 		return err
 	}

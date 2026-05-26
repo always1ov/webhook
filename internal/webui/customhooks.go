@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 	"time"
 )
 
@@ -97,61 +96,16 @@ func DeleteCustomHookFiles(hooksDir, scriptsDir, id string) {
 }
 
 func generateScript(h CustomHook) string {
-	method := strings.ToUpper(h.Method)
-	if method == "" {
-		method = "POST"
-	}
-	tpl := h.BodyTemplate
-	if tpl == "" {
-		tpl = `{"msg":$msg,"title":$title}`
-	}
-
-	var hdrLines strings.Builder
-	for _, line := range strings.Split(h.Headers, "\n") {
-		line = strings.TrimSpace(line)
-		if line != "" && strings.Contains(line, ":") {
-			fmt.Fprintf(&hdrLines, "  -H %q \\\n", line)
-		}
-	}
-
-	return fmt.Sprintf(`#!/bin/sh
+	return fmt.Sprintf(`#!/bin/bash
 # 自定义推送脚本 - %s
-# 由 Web UI 自动生成，请勿手动编辑
+# 由 Web UI 自动生成；在「通知配置」中添加目标地址后即可触发推送
 
-set -e
-
-MSG="${MSG:-$MSG_QUERY}"
-TITLE="${TITLE:-$TITLE_QUERY}"
-TITLE="${TITLE:-通知}"
-
-if [ -z "$MSG" ]; then
-    echo "[ERROR] 消息内容为空，请通过 ?msg=... 或 POST body {\"msg\":\"...\"} 传入"
-    exit 1
-fi
-
-BODY=$(jq -n --arg msg "$MSG" --arg title "$TITLE" '%s')
-
-HTTP_CODE=$(curl -s -o /tmp/.custom_%s_resp -w "%%{http_code}" \\
-  -X %s \\
-  -H "Content-Type: application/json" \\
-%s  -d "$BODY" \\
-  "%s")
-
-RESP=$(cat /tmp/.custom_%s_resp)
-
-if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
-    echo "[OK] 推送成功 (HTTP $HTTP_CODE)"
-else
-    echo "[ERROR] 推送失败 (HTTP $HTTP_CODE): $RESP"
-    exit 1
-fi
+export HOOK_ID="%s"
+export MSG="${MSG:-}"
+export TITLE="${TITLE:-通知}"
+exec /notify/notify.sh
 `,
 		h.Name,
-		tpl,
-		h.ID,
-		method,
-		hdrLines.String(),
-		h.TargetURL,
 		h.ID,
 	)
 }
@@ -162,22 +116,22 @@ func generateYAML(h CustomHook, scriptPath string) string {
 
 - id: %s
   execute-command: %s
-  command-working-directory: /data/scripts
+  command-working-directory: /
   include-command-output-in-response: true
   include-command-out-in-response-on-error: true
   pass-environment-to-command:
     - source: payload
       name: msg
-      envname: MSG
+      env-name: MSG
     - source: payload
       name: title
-      envname: TITLE
+      env-name: TITLE
     - source: url
       name: msg
-      envname: MSG_QUERY
+      env-name: MSG
     - source: url
       name: title
-      envname: TITLE_QUERY
+      env-name: TITLE
 `,
 		h.Name,
 		h.ID,

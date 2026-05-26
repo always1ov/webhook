@@ -54,7 +54,7 @@ func (s *server) routes() *http.ServeMux {
 	mux.HandleFunc(s.basePath+"/api/logs", s.listLogs)
 	mux.HandleFunc(s.basePath+"/api/custom-hooks", s.handleCustomHooks)
 	mux.HandleFunc(s.basePath+"/api/custom-hooks/", s.handleCustomHookByID)
-	mux.HandleFunc(s.basePath+"/api/notify-targets", s.handleNotifyTargets)
+	mux.HandleFunc(s.basePath+"/api/notify-targets", s.handleAllNotifyTargets)
 	return mux
 }
 
@@ -177,6 +177,43 @@ func (s *server) handleHookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// GET|PUT /{id}/targets
+	if strings.HasSuffix(suffix, "/targets") {
+		hookID := strings.TrimSuffix(suffix, "/targets")
+		if hookID == "" {
+			fail(w, http.StatusBadRequest, "hook id is required")
+			return
+		}
+		switch r.Method {
+		case http.MethodGet:
+			targets, err := GetHookTargets(s.notifyTargetsFile, hookID)
+			if err != nil {
+				fail(w, http.StatusInternalServerError, fmt.Sprintf("load failed: %v", err))
+				return
+			}
+			okData(w, targets)
+		case http.MethodPut:
+			var targets []NotifyTarget
+			if err := json.NewDecoder(r.Body).Decode(&targets); err != nil {
+				fail(w, http.StatusBadRequest, fmt.Sprintf("invalid JSON: %v", err))
+				return
+			}
+			for i, t := range targets {
+				if t.ID == "" {
+					targets[i].ID = fmt.Sprintf("%d", time.Now().UnixNano()+int64(i))
+				}
+			}
+			if err := SetHookTargets(s.notifyTargetsFile, hookID, targets); err != nil {
+				fail(w, http.StatusInternalServerError, fmt.Sprintf("save failed: %v", err))
+				return
+			}
+			okMsgData(w, fmt.Sprintf("通知目标已保存（%d 个）", len(targets)), targets)
+		default:
+			fail(w, http.StatusMethodNotAllowed, "method not allowed")
+		}
+		return
+	}
+
 	// POST /{id}/test
 	if strings.HasSuffix(suffix, "/test") && r.Method == http.MethodPost {
 		hookID := strings.TrimSuffix(suffix, "/test")
@@ -278,10 +315,6 @@ func (s *server) handleCustomHooks(w http.ResponseWriter, r *http.Request) {
 			fail(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		if h.TargetURL == "" {
-			fail(w, http.StatusBadRequest, "targetURL 不能为空")
-			return
-		}
 		hooks, err := LoadCustomHooks(s.customHooksFile)
 		if err != nil {
 			fail(w, http.StatusInternalServerError, fmt.Sprintf("load failed: %v", err))
@@ -326,10 +359,6 @@ func (s *server) handleCustomHookByID(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		h.ID = id
-		if h.TargetURL == "" {
-			fail(w, http.StatusBadRequest, "targetURL 不能为空")
-			return
-		}
 		hooks, err := LoadCustomHooks(s.customHooksFile)
 		if err != nil {
 			fail(w, http.StatusInternalServerError, fmt.Sprintf("load failed: %v", err))
@@ -389,34 +418,16 @@ func (s *server) handleCustomHookByID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *server) handleNotifyTargets(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		targets, err := LoadNotifyTargets(s.notifyTargetsFile)
-		if err != nil {
-			fail(w, http.StatusInternalServerError, fmt.Sprintf("load failed: %v", err))
-			return
-		}
-		okData(w, targets)
-
-	case http.MethodPut:
-		var targets []NotifyTarget
-		if err := json.NewDecoder(r.Body).Decode(&targets); err != nil {
-			fail(w, http.StatusBadRequest, fmt.Sprintf("invalid JSON: %v", err))
-			return
-		}
-		for i, t := range targets {
-			if t.ID == "" {
-				targets[i].ID = fmt.Sprintf("%d", time.Now().UnixNano()+int64(i))
-			}
-		}
-		if err := SaveNotifyTargets(s.notifyTargetsFile, targets); err != nil {
-			fail(w, http.StatusInternalServerError, fmt.Sprintf("save failed: %v", err))
-			return
-		}
-		okMsgData(w, "通知目标已保存", targets)
-
-	default:
+// handleAllNotifyTargets returns the full hookID→targets map for the UI to compute per-hook counts.
+func (s *server) handleAllNotifyTargets(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
 		fail(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
 	}
+	m, err := LoadHookTargets(s.notifyTargetsFile)
+	if err != nil {
+		fail(w, http.StatusInternalServerError, fmt.Sprintf("load failed: %v", err))
+		return
+	}
+	okData(w, m)
 }
