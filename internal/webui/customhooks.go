@@ -98,12 +98,107 @@ func DeleteCustomHookFiles(hooksDir, scriptsDir, id string) {
 func generateScript(h CustomHook) string {
 	return fmt.Sprintf(`#!/bin/bash
 # 自定义推送脚本 - %s
-# 由 Web UI 自动生成；在「通知配置」中添加目标地址后即可触发推送
+# 修改 HOOK_ID 下方的逻辑可自定义发送行为
 
-export HOOK_ID="%s"
-export MSG="${MSG:-}"
-export TITLE="${TITLE:-通知}"
-exec /notify/notify.sh
+HOOK_ID="%s"
+TARGETS_FILE="${NOTIFY_TARGETS_FILE:-/data/notify-targets.json}"
+MSG="${MSG:-}"
+TITLE="${TITLE:-Webhook 通知}"
+
+if [ -z "$MSG" ]; then
+  echo "ERROR: MSG is empty" >&2
+  exit 1
+fi
+
+if [ ! -f "$TARGETS_FILE" ]; then
+  echo "WARN: targets file not found: $TARGETS_FILE"
+  exit 0
+fi
+
+targets_json=$(jq -e --arg id "$HOOK_ID" '.[$id] // []' "$TARGETS_FILE" 2>/dev/null || echo "[]")
+count=$(echo "$targets_json" | jq 'length' 2>/dev/null || echo 0)
+
+if [ "$count" -eq 0 ]; then
+  echo "WARN: no targets configured for hook \"$HOOK_ID\""
+  exit 0
+fi
+
+TMPDIR_SELF=$(mktemp -d)
+trap 'rm -rf "$TMPDIR_SELF"' EXIT
+
+success=0
+failure=0
+
+send_feishu() {
+  local url="$1" body tmp
+  tmp="$TMPDIR_SELF/resp.json"
+  body=$(jq -n --arg title "$TITLE" --arg text "$MSG" \
+    '{"msg_type":"post","content":{"post":{"zh_cn":{"title":$title,"content":[[{"tag":"text","text":$text}]]}}}}')
+  resp=$(curl -s --max-time 10 --connect-timeout 5 \
+    -o "$tmp" -w "%%{http_code}" -H "Content-Type: application/json" -d "$body" "$url")
+  if [ "$resp" = "200" ]; then
+    code=$(jq -r '.code // 0' "$tmp" 2>/dev/null)
+    [ "$code" = "0" ] && return 0
+    echo "WARN: feishu code=$code msg=$(jq -r '.msg // ""' "$tmp")"
+    return 1
+  fi
+  echo "WARN: feishu HTTP $resp"; return 1
+}
+
+send_dingtalk() {
+  local url="$1" secret="$2" body tmp
+  tmp="$TMPDIR_SELF/resp.json"
+  if [ -n "$secret" ]; then
+    ts=$(date +%%s%%3N)
+    sign=$(printf "%%s\n%%s" "$ts" "$secret" | openssl dgst -sha256 -hmac "$secret" -binary | base64 | tr -d '\n')
+    sign_enc=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$sign" 2>/dev/null || echo "$sign")
+    url="${url}&timestamp=${ts}&sign=${sign_enc}"
+  fi
+  body=$(jq -n --arg title "$TITLE" --arg text "$MSG" \
+    '{"msgtype":"markdown","markdown":{"title":$title,"text":("## "+$title+"\n"+$text)}}')
+  resp=$(curl -s --max-time 10 --connect-timeout 5 \
+    -o "$tmp" -w "%%{http_code}" -H "Content-Type: application/json" -d "$body" "$url")
+  if [ "$resp" = "200" ]; then
+    errcode=$(jq -r '.errcode // 0' "$tmp" 2>/dev/null)
+    [ "$errcode" = "0" ] && return 0
+    echo "WARN: dingtalk error=$errcode msg=$(jq -r '.errmsg // ""' "$tmp")"
+    return 1
+  fi
+  echo "WARN: dingtalk HTTP $resp"; return 1
+}
+
+send_wecom() {
+  local url="$1" body tmp
+  tmp="$TMPDIR_SELF/resp.json"
+  body=$(jq -n --arg title "$TITLE" --arg text "$MSG" \
+    '{"msgtype":"markdown","markdown":{"content":("## "+$title+"\n"+$text)}}')
+  resp=$(curl -s --max-time 10 --connect-timeout 5 \
+    -o "$tmp" -w "%%{http_code}" -H "Content-Type: application/json" -d "$body" "$url")
+  if [ "$resp" = "200" ]; then
+    errcode=$(jq -r '.errcode // 0' "$tmp" 2>/dev/null)
+    [ "$errcode" = "0" ] && return 0
+    echo "WARN: wecom error=$errcode msg=$(jq -r '.errmsg // ""' "$tmp")"
+    return 1
+  fi
+  echo "WARN: wecom HTTP $resp"; return 1
+}
+
+while IFS= read -r target; do
+  type=$(echo "$target" | jq -r '.type // ""')
+  name=$(echo "$target" | jq -r '.name // ""')
+  url=$(echo "$target"  | jq -r '.url // ""')
+  secret=$(echo "$target" | jq -r '.secret // ""')
+  [ -z "$url" ] && { echo "SKIP: \"$name\" has no url"; continue; }
+  case "$type" in
+    feishu)   if send_feishu "$url";          then echo "OK: feishu \"$name\"";   success=$((success+1)); else echo "FAIL: feishu \"$name\"";   failure=$((failure+1)); fi ;;
+    dingtalk) if send_dingtalk "$url" "$secret"; then echo "OK: dingtalk \"$name\""; success=$((success+1)); else echo "FAIL: dingtalk \"$name\""; failure=$((failure+1)); fi ;;
+    wecom)    if send_wecom "$url";           then echo "OK: wecom \"$name\"";    success=$((success+1)); else echo "FAIL: wecom \"$name\"";    failure=$((failure+1)); fi ;;
+    *) echo "SKIP: unknown type \"$type\" for \"$name\"" ;;
+  esac
+done < <(echo "$targets_json" | jq -c '.[]')
+
+echo "DONE: success=$success failure=$failure"
+[ "$failure" -eq 0 ]
 `,
 		h.Name,
 		h.ID,
