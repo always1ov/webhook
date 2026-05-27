@@ -8,9 +8,7 @@ mkdir -p "$HOOKS_DIR" "$DATA_DIR"
 for f in /builtin-hooks/*.yaml; do
   [ -f "$f" ] || continue
   name=$(basename "$f")
-  if [ ! -f "$HOOKS_DIR/$name" ]; then
-    cp "$f" "$HOOKS_DIR/$name"
-  fi
+  cp "$f" "$HOOKS_DIR/$name"
 done
 
 exec /usr/bin/webhook "$@"

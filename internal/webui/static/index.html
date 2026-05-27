@@ -188,9 +188,9 @@
             <template x-for="l in filteredLogs" :key="l.id">
               <tr>
                 <td><span :class="l.success?'badge badge-ok':'badge badge-err'"><span class="dot"></span><span x-text="l.success?'成功':'失败'"></span></span></td>
-                <td><span class="mono" style="color:var(--accent);font-size:13px;" x-text="l.hookID"></span></td>
+                <td><span class="mono" style="color:var(--accent);font-size:13px;" x-text="l.hookId"></span></td>
                 <td style="color:var(--faint);font-size:12px;white-space:nowrap;" x-text="fmtTime(l.timestamp)"></td>
-                <td><span class="mono" style="color:var(--muted);font-size:12px;" x-text="l.durationMS+'ms'"></span></td>
+                <td><span class="mono" style="color:var(--muted);font-size:12px;" x-text="l.durationMs+'ms'"></span></td>
                 <td><span class="mono" style="color:var(--faint);font-size:12px;" x-text="l.ip||'—'"></span></td>
                 <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--faint);font-size:12px;" x-text="l.output||'—'"></td>
               </tr>
@@ -477,14 +477,14 @@
           const r = await fetch(`api/hooks/${id}`, {method:'DELETE'});
           const j = await r.json();
           this.dashOk = j.ok; this.dashMsg = j.msg||(j.ok?'已删除':'删除失败');
-          if (j.ok) { await this.loadHooks(); }
+          if (j.ok) { await this.loadHooks(); await this.loadAllTargets(); }
           setTimeout(()=>this.dashMsg='', 3000);
         } catch(e) { this.dashOk=false; this.dashMsg='网络错误：'+e.message; }
       },
 
       get filteredLogs() {
         return this.logs.filter(l => {
-          const okId = !this.logFilter || l.hookID.includes(this.logFilter);
+          const okId = !this.logFilter || l.hookId.includes(this.logFilter);
           const okSt = !this.logStatus || (this.logStatus==='success'?l.success:!l.success);
           return okId && okSt;
         });

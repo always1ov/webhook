@@ -27,20 +27,26 @@ if [ "$count" -eq 0 ]; then
   exit 0
 fi
 
+# Unique temp files per process to avoid concurrent-call collisions
+TMPDIR_SELF=$(mktemp -d)
+trap 'rm -rf "$TMPDIR_SELF"' EXIT
+
 success=0
 failure=0
 
 send_feishu() {
   local url="$1"
-  local body
+  local body tmp
+  tmp="$TMPDIR_SELF/resp.json"
   body=$(jq -n --arg title "$TITLE" --arg text "$MSG" \
     '{"msg_type":"post","content":{"post":{"zh_cn":{"title":$title,"content":[[{"tag":"text","text":$text}]]}}}}')
-  resp=$(curl -s -o /tmp/feishu_resp.json -w "%{http_code}" \
+  resp=$(curl -s --max-time 10 --connect-timeout 5 \
+    -o "$tmp" -w "%{http_code}" \
     -H "Content-Type: application/json" -d "$body" "$url")
   if [ "$resp" = "200" ]; then
-    code=$(jq -r '.code // 0' /tmp/feishu_resp.json 2>/dev/null)
+    code=$(jq -r '.code // 0' "$tmp" 2>/dev/null)
     if [ "$code" = "0" ]; then return 0; fi
-    echo "WARN: feishu API code=$code msg=$(jq -r '.msg // ""' /tmp/feishu_resp.json)"
+    echo "WARN: feishu API code=$code msg=$(jq -r '.msg // ""' "$tmp")"
     return 1
   fi
   echo "WARN: feishu HTTP $resp"
@@ -50,6 +56,8 @@ send_feishu() {
 send_dingtalk() {
   local url="$1"
   local secret="$2"
+  local tmp
+  tmp="$TMPDIR_SELF/resp.json"
   if [ -n "$secret" ]; then
     ts=$(date +%s%3N)
     sign=$(printf "%s\n%s" "$ts" "$secret" | openssl dgst -sha256 -hmac "$secret" -binary | base64 | tr -d '\n')
@@ -61,12 +69,13 @@ send_dingtalk() {
   local body
   body=$(jq -n --arg title "$TITLE" --arg text "$MSG" \
     '{"msgtype":"markdown","markdown":{"title":$title,"text":("## "+$title+"\n"+$text)}}')
-  resp=$(curl -s -o /tmp/dingtalk_resp.json -w "%{http_code}" \
+  resp=$(curl -s --max-time 10 --connect-timeout 5 \
+    -o "$tmp" -w "%{http_code}" \
     -H "Content-Type: application/json" -d "$body" "$url")
   if [ "$resp" = "200" ]; then
-    errcode=$(jq -r '.errcode // 0' /tmp/dingtalk_resp.json 2>/dev/null)
+    errcode=$(jq -r '.errcode // 0' "$tmp" 2>/dev/null)
     if [ "$errcode" = "0" ]; then return 0; fi
-    echo "WARN: dingtalk error=$errcode msg=$(jq -r '.errmsg // ""' /tmp/dingtalk_resp.json)"
+    echo "WARN: dingtalk error=$errcode msg=$(jq -r '.errmsg // ""' "$tmp")"
     return 1
   fi
   echo "WARN: dingtalk HTTP $resp"
@@ -75,15 +84,18 @@ send_dingtalk() {
 
 send_wecom() {
   local url="$1"
+  local tmp
+  tmp="$TMPDIR_SELF/resp.json"
   local body
   body=$(jq -n --arg title "$TITLE" --arg text "$MSG" \
     '{"msgtype":"markdown","markdown":{"content":("## "+$title+"\n"+$text)}}')
-  resp=$(curl -s -o /tmp/wecom_resp.json -w "%{http_code}" \
+  resp=$(curl -s --max-time 10 --connect-timeout 5 \
+    -o "$tmp" -w "%{http_code}" \
     -H "Content-Type: application/json" -d "$body" "$url")
   if [ "$resp" = "200" ]; then
-    errcode=$(jq -r '.errcode // 0' /tmp/wecom_resp.json 2>/dev/null)
+    errcode=$(jq -r '.errcode // 0' "$tmp" 2>/dev/null)
     if [ "$errcode" = "0" ]; then return 0; fi
-    echo "WARN: wecom error=$errcode msg=$(jq -r '.errmsg // ""' /tmp/wecom_resp.json)"
+    echo "WARN: wecom error=$errcode msg=$(jq -r '.errmsg // ""' "$tmp")"
     return 1
   fi
   echo "WARN: wecom HTTP $resp"

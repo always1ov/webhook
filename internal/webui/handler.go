@@ -283,6 +283,8 @@ func (s *server) handleHookByID(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	// 清理该 hook 的通知目标
+	_ = SetHookTargets(s.notifyTargetsFile, hookID, nil)
 	okMsg(w, fmt.Sprintf("Hook \"%s\" 已删除", hookID))
 }
 
@@ -411,6 +413,7 @@ func (s *server) handleCustomHookByID(w http.ResponseWriter, r *http.Request) {
 			fail(w, http.StatusInternalServerError, fmt.Sprintf("save failed: %v", err))
 			return
 		}
+		_ = SetHookTargets(s.notifyTargetsFile, id, nil)
 		okMsg(w, fmt.Sprintf("推送 %q 已删除", id))
 
 	default:
