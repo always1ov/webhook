@@ -1,14 +1,23 @@
 #!/bin/sh
-# Copy built-in hook YAML files into HOOKS_DIR if not already present.
-# This lets the mounted volume persist custom hooks while still shipping
-# the built-in hooks (feishu, dingtalk, etc.) inside the image.
 HOOKS_DIR="${HOOKS_DIR:-/hooks}"
 DATA_DIR="${DATA_DIR:-/data}"
-mkdir -p "$HOOKS_DIR" "$DATA_DIR"
+SCRIPTS_DIR="$DATA_DIR/scripts"
+mkdir -p "$HOOKS_DIR" "$SCRIPTS_DIR"
+
+# Always overwrite built-in hook YAMLs (system-managed, users edit scripts not YAMLs)
 for f in /builtin-hooks/*.yaml; do
   [ -f "$f" ] || continue
-  name=$(basename "$f")
-  cp "$f" "$HOOKS_DIR/$name"
+  cp "$f" "$HOOKS_DIR/$(basename "$f")"
+done
+
+# Copy built-in scripts to data volume ONLY if not already present (preserve user edits)
+for f in /notify/*.sh; do
+  [ -f "$f" ] || continue
+  dest="$SCRIPTS_DIR/$(basename "$f")"
+  if [ ! -f "$dest" ]; then
+    cp "$f" "$dest"
+    chmod +x "$dest"
+  fi
 done
 
 exec /usr/bin/webhook "$@"

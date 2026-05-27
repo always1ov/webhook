@@ -1,5 +1,5 @@
 - id: notify
-  execute-command: /notify/notify.sh
+  execute-command: /data/scripts/notify.sh
   command-working-directory: /
   http-methods:
     - GET
