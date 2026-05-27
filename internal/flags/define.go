@@ -94,6 +94,7 @@ const (
 	DEFAULT_NOTIFY_CONFIG_FILE  = "./notify.config.json"
 	DEFAULT_CUSTOM_HOOKS_FILE   = "./data/custom-hooks.json"
 	DEFAULT_NOTIFY_TARGETS_FILE = "./data/notify-targets.json"
+	DEFAULT_CRON_JOBS_FILE      = "./data/cron-jobs.json"
 )
 
 const (
@@ -187,6 +188,7 @@ const (
 	ENV_KEY_NOTIFY_CONFIG_FILE   = "NOTIFY_CONFIG_FILE"
 	ENV_KEY_CUSTOM_HOOKS_FILE    = "CUSTOM_HOOKS_FILE"
 	ENV_KEY_NOTIFY_TARGETS_FILE  = "NOTIFY_TARGETS_FILE"
+	ENV_KEY_CRON_JOBS_FILE       = "CRON_JOBS_FILE"
 )
 
 type AppFlags struct {
@@ -277,9 +279,10 @@ type AppFlags struct {
 	HooksDir string
 
 	// WebUI settings
-	WebUIEnabled        bool
-	WebUIPath           string
-	NotifyConfigFile    string
-	CustomHooksFile     string
-	NotifyTargetsFile   string
+	WebUIEnabled      bool
+	WebUIPath         string
+	NotifyConfigFile  string
+	CustomHooksFile   string
+	NotifyTargetsFile string
+	CronJobsFile      string
 }

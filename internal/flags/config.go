@@ -222,6 +222,7 @@ func ParseConfig() AppFlags {
 	flags.NotifyConfigFile = configutil.ResolveString(fs, "notify-config-file", ENV_KEY_NOTIFY_CONFIG_FILE, DEFAULT_NOTIFY_CONFIG_FILE, true)
 	flags.CustomHooksFile = configutil.ResolveString(fs, "custom-hooks-file", ENV_KEY_CUSTOM_HOOKS_FILE, DEFAULT_CUSTOM_HOOKS_FILE, true)
 	flags.NotifyTargetsFile = configutil.ResolveString(fs, "notify-targets-file", ENV_KEY_NOTIFY_TARGETS_FILE, DEFAULT_NOTIFY_TARGETS_FILE, true)
+	flags.CronJobsFile = configutil.ResolveString(fs, "cron-jobs-file", ENV_KEY_CRON_JOBS_FILE, DEFAULT_CRON_JOBS_FILE, true)
 
 	// Hooks directory: when set, scan for hook files and optionally watch when empty
 	flags.HooksDir = configutil.ResolveString(fs, "hooks-dir", ENV_KEY_HOOKS_DIR, DEFAULT_HOOKS_DIR, true)

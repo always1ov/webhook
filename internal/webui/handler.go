@@ -27,21 +27,23 @@ type apiResponse struct {
 }
 
 type server struct {
-	basePath           string
-	customHooksFile    string
-	hooksDir           string
-	scriptsDir         string
-	notifyTargetsFile  string
-	addr               string
+	basePath          string
+	customHooksFile   string
+	hooksDir          string
+	scriptsDir        string
+	notifyTargetsFile string
+	cronJobsFile      string
+	addr              string
 }
 
-func newServer(basePath, customHooksFile, hooksDir, notifyTargetsFile, addr string) *server {
+func newServer(basePath, customHooksFile, hooksDir, notifyTargetsFile, cronJobsFile, addr string) *server {
 	return &server{
 		basePath:          basePath,
 		customHooksFile:   customHooksFile,
 		hooksDir:          hooksDir,
 		scriptsDir:        filepath.Join(filepath.Dir(customHooksFile), "scripts"),
 		notifyTargetsFile: notifyTargetsFile,
+		cronJobsFile:      cronJobsFile,
 		addr:              addr,
 	}
 }
@@ -55,6 +57,8 @@ func (s *server) routes() *http.ServeMux {
 	mux.HandleFunc(s.basePath+"/api/custom-hooks", s.handleCustomHooks)
 	mux.HandleFunc(s.basePath+"/api/custom-hooks/", s.handleCustomHookByID)
 	mux.HandleFunc(s.basePath+"/api/notify-targets", s.handleAllNotifyTargets)
+	mux.HandleFunc(s.basePath+"/api/cron-jobs", s.handleAllCronJobs)
+	mux.HandleFunc(s.basePath+"/api/cron-jobs/", s.handleCronJobByID)
 	return mux
 }
 
@@ -283,8 +287,8 @@ func (s *server) handleHookByID(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	// 清理该 hook 的通知目标
 	_ = SetHookTargets(s.notifyTargetsFile, hookID, nil)
+	_ = DeleteCronJob(s.cronJobsFile, hookID)
 	okMsg(w, fmt.Sprintf("Hook \"%s\" 已删除", hookID))
 }
 
@@ -414,6 +418,7 @@ func (s *server) handleCustomHookByID(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		_ = SetHookTargets(s.notifyTargetsFile, id, nil)
+		_ = DeleteCronJob(s.cronJobsFile, id)
 		okMsg(w, fmt.Sprintf("推送 %q 已删除", id))
 
 	default:
@@ -433,4 +438,75 @@ func (s *server) handleAllNotifyTargets(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	okData(w, m)
+}
+
+// handleAllCronJobs returns the full hookID→cron map.
+func (s *server) handleAllCronJobs(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		fail(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+	m, err := LoadCronJobs(s.cronJobsFile)
+	if err != nil {
+		fail(w, http.StatusInternalServerError, fmt.Sprintf("load failed: %v", err))
+		return
+	}
+	okData(w, m)
+}
+
+// handleCronJobByID handles GET/PUT/DELETE /api/cron-jobs/{hookID}
+func (s *server) handleCronJobByID(w http.ResponseWriter, r *http.Request) {
+	hookID := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, s.basePath+"/api/cron-jobs/"), "/")
+	if hookID == "" {
+		fail(w, http.StatusBadRequest, "hook id is required")
+		return
+	}
+	switch r.Method {
+	case http.MethodGet:
+		m, err := LoadCronJobs(s.cronJobsFile)
+		if err != nil {
+			fail(w, http.StatusInternalServerError, fmt.Sprintf("load failed: %v", err))
+			return
+		}
+		job, ok := m[hookID]
+		if !ok {
+			job = CronJob{HookID: hookID, Schedule: "", Enabled: false}
+		}
+		okData(w, job)
+
+	case http.MethodPut:
+		var body struct {
+			Schedule string `json:"schedule"`
+			Enabled  bool   `json:"enabled"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			fail(w, http.StatusBadRequest, "invalid JSON")
+			return
+		}
+		if body.Schedule != "" {
+			if err := ValidateCronSchedule(body.Schedule); err != nil {
+				fail(w, http.StatusBadRequest, fmt.Sprintf("无效的 cron 表达式: %v", err))
+				return
+			}
+		}
+		if err := SetCronJob(s.cronJobsFile, hookID, body.Schedule, body.Enabled); err != nil {
+			fail(w, http.StatusInternalServerError, fmt.Sprintf("save failed: %v", err))
+			return
+		}
+		if body.Schedule == "" {
+			okMsg(w, fmt.Sprintf("Hook %q 定时任务已清除", hookID))
+		} else {
+			okMsg(w, fmt.Sprintf("Hook %q 定时任务已保存: %s", hookID, body.Schedule))
+		}
+
+	case http.MethodDelete:
+		if err := DeleteCronJob(s.cronJobsFile, hookID); err != nil {
+			fail(w, http.StatusInternalServerError, fmt.Sprintf("delete failed: %v", err))
+			return
+		}
+		okMsg(w, fmt.Sprintf("Hook %q 定时任务已删除", hookID))
+
+	default:
+		fail(w, http.StatusMethodNotAllowed, "method not allowed")
+	}
 }
